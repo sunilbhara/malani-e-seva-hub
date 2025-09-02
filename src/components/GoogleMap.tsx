@@ -220,23 +220,23 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 items-start">
-          {/* Map Container */}
-          <div className="lg:col-span-2">
+         <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* <div className="lg:col-span-2">
             <Card className="overflow-hidden shadow-2xl border-0">
               <CardContent className="p-0">
                 <div 
                    ref={mapRef}
                    className="w-full h-[400px] md:h-[500px] bg-gray-200 relative"
                  >
-                   {/* {!isMapLoaded && !mapError && (
+                   {!isMapLoaded && !mapError && (
                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                        <div className="text-center">
                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
                          <p className="text-gray-600">Loading map...</p>
                        </div>
                      </div>
-                   )} */}
+                   )}
                    {mapError && (
                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                        <div className="text-center">
@@ -263,6 +263,20 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
                  </div>
               </CardContent>
             </Card>
+          </div> */}
+
+          <div className="w-full lg:w-2/3">
+            <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-xl overflow-hidden shadow-xl">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3593.7196031979474!2d71.39411987523034!3d25.746784677361163!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39443b007750dead%3A0x57460a770747e6a0!2sMalani%20Mobile%20and%20Electronics%20Barmer!5e0!3m2!1sen!2sin!4v1756790030430!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
           </div>
 
           {/* Location Details */}
