@@ -21,7 +21,7 @@ const Footer = () => {
                 <User className="h-6 w-6 text-yellow-400" />
                 <div>
                   <p className="text-blue-200">Proprietor</p>
-                  <p className="text-xl font-semibold text-white">Tarun Bharati</p>
+                  <p className="text-xl font-semibold text-white">Tarun Bharti</p>
                 </div>
               </div>
             </div>
@@ -70,15 +70,15 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3 hover:text-white transition-colors">
                 <Mail className="h-5 w-5 text-yellow-400" />
-                <span>info@malanimitira.com</span>
+                <span>malanibme@gmail.com</span>
               </div>
               <div className="flex items-center space-x-3 hover:text-white transition-colors">
                 <Clock className="h-5 w-5 text-yellow-400" />
-                <span>Mon-Sat: 9AM-7PM</span>
+                <span>Mon-Sat: 9AM-7PM, Sun: 10AM-8PM</span>
               </div>
               <div className="flex items-center space-x-3 hover:text-white transition-colors">
                 <Star className="h-5 w-5 text-yellow-400" />
-                <span>5000+ Happy Customers</span>
+                <span>50000+ Happy Customers</span>
               </div>
             </div>
 
@@ -105,7 +105,7 @@ const Footer = () => {
         <div className="border-t border-gray-700 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-center md:text-left">
-              &copy; 2024 Malani E-Mitra Services. All rights reserved. | Authorized E-Mitra Center
+              &copy; 2025 Malani E-Mitra Services. All rights reserved. | Authorized E-Mitra Center
             </p>
             <div className="flex items-center gap-2 text-yellow-400">
               <Star className="h-4 w-4" />
