@@ -20,6 +20,8 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
 
+  const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
   const initializeMap = useCallback(() => {
     try {
       if (!mapRef.current || !window.google) {
@@ -127,7 +129,7 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
       }
 
       scriptElement = document.createElement('script');
-      scriptElement.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places`;
+      scriptElement.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
       scriptElement.async = true;
       scriptElement.defer = true;
       
@@ -194,7 +196,7 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
         mapInstanceRef.current = null;
       }
     };
-  }, [initializeMap]);
+  }, [initializeMap, GOOGLE_MAPS_API_KEY]);
 
   const openInGoogleMaps = () => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;

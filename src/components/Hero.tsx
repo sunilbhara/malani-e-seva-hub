@@ -125,7 +125,7 @@ const Hero = () => {
                 <User className="h-6 w-6 text-yellow-300" />
                 <div>
                   <p className="text-sm text-blue-200">Proprietor</p>
-                  <p className="text-lg font-semibold text-white">Tarun Bharati</p>
+                  <p className="text-lg font-semibold text-white">Tarun Bharti</p>
                 </div>
               </motion.div>
             </motion.div>
