@@ -107,7 +107,7 @@ const Hero = () => {
                   Malani
                 </span>
                 <span className="block bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-400 bg-clip-text text-transparent">
-                  E-Mitra Services
+                  Barmer
                 </span>
               </motion.h1>
               
@@ -115,7 +115,7 @@ const Hero = () => {
                 variants={itemVariants}
                 className="text-lg sm:text-xl lg:text-2xl text-blue-100 leading-relaxed font-light"
               >
-                Your trusted partner for all government and digital services in Barmer
+                Complete solutions for E-Mitra services, mobile electronics & professional photography
               </motion.p>
 
               <motion.div 

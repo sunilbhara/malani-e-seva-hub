@@ -18,10 +18,9 @@ const Navigation = () => {
 
   const navItems = [
     { name: 'Home', href: '#home' },
-    { name: 'Services', href: '#services' },
+    { name: 'E-Mitra Services', href: '#services' },
     { name: 'Mobile & Electronics', href: '#mobile-electronics' },
     { name: 'Mataji Studio', href: '#mataji-studio' },
-    { name: 'Features', href: '#features' },
     { name: 'Location', href: '#location' },
     { name: 'Contact', href: '#contact' },
   ];
@@ -52,17 +51,17 @@ const Navigation = () => {
             className="flex items-center space-x-3"
           >
             <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-              <img 
+               <img 
                 src="/logo.png" 
-                alt="Malani E-Mitra Logo" 
+                alt="Malani Barmer Logo" 
                 className="w-full h-full object-contain p-1"
               />
             </div>
             <div className="hidden sm:block">
-                             <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-[#ef4444] via-[#b45309] to-[#f59e0b] bg-clip-text text-transparent">
-                Malani E-Mitra
+              <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-[#ef4444] via-[#b45309] to-[#f59e0b] bg-clip-text text-transparent">
+                Malani Barmer
               </h1>
-              <p className="text-xs text-gray-600">Authorized Center</p>
+              <p className="text-xs text-gray-600">Complete Solutions Hub</p>
             </div>
           </motion.div>
 

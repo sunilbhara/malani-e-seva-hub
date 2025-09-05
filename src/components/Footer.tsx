@@ -15,7 +15,7 @@ const Footer = () => {
           <div className="space-y-6 lg:col-span-2">
             <div className="space-y-4">
               <h3 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                Malani E-Mitra Services
+                Malani Barmer
               </h3>
               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                 <User className="h-6 w-6 text-yellow-400" />
@@ -27,8 +27,8 @@ const Footer = () => {
             </div>
             
             <p className="text-gray-300 leading-relaxed text-lg">
-              Your most trusted partner for all government and digital services in Barmer, Rajasthan. 
-              We provide professional, reliable, and efficient services to make your life easier.
+              Your complete solution hub for E-Mitra services, mobile electronics, and professional photography in Barmer, Rajasthan. 
+              We provide comprehensive, reliable, and efficient services under one roof.
             </p>
             
             <div className="space-y-3">
@@ -105,7 +105,7 @@ const Footer = () => {
         <div className="border-t border-gray-700 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-center md:text-left">
-              &copy; 2025 Malani E-Mitra Services. All rights reserved. | Authorized E-Mitra Center
+              &copy; 2025 Malani Barmer. All rights reserved. | Complete Solutions Hub
             </p>
             <div className="flex items-center gap-2 text-yellow-400">
               <Star className="h-4 w-4" />
