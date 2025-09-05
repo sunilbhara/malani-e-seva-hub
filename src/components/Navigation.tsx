@@ -19,6 +19,8 @@ const Navigation = () => {
   const navItems = [
     { name: 'Home', href: '#home' },
     { name: 'Services', href: '#services' },
+    { name: 'Mobile & Electronics', href: '#mobile-electronics' },
+    { name: 'Mataji Studio', href: '#mataji-studio' },
     { name: 'Features', href: '#features' },
     { name: 'Location', href: '#location' },
     { name: 'Contact', href: '#contact' },

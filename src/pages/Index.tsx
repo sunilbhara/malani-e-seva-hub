@@ -1,6 +1,8 @@
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
+import MobileElectronics from "@/components/MobileElectronics";
+import MatajiStudio from "@/components/MatajiStudio";
 import Features from "@/components/Features";
 import GoogleMap from "@/components/GoogleMap";
 import Contact from "@/components/Contact";
@@ -20,6 +22,12 @@ const Index = () => {
       <Adsense slot="1234567890" />
       <section id="services">
         <Services />
+      </section>
+      <section id="mobile-electronics">
+        <MobileElectronics />
+      </section>
+      <section id="mataji-studio">
+        <MatajiStudio />
       </section>
       <section id="features">
         <Features />
