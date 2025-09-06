@@ -34,13 +34,13 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-[#ef4444] via-[#b45309] to-[#f59e0b] text-white min-h-screen flex items-center">
+    <section className="relative overflow-hidden bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground min-h-screen flex items-center">
       <div className="absolute inset-0 bg-black/30"></div>
       
       {/* Enhanced animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
-          className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/20 rounded-full blur-3xl"
+          className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.6, 0.3],
@@ -52,7 +52,7 @@ const Hero = () => {
           }}
         />
         <motion.div 
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/20 rounded-full blur-3xl"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.2, 0.5, 0.2],
@@ -65,7 +65,7 @@ const Hero = () => {
           }}
         />
         <motion.div 
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-400/10 rounded-full blur-3xl"
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.1, 1],
             opacity: [0.1, 0.3, 0.1],
@@ -91,9 +91,9 @@ const Hero = () => {
             <motion.div variants={itemVariants} className="space-y-6">
               <motion.div 
                 variants={itemVariants}
-                className="inline-block px-4 py-2 bg-yellow-400/20 backdrop-blur-sm rounded-full border border-yellow-400/30 animate-glow"
+                className="inline-block px-4 py-2 bg-primary/20 backdrop-blur-sm rounded-full border border-primary/30 animate-glow"
               >
-                <span className="text-yellow-300 font-medium text-sm flex items-center gap-2">
+                <span className="text-primary-foreground font-medium text-sm flex items-center gap-2">
                   <Star className="h-4 w-4" />
                   Authorized E-Mitra Center
                 </span>
@@ -103,17 +103,17 @@ const Hero = () => {
                 variants={itemVariants}
                 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight"
               >
-                <span className="block bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent animate-fade-in">
+                <span className="block bg-gradient-to-r from-primary-foreground to-accent-foreground bg-clip-text text-transparent animate-fade-in">
                   Malani
                 </span>
-                <span className="block bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-400 bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                   Barmer
                 </span>
               </motion.h1>
               
               <motion.p 
                 variants={itemVariants}
-                className="text-lg sm:text-xl lg:text-2xl text-blue-100 leading-relaxed font-light"
+                className="text-lg sm:text-xl lg:text-2xl text-primary-foreground/80 leading-relaxed font-light"
               >
                 Complete solutions for E-Mitra services, mobile electronics & professional photography
               </motion.p>
@@ -122,7 +122,7 @@ const Hero = () => {
                 variants={itemVariants}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
               >
-                <User className="h-6 w-6 text-yellow-300" />
+                <User className="h-6 w-6 text-primary" />
                 <div>
                   <p className="text-sm text-blue-200">Proprietor</p>
                   <p className="text-lg font-semibold text-white">Tarun Bharti</p>
@@ -133,7 +133,7 @@ const Hero = () => {
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 lg:gap-6">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold shadow-2xl transform hover:scale-105 transition-all duration-300 group animate-bounce-in"
+                className="bg-primary hover:bg-accent text-primary-foreground font-bold shadow-2xl transform hover:scale-105 transition-all duration-300 group animate-bounce-in"
                 onClick={() => {
                   const contactSection = document.getElementById('contact');
                   if (contactSection) {
@@ -163,9 +163,9 @@ const Hero = () => {
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
               >
-                <Phone className="h-5 w-5 text-yellow-300" />
+                <Phone className="h-5 w-5 text-primary" />
                 <div>
-                  <p className="text-blue-200">Call Us</p>
+                  <p className="text-primary-foreground/80">Call Us</p>
                   <span className="font-semibold">+91 9950788973</span>
                 </div>
               </motion.div>
@@ -173,9 +173,9 @@ const Hero = () => {
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
               >
-                <MapPin className="h-5 w-5 text-yellow-300" />
+                <MapPin className="h-5 w-5 text-primary" />
                 <div>
-                  <p className="text-blue-200">Visit Us</p>
+                  <p className="text-primary-foreground/80">Visit Us</p>
                   <span className="font-semibold">Near IDBI Bank, Barmer</span>
                 </div>
               </motion.div>
