@@ -71,18 +71,18 @@ const Navigation = () => {
               <motion.button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                  className={`font-semibold transition-colors relative group text-shadow-sm ${
-                    isScrolled ? 'text-gray-900 hover:text-primary' : 'text-white hover:text-accent'
-                  }`}
-                  whileHover={{ y: -2 }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  {item.name}
-                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 ${
-                    isScrolled ? 'bg-primary' : 'bg-accent'
-                  } group-hover:w-full transition-all duration-300`}></span>
+                className={`font-semibold transition-colors relative group text-shadow-sm ${
+                  isScrolled ? 'text-gray-900 hover:text-yellow-600' : 'text-white hover:text-yellow-300'
+                }`}
+                whileHover={{ y: -2 }}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                {item.name}
+                <span className={`absolute bottom-0 left-0 w-0 h-0.5 ${
+                  isScrolled ? 'bg-yellow-600' : 'bg-yellow-400'
+                } group-hover:w-full transition-all duration-300`}></span>
               </motion.button>
             ))}
           </div>
@@ -93,7 +93,7 @@ const Navigation = () => {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-2 text-sm bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/30"
             >
-              <Phone className="h-4 w-4 text-orange-500" />
+              <Phone className="h-4 w-4 text-yellow-400" />
               <span className={`${isScrolled ? 'text-gray-900' : 'text-white'} font-medium`}>
                 +91 9950788973
               </span>
@@ -102,7 +102,7 @@ const Navigation = () => {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-2 text-sm bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/30"
             >
-              <MapPin className="h-4 w-4 text-orange-500" />
+              <MapPin className="h-4 w-4 text-yellow-400" />
               <span className={`${isScrolled ? 'text-gray-900' : 'text-white'} font-medium`}>Barmer</span>
             </motion.div>
           </div>
@@ -157,7 +157,7 @@ const Navigation = () => {
                   <motion.button
                     key={item.name}
                     onClick={() => scrollToSection(item.href)}
-                    className="block w-full text-left py-3 px-4 text-foreground hover:text-primary hover:bg-accent/20 rounded-lg transition-all duration-200 font-semibold"
+                    className="block w-full text-left py-3 px-4 text-gray-800 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-semibold"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
@@ -172,18 +172,18 @@ const Navigation = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="flex items-center space-x-3 text-sm text-muted-foreground font-medium"
+                    className="flex items-center space-x-3 text-sm text-gray-700 font-medium"
                   >
-                    <Phone className="h-4 w-4 text-red-500" />
+                    <Phone className="h-4 w-4 text-blue-600" />
                     <span>+91 9950788973</span>
                   </motion.div>
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="flex items-center space-x-3 text-sm text-muted-foreground font-medium"
+                    className="flex items-center space-x-3 text-sm text-gray-700 font-medium"
                   >
-                    <MapPin className="h-4 w-4 text-red-500" />
+                    <MapPin className="h-4 w-4 text-blue-600" />
                     <span>Near IDBI Bank, Barmer</span>
                   </motion.div>
                 </div>
