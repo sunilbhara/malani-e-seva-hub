@@ -38,51 +38,51 @@ const Services = () => {
       title: "Form Filling Services",
       description: "Complete assistance for exam forms, job applications, government forms, and online registrations",
       features: ["Exam Registration", "Job Applications", "Government Forms", "Online Applications"],
-      color: "from-blue-500 to-purple-600"
+      color: "from-red-500 to-orange-600"
     },
     {
       icon: Camera,
       title: "Passport Size Photos",
       description: "Professional quality passport size photos for all official documents and applications",
       features: ["Instant Printing", "Digital Format", "All Sizes Available", "Government Standard"],
-      color: "from-green-500 to-teal-600"
+      color: "from-orange-500 to-amber-600"
     },
     {
       icon: CreditCard,
       title: "Money Transfer",
       description: "Secure and fast money transfer services with competitive rates and instant processing",
       features: ["Bank Transfers", "Mobile Wallets", "Cash Pickup", "International Transfers"],
-      color: "from-orange-500 to-red-600"
+      color: "from-amber-500 to-yellow-600"
     },
     {
       icon: Users,
       title: "Bill Payments",
       description: "Pay all your utility bills, mobile recharge, and government fees in one place",
       features: ["Electricity Bills", "Mobile Recharge", "Water Bills", "Government Fees"],
-      color: "from-purple-500 to-pink-600"
+      color: "from-red-500 to-pink-600"
     },
     {
       icon: Globe,
       title: "Digital Services",
       description: "Complete range of digital government services and online document processing",
       features: ["Aadhaar Services", "PAN Card", "Voter ID", "Digital Certificates"],
-      color: "from-cyan-500 to-blue-600"
+      color: "from-orange-500 to-red-600"
     },
     {
       icon: Shield,
       title: "Insurance Services",
       description: "Comprehensive insurance solutions for life, health, vehicle, and property protection",
       features: ["Life Insurance", "Health Insurance", "Vehicle Insurance", "Property Insurance"],
-      color: "from-indigo-500 to-purple-600"
+      color: "from-yellow-500 to-orange-600"
     }
   ];
 
   return (
-    <section className="py-16 lg:py-20 bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 relative overflow-hidden">
+    <section className="py-16 lg:py-20 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 relative overflow-hidden">
       {/* Enhanced background decorations */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <motion.div 
-          className="absolute top-20 left-10 w-32 h-32 bg-blue-200/30 rounded-full blur-2xl"
+          className="absolute top-20 left-10 w-32 h-32 bg-red-200/40 rounded-full blur-2xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.6, 0.3],
@@ -94,7 +94,7 @@ const Services = () => {
           }}
         />
         <motion.div 
-          className="absolute bottom-20 right-10 w-40 h-40 bg-purple-200/30 rounded-full blur-2xl"
+          className="absolute bottom-20 right-10 w-40 h-40 bg-orange-200/40 rounded-full blur-2xl"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.2, 0.5, 0.2],
@@ -119,7 +119,7 @@ const Services = () => {
             initial={{ scale: 0.8 }}
             animate={inView ? { scale: 1 } : { scale: 0.8 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold mb-6 shadow-lg animate-glow"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-full font-semibold mb-6 shadow-lg animate-glow"
           >
             🚀 Our Premium Services
           </motion.div>
@@ -127,7 +127,7 @@ const Services = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-6 lg:mb-8"
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-[#ef4444] via-[#b45309] to-[#f59e0b] bg-clip-text text-transparent mb-6 lg:mb-8"
           >
             Your One-Stop Solution
           </motion.h2>

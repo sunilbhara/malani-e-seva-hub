@@ -34,7 +34,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground min-h-screen flex items-center">
+    <section className="relative overflow-hidden bg-gradient-to-r from-[#ef4444] via-[#b45309] to-[#f59e0b] text-white min-h-screen flex items-center">
       <div className="absolute inset-0 bg-black/30"></div>
       
       {/* Enhanced animated background elements */}
@@ -133,7 +133,8 @@ const Hero = () => {
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 lg:gap-6">
               <Button 
                 size="lg" 
-                className="bg-primary hover:bg-accent text-primary-foreground font-bold shadow-2xl transform hover:scale-105 transition-all duration-300 group animate-bounce-in"
+                variant="gradient"
+                className="font-bold shadow-2xl transform hover:scale-105 transition-all duration-300 group animate-bounce-in"
                 onClick={() => {
                   const contactSection = document.getElementById('contact');
                   if (contactSection) {
@@ -146,6 +147,7 @@ const Hero = () => {
               </Button>
               <Button 
                 size="lg" 
+                variant="gradientOutline"
                 className="bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm border-2 border-white/50 text-white hover:from-white/30 hover:to-white/20 font-semibold shadow-xl transform hover:scale-105 transition-all duration-300"
                 onClick={() => {
                   const servicesSection = document.getElementById('services');

@@ -58,7 +58,7 @@ const Navigation = () => {
               />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-[#ef4444] via-[#b45309] to-[#f59e0b] bg-clip-text text-transparent">
                 Malani Barmer
               </h1>
               <p className="text-xs text-gray-600">Complete Solutions Hub</p>
@@ -93,7 +93,7 @@ const Navigation = () => {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-2 text-sm bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/30"
             >
-              <Phone className="h-4 w-4 text-primary" />
+              <Phone className="h-4 w-4 text-orange-500" />
               <span className={`${isScrolled ? 'text-gray-900' : 'text-white'} font-medium`}>
                 +91 9950788973
               </span>
@@ -102,7 +102,7 @@ const Navigation = () => {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-2 text-sm bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/30"
             >
-              <MapPin className="h-4 w-4 text-primary" />
+              <MapPin className="h-4 w-4 text-orange-500" />
               <span className={`${isScrolled ? 'text-gray-900' : 'text-white'} font-medium`}>Barmer</span>
             </motion.div>
           </div>
@@ -174,7 +174,7 @@ const Navigation = () => {
                     transition={{ delay: 0.5 }}
                     className="flex items-center space-x-3 text-sm text-muted-foreground font-medium"
                   >
-                    <Phone className="h-4 w-4 text-primary" />
+                    <Phone className="h-4 w-4 text-red-500" />
                     <span>+91 9950788973</span>
                   </motion.div>
                   <motion.div
@@ -183,7 +183,7 @@ const Navigation = () => {
                     transition={{ delay: 0.6 }}
                     className="flex items-center space-x-3 text-sm text-muted-foreground font-medium"
                   >
-                    <MapPin className="h-4 w-4 text-primary" />
+                    <MapPin className="h-4 w-4 text-red-500" />
                     <span>Near IDBI Bank, Barmer</span>
                   </motion.div>
                 </div>
