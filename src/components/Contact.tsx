@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Clock, Mail, User, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import ContactForm from "./ContactUsForm";
 
 const Contact = () => {
   const [ref, inView] = useInView({
@@ -128,7 +129,7 @@ const Contact = () => {
                         <MapPin className="h-6 w-6 lg:h-8 lg:w-8 text-white" />
                       </motion.div>
                       <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">Our Address</h3>
-                      <p className="text-gray-600 leading-relaxed text-sm lg:text-base">Near IDBI Bank Opp. Railway Station<br />Height School Road<br />Barmer 344001</p>
+                      <p className="text-gray-600 leading-relaxed text-sm lg:text-base">Near IDBI Bank Opp. Railway Station<br />High School Road<br />Barmer 344001</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -203,7 +204,7 @@ const Contact = () => {
                         <User className="h-6 w-6 lg:h-8 lg:w-8 text-white" />
                       </motion.div>
                       <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">Proprietor</h3>
-                      <p className="text-gray-600 text-base lg:text-lg font-semibold">Tarun Bharati</p>
+                      <p className="text-gray-600 text-base lg:text-lg font-semibold">Tarun Bharti</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -211,33 +212,7 @@ const Contact = () => {
             </motion.div>
           </motion.div>
 
-          <motion.div variants={itemVariants}>
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-gray-50 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"></div>
-              <CardHeader className="relative">
-                <CardTitle className="text-2xl lg:text-3xl text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-bold">Send us a Message</CardTitle>
-                <p className="text-center text-gray-600 mt-2 text-sm lg:text-base">We'll get back to you within 24 hours</p>
-              </CardHeader>
-              <CardContent className="space-y-4 lg:space-y-6 relative">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <Input placeholder="Your Name" className="h-12 lg:h-14 border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm" />
-                  <Input placeholder="Phone Number" className="h-12 lg:h-14 border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm" />
-                </div>
-                <Input placeholder="Email Address" className="h-12 lg:h-14 border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm" />
-                <Input placeholder="Service Required" className="h-12 lg:h-14 border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm" />
-                <Textarea placeholder="Your Message" rows={4} className="border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm" />
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 hover:from-blue-700 hover:via-purple-700 hover:to-blue-700 h-12 lg:h-14 text-base lg:text-lg font-bold shadow-xl transform hover:scale-105 transition-all duration-300 group">
-                    <Send className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
-                    Send Message
-                  </Button>
-                </motion.div>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <ContactForm />
         </motion.div>
       </div>
     </section>

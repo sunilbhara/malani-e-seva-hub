@@ -7,6 +7,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import BookingForm from './MatajiStudioForm';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MatajiStudio = () => {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -31,7 +34,7 @@ const MatajiStudio = () => {
       id: 2,
       category: 'portraits',
       title: 'Professional Portrait',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b332c8f2?w=500&h=600&fit=crop',
+      image: 'https://images.unsplash.com/photo-1580928891465-837f64326c73?w=500&h=600&fit=crop',
       description: 'Stunning portrait session with professional lighting'
     },
     {
@@ -52,25 +55,32 @@ const MatajiStudio = () => {
       id: 5,
       category: 'portraits',
       title: 'Family Portrait',
-      image: 'https://images.unsplash.com/photo-1511895426328-dc8714efa8d3?w=500&h=600&fit=crop',
+      image: 'https://images.unsplash.com/photo-1640953148126-1962ec17a92b?w=500&h=600&fit=crop',
       description: 'Heartwarming family portrait session'
     },
     {
       id: 6,
       category: 'events',
       title: 'Birthday Celebration',
-      image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=500&h=600&fit=crop',
+      image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=500&h=700&fit=crop',
       description: 'Joyful birthday party photography'
     },
     {
       id: 7,
       category: 'weddings',
       title: 'Reception Moments',
-      image: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=500&h=700&fit=crop',
+      image: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=500&h=600&fit=crop',
       description: 'Capturing the joy and celebration of wedding receptions'
     },
     {
       id: 8,
+      category: 'weddings',
+      title: 'Wedding Moments',
+      image: 'https://images.unsplash.com/photo-1633104502699-b2ecf0fee294?w=500&h=700&fit=crop',
+      description: 'Capturing the joy and celebration of weddings'
+    },
+    {
+      id: 9,
       category: 'portraits',
       title: 'Business Headshots',
       image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=600&fit=crop',
@@ -134,59 +144,8 @@ const MatajiStudio = () => {
             })}
           </div>
 
-          {/* Book Session CTA */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button 
-                size="lg"
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <Calendar className="w-5 h-5 mr-2" />
-                Book a Photo Session
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Book Your Session
-                </DialogTitle>
-              </DialogHeader>
-              <form className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" placeholder="Enter your full name" />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" placeholder="+91 9950788973" />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" placeholder="your@email.com" />
-                </div>
-                <div>
-                  <Label htmlFor="session-type">Session Type</Label>
-                  <select id="session-type" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <option>Wedding Photography</option>
-                    <option>Portrait Session</option>
-                    <option>Event Coverage</option>
-                    <option>Family Photos</option>
-                  </select>
-                </div>
-                <div>
-                  <Label htmlFor="date">Preferred Date</Label>
-                  <Input id="date" type="date" />
-                </div>
-                <div>
-                  <Label htmlFor="message">Additional Details</Label>
-                  <Textarea id="message" placeholder="Tell us about your photography needs..." />
-                </div>
-                <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                  Send Booking Request
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <BookingForm />
+
         </motion.div>
 
         {/* Masonry Photo Gallery */}
@@ -326,7 +285,7 @@ const MatajiStudio = () => {
               </div>
               <div className="flex items-start gap-3">
                 <Camera className="w-5 h-5 text-purple-500 mt-0.5" />
-                <span className="text-gray-700">Near IDBI Bank Opp. Railway Station Height School Road, Barmer 344001</span>
+                <span className="text-gray-700">Near IDBI Bank Opp. Railway Station High School Road, Barmer 344001</span>
               </div>
             </div>
           </div>

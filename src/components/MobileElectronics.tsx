@@ -187,11 +187,14 @@ const MobileElectronics = () => {
                   {/* Price & CTA */}
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-green-600">
-                      {product.price}
+                      
                     </span>
                     <Button 
                       className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white border-0"
                       size="sm"
+                      onClick={() =>
+                        window.open(`https://wa.me/919950788973?text=I'm%20interested%20in%20the%20${encodeURIComponent(product.name)}%20please%20provide%20details`, '_blank')
+                      }
                     >
                       <ShoppingCart className="w-4 h-4 mr-2" />
                       Buy Now

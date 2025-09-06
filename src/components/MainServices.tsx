@@ -108,9 +108,9 @@ const MainServices = () => {
           <motion.div variants={itemVariants} className="space-y-6">
             <motion.div 
               variants={itemVariants}
-              className="inline-block px-6 py-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-sm rounded-full border border-blue-500/20"
+              className="inline-block px-6 py-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 backdrop-blur-sm rounded-full border border-blue-500/20"
             >
-              <span className="text-blue-600 font-semibold text-lg flex items-center gap-2">
+              <span className="text-orange-600 font-semibold text-lg flex items-center gap-2">
                 <Star className="h-5 w-5" />
                 Our Core Services
               </span>
@@ -118,7 +118,7 @@ const MainServices = () => {
             
             <motion.h2 
               variants={itemVariants}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-l from-[#f97316] via-[#e11d48] to-[#ef4444] bg-clip-text text-transparent"
             >
               Everything You Need
               <span className="block text-3xl sm:text-4xl lg:text-5xl mt-2">Under One Roof</span>

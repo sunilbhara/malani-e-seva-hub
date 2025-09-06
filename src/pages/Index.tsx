@@ -11,11 +11,14 @@ import Footer from "@/components/Footer";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Adsense from "@/components/Adsense";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       <Navigation />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
       <main>
         <section id="home">
           <Hero />
@@ -44,7 +47,7 @@ const Index = () => {
             shopName="Malani Barmer"
             address="Near IDBI Bank, Barmer, Rajasthan"
             phone="+91 9950788973"
-            hours="Monday - Saturday: 9:00 AM - 8:00 PM"
+            hours="Monday - Saturday: 9:00 AM - 8:00 PM, Sunday: 10:00 AM - 6:00 PM"
           />
         </ErrorBoundary>
       </section>
