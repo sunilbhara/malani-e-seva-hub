@@ -78,7 +78,7 @@ const Services = () => {
   ];
 
   return (
-    <section className="py-16 lg:py-20 bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 relative overflow-hidden">
+    <section className="py-16 lg:py-20 custom-light-gradient-bg relative overflow-hidden">
       {/* Enhanced background decorations */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <motion.div 
@@ -119,7 +119,7 @@ const Services = () => {
             initial={{ scale: 0.8 }}
             animate={inView ? { scale: 1 } : { scale: 0.8 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold mb-6 shadow-lg animate-glow"
+            className="inline-block custom-pill-theme font-semibold mb-6"
           >
             🚀 Our Premium Services
           </motion.div>
@@ -127,10 +127,11 @@ const Services = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-6 lg:mb-8"
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold custom-gradient-text mb-6 lg:mb-8"
           >
             Your One-Stop Solution
           </motion.h2>
+
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}

@@ -145,3 +145,38 @@
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   }
 }
+
+.custom-gradient-bg {
+  background: #200122;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #6f0000, #200122);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #6f0000, #200122); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+.custom-gradient-text {
+  background: #200122;
+  background: -webkit-linear-gradient(to right, #6f0000, #200122);
+  background: linear-gradient(to right, #6f0000, #200122);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.custom-gradient-pill {
+  background: linear-gradient(to right, #6f0000, #200122);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.custom-pill-theme {
+  background: linear-gradient(to right, #6f0000, #200122);
+  color: white;
+  border-radius: 9999px;
+  box-shadow: 0 4px 20px rgba(111, 0, 0, 0.4);
+  padding: 0.75rem 1.5rem;
+}
+
+.custom-light-gradient-bg {
+  background: #f5f5f5; /* Fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom right, #f8fafc, #e0f2ff, #f3e8ff); /* Chrome/Safari */
+  background: linear-gradient(to bottom right, #f8fafc, #e0f2ff, #f3e8ff); /* Modern browsers */
+}

@@ -73,7 +73,7 @@ const MainServices = () => {
       title: "Mataji Studio",
       description: "Professional photography services for weddings, events, and portraits. Capturing your precious moments.",
       icon: Camera,
-      image: "https://images.unsplash.com/photo-1606983340126-1ec2d85826b4?w=500&h=300&fit=crop",
+      image: "https://images.unsplash.com/photo-1650688331261-fd5e6de2e23a?w=500&h=300&fit=crop",
       features: ["Wedding Photography", "Event Coverage", "Portrait Sessions", "Digital Albums"],
       stats: "500+ Events Covered",
       gradient: "from-orange-500 to-red-500",
@@ -108,17 +108,18 @@ const MainServices = () => {
           <motion.div variants={itemVariants} className="space-y-6">
             <motion.div 
               variants={itemVariants}
-              className="inline-block px-6 py-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 backdrop-blur-sm rounded-full border border-blue-500/20"
+              className="inline-block px-6 py-3 rounded-full custom-gradient-pill"
             >
-              <span className="text-orange-600 font-semibold text-lg flex items-center gap-2">
-                <Star className="h-5 w-5" />
+              <span className="text-white font-semibold text-lg flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-400" />
                 Our Core Services
               </span>
             </motion.div>
+
             
             <motion.h2 
               variants={itemVariants}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-l from-[#f97316] via-[#e11d48] to-[#ef4444] bg-clip-text text-transparent"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold custom-gradient-text"
             >
               Everything You Need
               <span className="block text-3xl sm:text-4xl lg:text-5xl mt-2">Under One Roof</span>
