@@ -34,7 +34,7 @@ const MatajiStudio = () => {
       id: 2,
       category: 'portraits',
       title: 'Professional Portrait',
-      image: 'https://images.unsplash.com/photo-1580928891465-837f64326c73?w=500&h=600&fit=crop',
+      image: 'https://images.unsplash.com/photo-1580928891465-837f64326c73?w=500&h=700&fit=crop',
       description: 'Stunning portrait session with professional lighting'
     },
     {
@@ -55,7 +55,7 @@ const MatajiStudio = () => {
       id: 5,
       category: 'portraits',
       title: 'Family Portrait',
-      image: 'https://images.unsplash.com/photo-1640953148126-1962ec17a92b?w=500&h=600&fit=crop',
+      image: 'https://images.unsplash.com/photo-1640953148126-1962ec17a92b?w=500&h=700&fit=crop',
       description: 'Heartwarming family portrait session'
     },
     {
@@ -68,23 +68,30 @@ const MatajiStudio = () => {
     {
       id: 7,
       category: 'weddings',
+      title: 'Couple Photoshoot',
+      image: "./pci2.jpg",
+      description: 'Wedding couple photoshoot in scenic locations'
+    },
+    {
+      id: 8,
+      category: 'weddings',
       title: 'Reception Moments',
       image: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=500&h=600&fit=crop',
       description: 'Capturing the joy and celebration of wedding receptions'
     },
     {
-      id: 8,
+      id: 9,
       category: 'weddings',
       title: 'Wedding Moments',
       image: 'https://images.unsplash.com/photo-1633104502699-b2ecf0fee294?w=500&h=700&fit=crop',
       description: 'Capturing the joy and celebration of weddings'
     },
     {
-      id: 9,
-      category: 'portraits',
-      title: 'Business Headshots',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=600&fit=crop',
-      description: 'Professional business headshots for corporate profiles'
+      id: 10,
+      category: 'weddings',
+      title: 'Couple Portrait',
+      image: "./matajiphoto1.jpg",
+      description: 'Professional wedding photography for couples'
     }
   ];
 
