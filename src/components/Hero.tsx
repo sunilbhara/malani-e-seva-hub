@@ -34,7 +34,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden custom-gradient-bg text-white min-h-screen flex items-center">
+    <section className="relative overflow-hidden custom-gradient-bg text-white min-h-screen flex items-center pt-2">
       <div className="absolute inset-0 bg-black/30"></div>
 
       {/* Enhanced animated background elements */}
