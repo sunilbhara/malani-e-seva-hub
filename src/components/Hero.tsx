@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Phone, MapPin, User, Star, CheckCircle } from "lucide-react";
+import { ArrowRight, Phone, MapPin, User, Star, CheckCircle, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
@@ -200,7 +200,7 @@ const Hero = () => {
                     window.location.href = "tel:+919950788973";
                 }}
               >
-                <Phone className="h-5 w-5 text-yellow-300" />
+                <MessageCircle className="h-5 w-5 text-yellow-300" />
                 <div>
                   <p className="text-blue-200">WhatsApp Us</p>
                   <span className="font-semibold">+91 9950788973</span>

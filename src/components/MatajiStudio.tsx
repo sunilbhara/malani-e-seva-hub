@@ -27,57 +27,57 @@ const MatajiStudio = () => {
       id: 1,
       category: 'weddings',
       title: 'Royal Wedding Ceremony',
-      image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=500&h=600&fit=crop',
+      image: 'https://images.unsplash.com/photo-1587271636175-90d58cdad458?q=80&w=1170&fit=crop',
       description: 'Beautiful traditional wedding photography capturing precious moments'
     },
     {
       id: 2,
       category: 'portraits',
       title: 'Professional Portrait',
-      image: 'https://images.unsplash.com/photo-1580928891465-837f64326c73?w=500&h=700&fit=crop',
+      image: 'https://images.unsplash.com/photo-1587027512547-81850a319ff5?w=500&h=700&fit=crop',
       description: 'Stunning portrait session with professional lighting'
     },
     {
       id: 3,
       category: 'events',
-      title: 'Corporate Event',
-      image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=500&h=600&fit=crop',
-      description: 'Professional event photography for corporate functions'
+      title: 'Mega Event',
+      image: 'https://images.unsplash.com/photo-1587271407850-8d438ca9fdf2?q=80&w=1170&auto=format&fit=crop',
+      description: 'Professional event photography for mega functions'
     },
     {
       id: 4,
-      category: 'weddings',
-      title: 'Pre-Wedding Shoot',
-      image: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=500&h=700&fit=crop',
-      description: 'Romantic pre-wedding photography in beautiful locations'
+      category: 'Haldi',
+      title: 'Haldi Shoot',
+      image: 'https://images.unsplash.com/photo-1645856052472-95fe99103c11?w=1170&fit=crop',
+      description: 'Vibrant Haldi ceremony photography capturing joyful moments'
     },
     {
       id: 5,
       category: 'portraits',
       title: 'Family Portrait',
-      image: 'https://images.unsplash.com/photo-1640953148126-1962ec17a92b?w=500&h=700&fit=crop',
+      image: 'https://images.unsplash.com/photo-1640953148126-1962ec17a92b?w=1170&fit=crop',
       description: 'Heartwarming family portrait session'
     },
     {
       id: 6,
       category: 'events',
       title: 'Birthday Celebration',
-      image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=500&h=700&fit=crop',
+      image: 'https://images.unsplash.com/photo-1756621716907-6451161cd100?q=80&w=500&h=700&auto=format&fit=crop',
       description: 'Joyful birthday party photography'
     },
     {
       id: 7,
       category: 'weddings',
       title: 'Couple Photoshoot',
-      image: "./pci2.jpg",
+      image: "https://res.cloudinary.com/duovfafmc/image/upload/matajiphoto1_itgrfu.jpg",
       description: 'Wedding couple photoshoot in scenic locations'
     },
     {
       id: 8,
-      category: 'weddings',
-      title: 'Reception Moments',
-      image: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=500&h=600&fit=crop',
-      description: 'Capturing the joy and celebration of wedding receptions'
+      category: 'events',
+      title: 'Independence Day Event',
+      image: 'https://images.unsplash.com/photo-1597536980706-7cdd82f1bb16?w=600&auto=format&fit=crop&q=60',
+      description: 'Capturing the spirit of national events with vibrant photography'
     },
     {
       id: 9,
@@ -89,8 +89,15 @@ const MatajiStudio = () => {
     {
       id: 10,
       category: 'weddings',
+      title: 'Pre-Wedding Shoot',
+      image: 'https://images.unsplash.com/photo-1677770753024-25f65003625b?w=500&h=700&fit=crop',
+      description: 'Romantic pre-wedding photography in beautiful locations'
+    },
+    {
+      id: 11,
+      category: 'weddings',
       title: 'Couple Portrait',
-      image: "./matajiphoto1.jpg",
+      image: "https://res.cloudinary.com/duovfafmc/image/upload/pci2_e5lwhc.jpg",
       description: 'Professional wedding photography for couples'
     }
   ];

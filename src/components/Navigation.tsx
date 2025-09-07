@@ -30,8 +30,12 @@ const Navigation = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-    setIsOpen(false);
+
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 200); 
   };
+
 
   return (
     <motion.nav
@@ -44,15 +48,15 @@ const Navigation = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="flex items-center justify-between h-20 lg:h-20">
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}
             className="flex items-center space-x-3"
           >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+            <div className="w-12 h-12 lg:w-12 lg:h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
                <img 
-                src="/logo.png" 
+                src="/logo.jpeg" 
                 alt="Malani Barmer Logo" 
                 className="w-full h-full object-contain p-1"
               />
@@ -110,7 +114,9 @@ const Navigation = () => {
           {/* Mobile Menu Button */}
           <motion.button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 rounded-lg bg-white/20 backdrop-blur-sm border border-white/40 shadow-lg"
+            className={`lg:hidden p-2 rounded-lg backdrop-blur-sm border shadow-lg ${
+                  isScrolled ? 'bg-black/20 border-black/40' : 'bg-white/20 border-white/40'
+            }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -123,7 +129,7 @@ const Navigation = () => {
                   exit={{ rotate: 90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <X className="h-6 w-6 text-white" />
+                  <X className={`h-6 w-6 ${isScrolled ? 'text-black' :  'text-white'}`} />
                 </motion.div>
               ) : (
                 <motion.div
@@ -133,7 +139,7 @@ const Navigation = () => {
                   exit={{ rotate: -90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Menu className="h-6 w-6 text-white" />
+                  <Menu className={`h-6 w-6 ${isScrolled ? 'text-black' :  'text-white'}`} />
                 </motion.div>
               )}
             </AnimatePresence>
