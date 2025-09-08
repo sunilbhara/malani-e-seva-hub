@@ -92,8 +92,10 @@ const Footer = () => {
                   className="flex items-center space-x-2 text-gray-300 hover:text-yellow-400 transition-colors"
                 >
                   <Instagram className="h-5 w-5" />
-                  <span className="hidden sm:inline">Instagram</span>
+                  <span >Instagram</span>
                 </a>
+              </div>
+              <div className="flex space-x-4">
                 <a 
                   href="https://www.youtube.com/@MalaniMobileandElectronices" 
                   target="_blank" 
@@ -101,7 +103,7 @@ const Footer = () => {
                   className="flex items-center space-x-2 text-gray-300 hover:text-yellow-400 transition-colors"
                 >
                   <Youtube className="h-5 w-5" />
-                  <span className="hidden sm:inline">YouTube</span>
+                  <span >YouTube</span>
                 </a>
               </div>
             </div>

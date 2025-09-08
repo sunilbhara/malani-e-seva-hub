@@ -106,10 +106,10 @@ const Hero = () => {
                 variants={itemVariants}
                 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight"
               >
-                <span className="block bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent animate-fade-in">
-                  Malani
+                <span className="bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent animate-fade-in">
+                  Malani {" "}
                 </span>
-                <span className="block bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-400 bg-clip-text text-transparent">
+                <span className=" bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-400 bg-clip-text text-transparent">
                   Barmer
                 </span>
               </motion.h1>
@@ -220,7 +220,7 @@ const Hero = () => {
                 <MapPin className="h-5 w-5 text-yellow-300" />
                 <div>
                   <p className="text-blue-200">Visit Us</p>
-                  <span className="font-semibold">Near IDBI Bank, Barmer</span>
+                  <span className="font-semibold">Opp. Railway Station, Barmer</span>
                 </div>
               </motion.div>
             </motion.div>
