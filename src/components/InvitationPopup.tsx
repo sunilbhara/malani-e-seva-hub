@@ -177,11 +177,7 @@ const InvitationPopup = () => {
               <ul className="space-y-2">
                 <li className="flex items-center gap-2 text-yellow-100 font-semibold text-base sm:text-lg">
                   <span className="text-yellow-400"><BsStars /></span>
-                  श्री अमर भारती
-                </li>
-                <li className="flex items-center gap-2 text-yellow-100 font-semibold text-base sm:text-lg">
-                  <span className="text-yellow-400"><BsStars /></span>
-                  तरुण भारती
+                  तरुण भारती s/o श्री अमर भारती जी गोस्वामी
                 </li>
               </ul>
               <p className="mt-3 text-xs sm:text-sm text-yellow-300 italic">
