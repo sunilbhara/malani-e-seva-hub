@@ -7,22 +7,16 @@ const InvitationPopup = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    // Check if popup has been shown in this session
-    const hasSeenPopup = sessionStorage.getItem("invitationPopupSeen");
+    // Show popup after a short delay for better UX
+    const timer = setTimeout(() => {
+      setOpen(true);
+    }, 1000);
     
-    if (!hasSeenPopup) {
-      // Show popup after a short delay for better UX
-      const timer = setTimeout(() => {
-        setOpen(true);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
     setOpen(false);
-    sessionStorage.setItem("invitationPopupSeen", "true");
   };
 
   return (
