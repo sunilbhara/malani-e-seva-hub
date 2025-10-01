@@ -180,3 +180,11 @@
   background: -webkit-linear-gradient(to bottom right, #f8fafc, #e0f2ff, #f3e8ff); /* Chrome/Safari */
   background: linear-gradient(to bottom right, #f8fafc, #e0f2ff, #f3e8ff); /* Modern browsers */
 }
+
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}

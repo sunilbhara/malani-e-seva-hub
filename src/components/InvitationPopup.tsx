@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { X, Sparkles, MapPin, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FaMapMarkerAlt, FaUserFriends } from "react-icons/fa";
+import { MdDateRange, MdAccessTime } from "react-icons/md";
+import { GiPartyPopper } from "react-icons/gi";
+import { BsStars } from "react-icons/bs";
 
 const InvitationPopup = () => {
   const [open, setOpen] = useState(false);
@@ -21,7 +25,32 @@ const InvitationPopup = () => {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden border-4 border-yellow-500 bg-gradient-to-br from-red-950 via-red-900 to-red-950 shadow-2xl animate-fade-in">
+      <DialogContent
+        className="
+          max-w-[95vw]
+          w-full
+          sm:max-w-2xl
+          lg:max-w-[50vw]
+          p-0
+          overflow-hidden
+          border-4
+          border-yellow-500
+          bg-gradient-to-br
+          from-red-950
+          via-red-900
+          to-red-950
+          shadow-2xl
+          animate-fade-in
+          max-h-[95vh]
+          flex
+          flex-col
+        "
+        style={{
+          // maxWidth: '50vw',
+          maxHeight: '95vh',
+          width: '100%',
+        }}
+      >
         {/* Close Button */}
         <button
           onClick={handleClose}
@@ -35,30 +64,44 @@ const InvitationPopup = () => {
         <div className="h-3 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 animate-pulse" />
 
         {/* Content */}
-        <div className="relative px-4 py-6 sm:px-10 sm:py-12 animate-slide-in-from-bottom">
+        <div
+          className="
+            relative
+            px-2 py-4
+            sm:px-8 sm:py-10
+            animate-slide-in-from-bottom
+            overflow-y-auto
+            flex-1
+            scrollbar-hide
+          "
+          style={{
+            maxHeight: 'calc(95vh - 48px)', // 48px for top+bottom border
+          }}
+        >
           {/* Logo Section */}
           <div className="flex justify-center mb-6 animate-scale-in">
             <div className="relative">
               <div className="absolute inset-0 blur-2xl bg-yellow-500 opacity-40 animate-pulse" />
-              <img 
-                src="/logo3.png" 
-                alt="Malani Mobile Logo" 
-                className="relative h-20 w-20 sm:h-24 sm:w-24 object-contain rounded-full border-4 border-yellow-400 shadow-2xl shadow-yellow-500/50 bg-white/10 backdrop-blur-sm p-2"
+              <img
+                src="/logo4.png"
+                alt="Malani Mobile Logo"
+                className="relative h-28 w-28 sm:h-24 sm:w-24 object-contain rounded-full border-4 border-yellow-400 shadow-2xl shadow-yellow-500/50 bg-white/10 backdrop-blur-sm p-2"
               />
             </div>
           </div>
 
-          {/* Sparkle Icon */}
-          <div className="flex justify-center mb-4">
-            <div className="relative">
-              <Sparkles className="h-12 w-12 sm:h-14 sm:w-14 text-yellow-400 animate-pulse" />
-              <div className="absolute inset-0 blur-xl bg-yellow-500 opacity-50 animate-pulse" />
-            </div>
-          </div>
 
           {/* Main Heading */}
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-center mb-3 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 bg-clip-text text-transparent animate-fade-in leading-tight drop-shadow-2xl">
+          <h1
+            className="text-2xl sm:text-4xl md:text-5xl font-bold text-center mb-3 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 bg-clip-text text-transparent animate-fade-in leading-tight drop-shadow-2xl pb-2 align-middle flex items-center justify-center gap-2"
+            style={{
+              lineHeight: 1.2,
+              paddingBottom: "0.25em",
+            }}
+          >
+            <GiPartyPopper className="inline-block text-yellow-400 drop-shadow-lg animate-bounce" size={36} />
             Grand Opening
+            <BsStars className="inline-block text-yellow-300 drop-shadow-lg animate-spin-slow" size={28} />
           </h1>
           
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-yellow-100 mb-6 drop-shadow-lg">
@@ -76,33 +119,73 @@ const InvitationPopup = () => {
           </div>
 
           {/* Date & Time Section - Improved Mobile Layout */}
-          <div className="bg-red-900/50 border-2 border-yellow-500/50 rounded-xl p-4 sm:p-6 mb-6 backdrop-blur-sm shadow-xl">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-yellow-100">
-              <div className="flex items-center gap-3 justify-center sm:justify-start bg-red-950/30 p-3 rounded-lg">
-                <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400 flex-shrink-0" />
-                <div className="text-center sm:text-left">
-                  <p className="text-xs sm:text-sm text-yellow-300 mb-0.5">Date</p>
-                  <p className="font-bold text-base sm:text-lg whitespace-nowrap">2nd October 2025</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 justify-center sm:justify-start bg-red-950/30 p-3 rounded-lg">
-                <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400 flex-shrink-0" />
-                <div className="text-center sm:text-left">
-                  <p className="text-xs sm:text-sm text-yellow-300 mb-0.5">Time</p>
-                  <p className="font-bold text-base sm:text-lg">11:00 AM</p>
-                </div>
-              </div>
+          <div className="flex justify-center mb-6">
+            <div className="flex items-center gap-4 bg-gradient-to-r from-yellow-900/60 via-red-900/80 to-yellow-900/60 border-2 border-yellow-500/50 rounded-xl px-6 py-4 shadow-xl backdrop-blur-sm">
+              <span className="flex items-center gap-2">
+                <Calendar className="h-6 w-6 text-yellow-400 animate-pulse" />
+                <span className="text-yellow-100 font-bold text-base sm:text-lg">
+                  2nd October 2025
+                </span>
+              </span>
+              <span className="text-yellow-400 font-bold text-xl">|</span>
+              <span className="flex items-center gap-2">
+                <Clock className="h-6 w-6 text-yellow-400 animate-pulse" />
+                <span className="text-yellow-100 font-bold text-base sm:text-lg">
+                  11:00 AM
+                </span>
+              </span>
             </div>
           </div>
 
           {/* Address Section */}
-          <div className="flex items-start gap-3 mb-8 text-yellow-100 bg-red-950/30 p-4 rounded-lg border border-yellow-500/30">
-            <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400 flex-shrink-0 mt-1" />
+          <div className="flex items-start gap-4 mb-8 bg-gradient-to-r from-yellow-900/60 via-red-900/80 to-yellow-900/60 p-5 rounded-xl border-2 border-yellow-500/40 shadow-lg">
+            <div className="flex flex-col items-center justify-center mr-2">
+              <FaMapMarkerAlt className="h-8 w-8 text-yellow-400 mb-2 animate-bounce" />
+              <span className="text-yellow-300 text-xs font-semibold uppercase tracking-widest">Venue</span>
+            </div>
             <div>
-              <p className="text-xs sm:text-sm text-yellow-300 mb-1 font-semibold">Location</p>
-              <p className="font-semibold text-sm sm:text-base leading-relaxed">
+              <p className="text-base sm:text-lg font-bold text-yellow-200 mb-2 flex items-center gap-2">
+                <BsStars className="text-yellow-400 animate-pulse" />
+                स्थल / Location
+                <BsStars className="text-yellow-400 animate-pulse" />
+              </p>
+              <address className="not-italic text-yellow-100 font-semibold text-base sm:text-lg leading-relaxed">
                 Near IDBI Bank, Opp. Railway Station,<br />
                 High School Road, Barmer – 344001
+              </address>
+              <a
+                href="https://maps.app.goo.gl/ZzkAbVAZRGT61f4u7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 mt-3 text-yellow-300 hover:text-yellow-400 text-xs sm:text-sm font-semibold underline transition-colors"
+              >
+                <FaMapMarkerAlt className="h-4 w-4" />
+                View on Google Maps
+              </a>
+            </div>
+          </div>
+
+          <div className="mb-8 bg-gradient-to-r from-yellow-900/60 via-red-900/80 to-yellow-900/60 p-5 rounded-xl border-2 border-yellow-500/40 flex items-start gap-4 shadow-lg">
+            <div className="flex flex-col items-center justify-center mr-2">
+              <FaUserFriends className="h-8 w-8 text-yellow-400 mb-2 animate-pulse" />
+              <span className="text-yellow-300 text-xs font-semibold uppercase tracking-widest">Invitees</span>
+            </div>
+            <div>
+              <p className="text-base sm:text-lg font-bold text-yellow-200 mb-2 flex items-center gap-2">
+                सादर आमंत्रण <BsStars className="text-yellow-400 animate-spin-slow" />
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2 text-yellow-100 font-semibold text-base sm:text-lg">
+                  <span className="text-yellow-400"><BsStars /></span>
+                  श्री अमर भारती
+                </li>
+                <li className="flex items-center gap-2 text-yellow-100 font-semibold text-base sm:text-lg">
+                  <span className="text-yellow-400"><BsStars /></span>
+                  तरुण भारती
+                </li>
+              </ul>
+              <p className="mt-3 text-xs sm:text-sm text-yellow-300 italic">
+                We respectfully invite you to grace the occasion with your presence.
               </p>
             </div>
           </div>
