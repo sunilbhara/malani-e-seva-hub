@@ -152,7 +152,7 @@ const Hero = () => {
           </div>
 
           {/* Right: Carousel */}
-          <motion.div variants={itemVariants} className="relative order-2">
+          <motion.div variants={itemVariants} className="relative order-2 group">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
               {/* Gradient overlay on images */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none rounded-2xl" />
@@ -165,7 +165,7 @@ const Hero = () => {
                 navigation={{ nextEl: ".hero-swiper-next", prevEl: ".hero-swiper-prev" }}
                 loop
                 speed={800}
-                className="hero-swiper aspect-[16/10] lg:aspect-[4/3] xl:aspect-[16/10]"
+                className="hero-swiper aspect-[16/9] sm:aspect-[16/10] lg:aspect-[4/3] xl:aspect-[16/10]"
                 lazyPreloadPrevNext={1}
               >
                 {carouselImages.map((img, i) => (
@@ -180,12 +180,12 @@ const Hero = () => {
                 ))}
               </Swiper>
 
-              {/* Custom navigation arrows */}
-              <button className="hero-swiper-prev absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110">
-                <ChevronLeft className="h-5 w-5" />
+              {/* Custom navigation arrows - visible on mobile, hover on desktop */}
+              <button className="hero-swiper-prev absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white rounded-full p-1.5 sm:p-2 transition-all duration-300 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110">
+                <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
-              <button className="hero-swiper-next absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110">
-                <ChevronRight className="h-5 w-5" />
+              <button className="hero-swiper-next absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white rounded-full p-1.5 sm:p-2 transition-all duration-300 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110">
+                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             </div>
 
