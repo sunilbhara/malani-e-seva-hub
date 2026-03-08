@@ -1,27 +1,34 @@
 import { useEffect } from "react";
 
-const Adsense = ({ slot }: { slot: string }) => {
-  const client = import.meta.env.VITE_GOOGLE_ADSENSE_CLIENT_ID;
+declare global {
+  interface Window {
+    adsbygoogle: unknown[];
+  }
+}
+
+interface AdsenseProps {
+  slot: string;
+}
+
+const Adsense = ({ slot }: AdsenseProps) => {
 
   useEffect(() => {
     try {
-      // @ts-expect-error Google AdSense global may not be typed
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      // Ignore AdSense errors
+    } catch (err) {
+      console.error("Adsense error:", err);
     }
   }, []);
 
   return (
-    <div className="flex justify-center my-6">
-      <ins className="adsbygoogle"
-        style={{ display: "block" }}
-        data-ad-client={client}
-        data-ad-slot={slot}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      ></ins>
-    </div>
+    <ins
+      className="adsbygoogle"
+      style={{ display: "block", textAlign: "center" }}
+      data-ad-client={import.meta.env.VITE_ADSENSE_CLIENT}
+      data-ad-slot={slot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    />
   );
 };
 

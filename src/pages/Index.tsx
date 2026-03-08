@@ -28,7 +28,9 @@ const Index = () => {
         <MainServices />
         
         {/* Google AdSense Ad */}
-        <Adsense slot="1234567890" />
+        <div className="my-10 flex justify-center">
+          <Adsense slot="1234567890" />
+        </div>
         
         <section id="services">
           <Services />
