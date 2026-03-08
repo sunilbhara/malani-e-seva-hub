@@ -110,27 +110,27 @@ const Hero = () => {
             </motion.div>
 
             {/* Quick contact row */}
-            <motion.div variants={itemVariants} className="flex flex-wrap gap-3 pt-2">
+            <motion.div variants={itemVariants} className="flex flex-wrap gap-2 sm:gap-3 pt-1">
               <button
                 onClick={() => { window.location.href = "tel:+919950788973"; }}
-                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 transition-all duration-300 group"
+                className="flex items-center gap-1.5 sm:gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 transition-all duration-300 group"
               >
-                <Phone className="h-4 w-4 text-emerald-400" />
-                <span className="text-sm text-slate-300 group-hover:text-white transition-colors">+91 9950788973</span>
+                <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
+                <span className="text-xs sm:text-sm text-slate-300 group-hover:text-white transition-colors">+91 9950788973</span>
               </button>
               <button
                 onClick={() => { window.open("https://wa.me/919950788973", "_blank"); }}
-                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 transition-all duration-300 group"
+                className="flex items-center gap-1.5 sm:gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 transition-all duration-300 group"
               >
-                <MessageCircle className="h-4 w-4 text-green-400" />
-                <span className="text-sm text-slate-300 group-hover:text-white transition-colors">WhatsApp</span>
+                <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-400" />
+                <span className="text-xs sm:text-sm text-slate-300 group-hover:text-white transition-colors">WhatsApp</span>
               </button>
               <button
                 onClick={() => { window.open("https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371", "_blank"); }}
-                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 transition-all duration-300 group"
+                className="flex items-center gap-1.5 sm:gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 transition-all duration-300 group"
               >
-                <MapPin className="h-4 w-4 text-amber-400" />
-                <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Barmer</span>
+                <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />
+                <span className="text-xs sm:text-sm text-slate-300 group-hover:text-white transition-colors">Barmer</span>
               </button>
             </motion.div>
 
