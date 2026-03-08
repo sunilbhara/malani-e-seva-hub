@@ -1,5 +1,6 @@
 
 import { MapPin, Phone, Mail, Clock, User, Star, Instagram, Youtube, ShieldCheck, FileText, Info, LifeBuoy } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -115,42 +116,42 @@ const Footer = () => {
 
                 <li className="flex items-center space-x-2 hover:text-yellow-400 transition-colors">
                   <ShieldCheck className="h-4 w-4 text-yellow-400" />
-                  <a
-                    href="/privacy-policy"
+                  <Link
+                    to="/privacy-policy"
                     className="transform hover:translate-x-2 transition-transform duration-200"
                   >
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="flex items-center space-x-2 hover:text-yellow-400 transition-colors">
                   <FileText className="h-4 w-4 text-yellow-400" />
-                  <a
-                    href="/terms"
+                  <Link
+                    to="/terms"
                     className="transform hover:translate-x-2 transition-transform duration-200"
                   >
                     Terms & Conditions
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="flex items-center space-x-2 hover:text-yellow-400 transition-colors">
                   <Info className="h-4 w-4 text-yellow-400" />
-                  <a
-                    href="/about"
+                  <Link
+                    to="/about"
                     className="transform hover:translate-x-2 transition-transform duration-200"
                   >
                     About Us
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="flex items-center space-x-2 hover:text-yellow-400 transition-colors">
                   <LifeBuoy className="h-4 w-4 text-yellow-400" />
-                  <a
-                    href="#contact"
+                  <Link
+                    to="/#contact"
                     className="transform hover:translate-x-2 transition-transform duration-200"
                   >
                     Help & Support
-                  </a>
+                  </Link>
                 </li>
 
               </ul>
