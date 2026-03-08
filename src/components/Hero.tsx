@@ -73,7 +73,7 @@ const Hero = () => {
               <span className="text-amber-300 font-medium text-sm">Government Authorized Center</span>
             </motion.div>
 
-            <motion.h1 variants={itemVariants} className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight">
+            <motion.h1 variants={itemVariants} className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight">
               <span className="text-white">Reliable Digital Services</span>
               <br />
               <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-400 bg-clip-text text-transparent">
