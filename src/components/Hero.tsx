@@ -50,7 +50,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden min-h-[85vh] lg:min-h-[90vh] flex items-center bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0c1524]">
+    <section className="relative overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0c1524]">
       {/* Subtle decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
