@@ -135,17 +135,17 @@ const Hero = () => {
             </motion.div>
 
             {/* Trust badges */}
-            <motion.div variants={itemVariants} className="flex items-center gap-5 text-sm text-slate-400 pt-1">
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-slate-400 pt-1">
               <span className="flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
                 Govt. Authorized
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
                 24/7 Support
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
                 Trusted by 1000+
               </span>
             </motion.div>
