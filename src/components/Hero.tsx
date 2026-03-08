@@ -58,7 +58,7 @@ const Hero = () => {
         <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 lg:pt-0 lg:pb-0">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 sm:pb-12 lg:pt-0 lg:pb-0">
         <motion.div
           ref={ref}
           variants={containerVariants}
