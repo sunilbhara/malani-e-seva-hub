@@ -1,219 +1,249 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Phone, MapPin, Star, CheckCircle, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ArrowRight,
+  Phone,
+  MapPin,
+  Star,
+  CheckCircle,
+  MessageCircle,
+} from "lucide-react";
+
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import ReactGA from "react-ga4";
+
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
+import { Autoplay, EffectFade } from "swiper/modules";
+
 import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 import "swiper/css/effect-fade";
 
 const carouselImages = [
   {
-    src: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=80",
-    alt: "Digital services center helping citizens",
+    src: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1600&q=80",
   },
   {
-    src: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
-    alt: "Technology assistance and digital India",
+    src: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1600&q=80",
   },
   {
-    src: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&q=80",
-    alt: "Online documentation and government services",
+    src: "https://res.cloudinary.com/duovfafmc/image/upload/v1772977318/Gemini_Generated_Image_77s7lx77s7lx77s7_q6n3ez.png",
   },
   {
-    src: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&w=1200&q=80",
-    alt: "Rural digital services and connectivity",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-    alt: "Digital help center and support",
+    src: "https://res.cloudinary.com/duovfafmc/image/upload/v1772977335/photo_2026-03-08_19-11-37_ywu0f9.jpg",
   },
 ];
 
+
+
 const Hero = () => {
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { duration: 0.6, staggerChildren: 0.15 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-  };
-
   return (
-    <section className="relative overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0c1524]">
-      {/* Subtle decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-emerald-500/8 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl" />
+    <section className="relative h-screen w-full overflow-hidden text-white">
+
+      {/* BACKGROUND CAROUSEL */}
+
+      <Swiper
+        modules={[Autoplay, EffectFade]}
+        effect="fade"
+        autoplay={{ delay: 5000 }}
+        speed={2000}
+        loop
+        className="absolute inset-0 h-full w-full"
+      >
+        {carouselImages.map((img, i) => (
+          <SwiperSlide key={i}>
+            <img
+              src={img.src}
+              className="w-full h-full object-cover animate-kenburns"
+              alt="hero"
+            />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+
+      {/* CINEMATIC DARK OVERLAY */}
+
+      <div className="absolute inset-0 z-10">
+        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50"></div>
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 sm:pb-12 lg:pt-0 lg:pb-0">
+      {/* GRADIENT MESH BACKGROUND */}
+
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
         <motion.div
-          ref={ref}
-          variants={containerVariants}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 items-center"
+          className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-orange-500/20 rounded-full blur-[120px]"
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 12, repeat: Infinity }}
+        />
+
+        <motion.div
+          className="absolute bottom-0 right-0 w-[450px] h-[450px] bg-yellow-400/20 rounded-full blur-[120px]"
+          animate={{ scale: [1, 1.25, 1] }}
+          transition={{ duration: 10, repeat: Infinity }}
+        />
+      </div>
+
+      {/* HERO CONTENT */}
+
+      <div className="relative z-20 flex items-center justify-center h-full px-6 text-center">
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="max-w-3xl space-y-8"
         >
-          {/* Left: Content */}
-          <div className="space-y-4 sm:space-y-6 lg:space-y-8 order-1">
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-400/15 border border-amber-400/25 backdrop-blur-sm">
-              <Star className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-300 font-medium text-sm">Government Authorized Center</span>
-            </motion.div>
 
-            <motion.h1 variants={itemVariants} className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight">
-              <span className="text-white">Reliable Digital Services</span>
-              <br />
-              <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-400 bg-clip-text text-transparent">
-                at Your Fingertips
-              </span>
-            </motion.h1>
+          {/* BADGE */}
 
-            <motion.p variants={itemVariants} className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 leading-relaxed max-w-xl">
-              Apply for certificates, government schemes, bill payments, and many other E-Mitra services quickly and securely — all at one place.
-            </motion.p>
-
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 transform hover:scale-[1.03] transition-all duration-300 group text-sm sm:text-base px-5 sm:px-7 h-10 sm:h-11"
-                onClick={() => {
-                  ReactGA.event({ category: "engagement", action: "get_started_click", label: "hero_cta" });
-                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                Get Started
-                <ArrowRight className="ml-1.5 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button
-                size="lg"
-                className="bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 font-semibold shadow-lg transform hover:scale-[1.03] transition-all duration-300 text-sm sm:text-base px-5 sm:px-7 h-10 sm:h-11"
-                onClick={() => {
-                  ReactGA.event({ category: "engagement", action: "explore_services_click", label: "hero_cta" });
-                  document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                Explore Services
-              </Button>
-            </motion.div>
-
-            {/* Quick contact row */}
-            <motion.div variants={itemVariants} className="flex flex-wrap gap-2 sm:gap-3 pt-1">
-              <button
-                onClick={() => { window.location.href = "tel:+919950788973"; }}
-                className="flex items-center gap-1.5 sm:gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 transition-all duration-300 group"
-              >
-                <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
-                <span className="text-xs sm:text-sm text-slate-300 group-hover:text-white transition-colors">+91 9950788973</span>
-              </button>
-              <button
-                onClick={() => { window.open("https://wa.me/919950788973", "_blank"); }}
-                className="flex items-center gap-1.5 sm:gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 transition-all duration-300 group"
-              >
-                <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-400" />
-                <span className="text-xs sm:text-sm text-slate-300 group-hover:text-white transition-colors">WhatsApp</span>
-              </button>
-              <button
-                onClick={() => { window.open("https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371", "_blank"); }}
-                className="flex items-center gap-1.5 sm:gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 transition-all duration-300 group"
-              >
-                <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />
-                <span className="text-xs sm:text-sm text-slate-300 group-hover:text-white transition-colors">Barmer</span>
-              </button>
-            </motion.div>
-
-            {/* Trust badges */}
-            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-slate-400 pt-1">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
-                Govt. Authorized
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
-                24/7 Support
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
-                Trusted by 1000+
-              </span>
-            </motion.div>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/20 backdrop-blur-md rounded-full border border-yellow-400/30">
+            <Star className="h-4 w-4 text-yellow-300" />
+            Authorized E-Mitra Center
           </div>
 
-          {/* Right: Carousel */}
-          <motion.div variants={itemVariants} className="relative order-2 group">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
-              {/* Gradient overlay on images */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none rounded-2xl" />
+          {/* TITLE */}
 
-              <Swiper
-                modules={[Autoplay, Pagination, Navigation, EffectFade]}
-                effect="fade"
-                autoplay={{ delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }}
-                pagination={{ clickable: true, dynamicBullets: true }}
-                navigation={{ nextEl: ".hero-swiper-next", prevEl: ".hero-swiper-prev" }}
-                loop
-                speed={800}
-                className="hero-swiper aspect-[16/9] sm:aspect-[16/10] lg:aspect-[4/3] xl:aspect-[16/10]"
-                lazyPreloadPrevNext={1}
-              >
-                {carouselImages.map((img, i) => (
-                  <SwiperSlide key={i}>
-                    <img
-                      src={img.src}
-                      alt={img.alt}
-                      loading={i === 0 ? "eager" : "lazy"}
-                      className="w-full h-full object-cover"
-                    />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight">
 
-              {/* Custom navigation arrows - visible on mobile, hover on desktop */}
-              <button className="hero-swiper-prev absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white rounded-full p-1.5 sm:p-2 transition-all duration-300 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110">
-                <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-              </button>
-              <button className="hero-swiper-next absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white rounded-full p-1.5 sm:p-2 transition-all duration-300 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110">
-                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
-              </button>
+            <span className="text-white">
+              Malani
+            </span>
+
+            {" "}
+
+            <span className="bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-400 bg-clip-text text-transparent">
+              Barmer
+            </span>
+
+          </h1>
+
+          {/* SUBTITLE */}
+
+          <p className="text-lg sm:text-xl text-gray-200 max-w-2xl mx-auto">
+            E-Mitra services, mobile electronics & professional photography —
+            all in one trusted place.
+          </p>
+
+          {/* CTA */}
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold shadow-xl hover:scale-105 transition"
+              onClick={() => {
+                ReactGA.event({
+                  category: "engagement",
+                  action: "get_started_today_click",
+                });
+
+                document
+                  .getElementById("contact")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+            >
+              Get Started
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+
+            <Button
+              size="lg"
+              className="bg-white/10 backdrop-blur-md border border-white/30 hover:bg-white/20 text-white"
+              onClick={() =>
+                document
+                  .getElementById("services")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              Explore Services
+            </Button>
+
+          </div>
+
+          {/* QUICK CONTACT */}
+
+          <div className="flex flex-wrap justify-center gap-4 pt-4">
+
+            <a
+              href="tel:+919950788973"
+              className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg backdrop-blur-md border border-white/20 hover:bg-white/20 transition"
+            >
+              <Phone size={16} />
+              +91 9950788973
+            </a>
+
+            <a
+              href="https://wa.me/919950788973"
+              className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg backdrop-blur-md border border-white/20 hover:bg-white/20 transition"
+            >
+              <MessageCircle size={16} />
+              WhatsApp
+            </a>
+
+            <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg backdrop-blur-md border border-white/20">
+              <MapPin size={16} />
+              Barmer
             </div>
 
-            {/* Decorative glow behind carousel */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/10 via-blue-500/10 to-emerald-500/10 rounded-3xl blur-2xl -z-10" />
-          </motion.div>
+          </div>
+
+          {/* TRUST BADGES */}
+
+          <div className="flex justify-center gap-6 pt-2 text-sm text-gray-300">
+
+            <span className="flex items-center gap-1">
+              <CheckCircle className="text-green-400" size={16} />
+              Govt Authorized
+            </span>
+
+            <span className="flex items-center gap-1">
+              <CheckCircle className="text-green-400" size={16} />
+              24/7 Support
+            </span>
+
+          </div>
+
         </motion.div>
+
       </div>
 
-      {/* Custom Swiper styles */}
-      <style>{`
-        .hero-swiper .swiper-pagination-bullet {
-          background: white;
-          opacity: 0.5;
-          width: 8px;
-          height: 8px;
-          transition: all 0.3s;
-        }
-        .hero-swiper .swiper-pagination-bullet-active {
-          opacity: 1;
-          background: #fbbf24;
-          width: 24px;
-          border-radius: 4px;
-        }
-        .hero-swiper .swiper-pagination {
-          bottom: 12px !important;
-        }
-      `}</style>
+      {/* FLOATING SERVICE CARDS */}
+
+      <div className="hidden lg:block z-20">
+
+        <motion.div
+          animate={{ y: [0, -15, 0] }}
+          transition={{ repeat: Infinity, duration: 4 }}
+          className="absolute left-[10%] top-[65%] bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/20"
+        >
+          📄 Document Services
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, -12, 0] }}
+          transition={{ repeat: Infinity, duration: 5 }}
+          className="absolute right-[12%] top-[60%] bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/20"
+        >
+          📱 Mobile Electronics
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ repeat: Infinity, duration: 6 }}
+          className="absolute right-[25%] top-[75%] bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/20"
+        >
+          📷 Mataji Studio
+        </motion.div>
+
+      </div>
+
+      {/* SCROLL INDICATOR */}
+
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/80 text-sm flex flex-col items-center gap-2 animate-bounce z-20">
+        <span>Scroll</span>
+        ↓
+      </div>
+
     </section>
   );
 };
