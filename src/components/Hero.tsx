@@ -85,21 +85,21 @@ const Hero = () => {
               Apply for certificates, government schemes, bill payments, and many other E-Mitra services quickly and securely — all at one place.
             </motion.p>
 
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 transform hover:scale-[1.03] transition-all duration-300 group text-base px-7"
+                className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 transform hover:scale-[1.03] transition-all duration-300 group text-sm sm:text-base px-5 sm:px-7 h-10 sm:h-11"
                 onClick={() => {
                   ReactGA.event({ category: "engagement", action: "get_started_click", label: "hero_cta" });
                   document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
                 Get Started
-                <ArrowRight className="ml-1.5 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-1.5 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button
                 size="lg"
-                className="bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 font-semibold shadow-lg transform hover:scale-[1.03] transition-all duration-300 text-base px-7"
+                className="bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 font-semibold shadow-lg transform hover:scale-[1.03] transition-all duration-300 text-sm sm:text-base px-5 sm:px-7 h-10 sm:h-11"
                 onClick={() => {
                   ReactGA.event({ category: "engagement", action: "explore_services_click", label: "hero_cta" });
                   document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
