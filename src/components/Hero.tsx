@@ -64,10 +64,10 @@ const Hero = () => {
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center"
+          className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 items-center"
         >
           {/* Left: Content */}
-          <div className="space-y-5 sm:space-y-7 lg:space-y-8 order-1">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8 order-1">
             <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-400/15 border border-amber-400/25 backdrop-blur-sm">
               <Star className="h-4 w-4 text-amber-400" />
               <span className="text-amber-300 font-medium text-sm">Government Authorized Center</span>
