@@ -58,16 +58,16 @@ const Hero = () => {
         <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-0">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 lg:pt-0 lg:pb-0">
         <motion.div
           ref={ref}
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+          className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center"
         >
           {/* Left: Content */}
-          <div className="space-y-7 lg:space-y-8 order-1">
+          <div className="space-y-5 sm:space-y-7 lg:space-y-8 order-1">
             <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-400/15 border border-amber-400/25 backdrop-blur-sm">
               <Star className="h-4 w-4 text-amber-400" />
               <span className="text-amber-300 font-medium text-sm">Government Authorized Center</span>
