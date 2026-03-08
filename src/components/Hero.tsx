@@ -50,7 +50,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden min-h-[85vh] lg:min-h-[90vh] flex items-center bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0c1524]">
+    <section className="relative overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0c1524]">
       {/* Subtle decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
@@ -58,22 +58,22 @@ const Hero = () => {
         <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-0">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 lg:pt-0 lg:pb-0">
         <motion.div
           ref={ref}
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+          className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center"
         >
           {/* Left: Content */}
-          <div className="space-y-7 lg:space-y-8 order-1">
+          <div className="space-y-5 sm:space-y-7 lg:space-y-8 order-1">
             <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-400/15 border border-amber-400/25 backdrop-blur-sm">
               <Star className="h-4 w-4 text-amber-400" />
               <span className="text-amber-300 font-medium text-sm">Government Authorized Center</span>
             </motion.div>
 
-            <motion.h1 variants={itemVariants} className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight">
+            <motion.h1 variants={itemVariants} className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight">
               <span className="text-white">Reliable Digital Services</span>
               <br />
               <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-400 bg-clip-text text-transparent">
@@ -81,7 +81,7 @@ const Hero = () => {
               </span>
             </motion.h1>
 
-            <motion.p variants={itemVariants} className="text-base sm:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-xl">
+            <motion.p variants={itemVariants} className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 leading-relaxed max-w-xl">
               Apply for certificates, government schemes, bill payments, and many other E-Mitra services quickly and securely — all at one place.
             </motion.p>
 
@@ -135,17 +135,17 @@ const Hero = () => {
             </motion.div>
 
             {/* Trust badges */}
-            <motion.div variants={itemVariants} className="flex items-center gap-5 text-sm text-slate-400 pt-1">
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-slate-400 pt-1">
               <span className="flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
                 Govt. Authorized
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
                 24/7 Support
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
                 Trusted by 1000+
               </span>
             </motion.div>
