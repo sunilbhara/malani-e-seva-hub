@@ -81,7 +81,7 @@ const Hero = () => {
               </span>
             </motion.h1>
 
-            <motion.p variants={itemVariants} className="text-base sm:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-xl">
+            <motion.p variants={itemVariants} className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 leading-relaxed max-w-xl">
               Apply for certificates, government schemes, bill payments, and many other E-Mitra services quickly and securely — all at one place.
             </motion.p>
 
