@@ -145,7 +145,7 @@ const Hero = () => {
                 size="lg"
                 className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold shadow-2xl transform hover:scale-105 transition-all duration-300 group animate-bounce-in"
                 onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'click', label: 'get_started_today' });
+                  ReactGA.event({ category: 'engagement', action: 'get_started_today_click', label: 'get_started_today' });
                   const contactSection = document.getElementById("contact");
                   if (contactSection) {
                     contactSection.scrollIntoView({ behavior: "smooth" });
@@ -159,7 +159,7 @@ const Hero = () => {
                 size="lg"
                 className="bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm border-2 border-white/50 text-white hover:from-white/30 hover:to-white/20 font-semibold shadow-xl transform hover:scale-105 transition-all duration-300"
                 onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'click', label: 'view_services' });
+                  ReactGA.event({ category: 'engagement', action: 'view_services_click', label: 'view_services' });
                   const servicesSection = document.getElementById("services");
                   if (servicesSection) {
                     servicesSection.scrollIntoView({ behavior: "smooth" });
@@ -178,14 +178,14 @@ const Hero = () => {
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
                 onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'click', label: 'call_us' });
+                  ReactGA.event({ category: 'engagement', action: 'call_us_click', label: 'call_us' });
                   window.location.href = "tel:+919950788973";
                 }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    ReactGA.event({ category: 'engagement', action: 'click', label: 'call_us' });
+                    ReactGA.event({ category: 'engagement', action: 'call_us_click', label: 'call_us' });
                     window.location.href = "tel:+919950788973";
                   }
                 }}
@@ -201,14 +201,14 @@ const Hero = () => {
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
                 onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'click', label: 'whatsapp_us' });
+                  ReactGA.event({ category: 'engagement', action: 'whatsapp_us_click', label: 'whatsapp_us' });
                   window.open('https://wa.me/919950788973', '_blank');
                 }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    ReactGA.event({ category: 'engagement', action: 'click', label: 'whatsapp_us' });
+                    ReactGA.event({ category: 'engagement', action: 'whatsapp_us_click', label: 'whatsapp_us' });
                     window.open('https://wa.me/919950788973', '_blank');
                   }
                 }}
@@ -223,14 +223,14 @@ const Hero = () => {
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
                 onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'click', label: 'visit_us' });
+                  ReactGA.event({ category: 'engagement', action: 'visit_us_click', label: 'visit_us' });
                   window.open('https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371', '_blank');
                 }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    ReactGA.event({ category: 'engagement', action: 'click', label: 'visit_us' });
+                    ReactGA.event({ category: 'engagement', action: 'visit_us_click', label: 'visit_us' });
                     window.open('https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371', '_blank');
                   }
                 }}
