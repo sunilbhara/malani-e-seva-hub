@@ -1,285 +1,219 @@
-
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Phone, MapPin, User, Star, CheckCircle, MessageCircle } from "lucide-react";
+import { ArrowRight, Phone, MapPin, Star, CheckCircle, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import ReactGA from "react-ga4";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import "swiper/css/effect-fade";
+
+const carouselImages = [
+  {
+    src: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=80",
+    alt: "Digital services center helping citizens",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
+    alt: "Technology assistance and digital India",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&q=80",
+    alt: "Online documentation and government services",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&w=1200&q=80",
+    alt: "Rural digital services and connectivity",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+    alt: "Digital help center and support",
+  },
+];
 
 const Hero = () => {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        duration: 0.8,
-        staggerChildren: 0.2,
-      },
+      transition: { duration: 0.6, staggerChildren: 0.15 },
     },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
 
   return (
-    <section className="relative overflow-hidden custom-gradient-bg text-white min-h-screen flex items-center pt-2">
-      <div className="absolute inset-0 bg-black/30"></div>
-
-      {/* Enhanced animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.6, 0.3],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.2, 0.5, 0.2],
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-400/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.1, 0.3, 0.1],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2,
-          }}
-        />
+    <section className="relative overflow-hidden min-h-[85vh] lg:min-h-[90vh] flex items-center bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0c1524]">
+      {/* Subtle decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-emerald-500/8 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative container mx-auto px-4 py-20 lg:py-32">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-0">
         <motion.div
           ref={ref}
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center"
+          className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center"
         >
-          <motion.div
-            variants={itemVariants}
-            className="space-y-8 lg:space-y-10"
-          >
-            <motion.div variants={itemVariants} className="space-y-6">
-              <motion.div
-                variants={itemVariants}
-                className="inline-block px-4 py-2 bg-yellow-400/20 backdrop-blur-sm rounded-full border border-yellow-400/30 animate-glow"
-              >
-                <span className="text-yellow-300 font-medium text-sm flex items-center gap-2">
-                  <Star className="h-4 w-4" />
-                  Authorized Center
-                </span>
-              </motion.div>
-
-              <motion.h1
-                variants={itemVariants}
-                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight"
-              >
-                <span className="bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent animate-fade-in">
-                  Malani {" "}
-                </span>
-                <span className=" bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-400 bg-clip-text text-transparent">
-                  Barmer
-                </span>
-              </motion.h1>
-
-              <motion.p
-                variants={itemVariants}
-                className="text-lg sm:text-xl lg:text-2xl text-blue-100 leading-relaxed font-light"
-              >
-                Complete solutions for E-Mitra services, mobile electronics &
-                professional photography
-              </motion.p>
-
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
-              >
-                <User className="h-6 w-6 text-yellow-300" />
-                <div>
-                  <p className="text-sm text-blue-200">Proprietor</p>
-                  <p className="text-lg font-semibold text-white">
-                    Tarun Bharti
-                  </p>
-                </div>
-              </motion.div>
+          {/* Left: Content */}
+          <div className="space-y-7 lg:space-y-8 order-1">
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-400/15 border border-amber-400/25 backdrop-blur-sm">
+              <Star className="h-4 w-4 text-amber-400" />
+              <span className="text-amber-300 font-medium text-sm">Government Authorized Center</span>
             </motion.div>
 
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-4 lg:gap-6"
-            >
+            <motion.h1 variants={itemVariants} className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight">
+              <span className="text-white">Reliable Digital Services</span>
+              <br />
+              <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-400 bg-clip-text text-transparent">
+                at Your Fingertips
+              </span>
+            </motion.h1>
+
+            <motion.p variants={itemVariants} className="text-base sm:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-xl">
+              Apply for certificates, government schemes, bill payments, and many other E-Mitra services quickly and securely — all at one place.
+            </motion.p>
+
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold shadow-2xl transform hover:scale-105 transition-all duration-300 group animate-bounce-in"
+                className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 transform hover:scale-[1.03] transition-all duration-300 group text-base px-7"
                 onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'get_started_today_click', label: 'get_started_today' });
-                  const contactSection = document.getElementById("contact");
-                  if (contactSection) {
-                    contactSection.scrollIntoView({ behavior: "smooth" });
-                  }
+                  ReactGA.event({ category: "engagement", action: "get_started_click", label: "hero_cta" });
+                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
-                Get Started Today
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                Get Started
+                <ArrowRight className="ml-1.5 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm border-2 border-white/50 text-white hover:from-white/30 hover:to-white/20 font-semibold shadow-xl transform hover:scale-105 transition-all duration-300"
+                className="bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 font-semibold shadow-lg transform hover:scale-[1.03] transition-all duration-300 text-base px-7"
                 onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'view_services_click', label: 'view_services' });
-                  const servicesSection = document.getElementById("services");
-                  if (servicesSection) {
-                    servicesSection.scrollIntoView({ behavior: "smooth" });
-                  }
+                  ReactGA.event({ category: "engagement", action: "explore_services_click", label: "hero_cta" });
+                  document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
-                View Services
+                Explore Services
               </Button>
             </motion.div>
 
-            <motion.div
-              variants={itemVariants}
-              className="grid sm:grid-cols-2 gap-4 lg:gap-6 text-sm"
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
-                onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'call_us_click', label: 'call_us' });
-                  window.location.href = "tel:+919950788973";
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    ReactGA.event({ category: 'engagement', action: 'call_us_click', label: 'call_us' });
-                    window.location.href = "tel:+919950788973";
-                  }
-                }}
+            {/* Quick contact row */}
+            <motion.div variants={itemVariants} className="flex flex-wrap gap-3 pt-2">
+              <button
+                onClick={() => { window.location.href = "tel:+919950788973"; }}
+                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 transition-all duration-300 group"
               >
-                <Phone className="h-5 w-5 text-yellow-300" />
-                <div>
-                  <p className="text-blue-200">Call Us</p>
-                  <span className="font-semibold">+91 9950788973</span>
-                </div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
-                onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'whatsapp_us_click', label: 'whatsapp_us' });
-                  window.open('https://wa.me/919950788973', '_blank');
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    ReactGA.event({ category: 'engagement', action: 'whatsapp_us_click', label: 'whatsapp_us' });
-                    window.open('https://wa.me/919950788973', '_blank');
-                  }
-                }}
+                <Phone className="h-4 w-4 text-emerald-400" />
+                <span className="text-sm text-slate-300 group-hover:text-white transition-colors">+91 9950788973</span>
+              </button>
+              <button
+                onClick={() => { window.open("https://wa.me/919950788973", "_blank"); }}
+                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 transition-all duration-300 group"
               >
-                <MessageCircle className="h-5 w-5 text-yellow-300" />
-                <div>
-                  <p className="text-blue-200">WhatsApp Us</p>
-                  <span className="font-semibold">+91 9950788973</span>
-                </div>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
-                onClick={() => {
-                  ReactGA.event({ category: 'engagement', action: 'visit_us_click', label: 'visit_us' });
-                  window.open('https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371', '_blank');
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    ReactGA.event({ category: 'engagement', action: 'visit_us_click', label: 'visit_us' });
-                    window.open('https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371', '_blank');
-                  }
-                }}
+                <MessageCircle className="h-4 w-4 text-green-400" />
+                <span className="text-sm text-slate-300 group-hover:text-white transition-colors">WhatsApp</span>
+              </button>
+              <button
+                onClick={() => { window.open("https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371", "_blank"); }}
+                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 transition-all duration-300 group"
               >
-                <MapPin className="h-5 w-5 text-yellow-300" />
-                <div>
-                  <p className="text-blue-200">Visit Us</p>
-                  <span className="font-semibold">Opp. Railway Station, Barmer</span>
-                </div>
-              </motion.div>
+                <MapPin className="h-4 w-4 text-amber-400" />
+                <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Barmer</span>
+              </button>
             </motion.div>
 
-            {/* Trust indicators */}
-            <motion.div
-              variants={itemVariants}
-              className="flex items-center gap-4 text-sm"
-            >
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-400" />
-                <span className="text-blue-100">Government Authorized</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-400" />
-                <span className="text-blue-100">24/7 Support</span>
-              </div>
+            {/* Trust badges */}
+            <motion.div variants={itemVariants} className="flex items-center gap-5 text-sm text-slate-400 pt-1">
+              <span className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                Govt. Authorized
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                24/7 Support
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                Trusted by 1000+
+              </span>
             </motion.div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={itemVariants}
-            className="relative lg:block hidden"
-          >
-            <motion.div
-              className="relative transform hover:scale-105 transition-all duration-500"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
-              <img
-                // src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-                src="img1.jpg"
-                alt="E-Mitra Services"
-                className="relative rounded-3xl shadow-2xl w-full max-w-lg mx-auto border border-white/20"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/50 via-transparent to-transparent rounded-3xl"></div>
-            </motion.div>
+          {/* Right: Carousel */}
+          <motion.div variants={itemVariants} className="relative order-2">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
+              {/* Gradient overlay on images */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none rounded-2xl" />
+
+              <Swiper
+                modules={[Autoplay, Pagination, Navigation, EffectFade]}
+                effect="fade"
+                autoplay={{ delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                pagination={{ clickable: true, dynamicBullets: true }}
+                navigation={{ nextEl: ".hero-swiper-next", prevEl: ".hero-swiper-prev" }}
+                loop
+                speed={800}
+                className="hero-swiper aspect-[16/10] lg:aspect-[4/3] xl:aspect-[16/10]"
+                lazyPreloadPrevNext={1}
+              >
+                {carouselImages.map((img, i) => (
+                  <SwiperSlide key={i}>
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      className="w-full h-full object-cover"
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+
+              {/* Custom navigation arrows */}
+              <button className="hero-swiper-prev absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110">
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button className="hero-swiper-next absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110">
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Decorative glow behind carousel */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/10 via-blue-500/10 to-emerald-500/10 rounded-3xl blur-2xl -z-10" />
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Custom Swiper styles */}
+      <style>{`
+        .hero-swiper .swiper-pagination-bullet {
+          background: white;
+          opacity: 0.5;
+          width: 8px;
+          height: 8px;
+          transition: all 0.3s;
+        }
+        .hero-swiper .swiper-pagination-bullet-active {
+          opacity: 1;
+          background: #fbbf24;
+          width: 24px;
+          border-radius: 4px;
+        }
+        .hero-swiper .swiper-pagination {
+          bottom: 12px !important;
+        }
+      `}</style>
     </section>
   );
 };
