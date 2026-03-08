@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import emailjs from "emailjs-com"; // ✅ or switch to '@emailjs/browser'
+import ReactGA from "react-ga4";
 import {
   Dialog,
   DialogTrigger,
@@ -63,6 +64,7 @@ export default function BookingForm() {
         <Button
           size="lg"
           className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+          onClick={() => ReactGA.event({ category: 'engagement', action: 'click', label: 'book_photo_session' })}
         >
           <Calendar className="w-5 h-5 mr-2" />
           Book a Photo Session

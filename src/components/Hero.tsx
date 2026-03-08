@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Phone, MapPin, User, Star, CheckCircle, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import ReactGA from "react-ga4";
 
 const Hero = () => {
   const [ref, inView] = useInView({
@@ -144,6 +145,7 @@ const Hero = () => {
                 size="lg"
                 className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold shadow-2xl transform hover:scale-105 transition-all duration-300 group animate-bounce-in"
                 onClick={() => {
+                  ReactGA.event({ category: 'engagement', action: 'click', label: 'get_started_today' });
                   const contactSection = document.getElementById("contact");
                   if (contactSection) {
                     contactSection.scrollIntoView({ behavior: "smooth" });
@@ -157,6 +159,7 @@ const Hero = () => {
                 size="lg"
                 className="bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm border-2 border-white/50 text-white hover:from-white/30 hover:to-white/20 font-semibold shadow-xl transform hover:scale-105 transition-all duration-300"
                 onClick={() => {
+                  ReactGA.event({ category: 'engagement', action: 'click', label: 'view_services' });
                   const servicesSection = document.getElementById("services");
                   if (servicesSection) {
                     servicesSection.scrollIntoView({ behavior: "smooth" });
@@ -174,12 +177,17 @@ const Hero = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
-                onClick={() => (window.location.href = "tel:+919950788973")}
+                onClick={() => {
+                  ReactGA.event({ category: 'engagement', action: 'click', label: 'call_us' });
+                  window.location.href = "tel:+919950788973";
+                }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter")
+                  if (e.key === "Enter") {
+                    ReactGA.event({ category: 'engagement', action: 'click', label: 'call_us' });
                     window.location.href = "tel:+919950788973";
+                  }
                 }}
               >
                 <Phone className="h-5 w-5 text-yellow-300" />
@@ -192,12 +200,17 @@ const Hero = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
-                onClick={() => (window.open('https://wa.me/919950788973', '_blank'))}
+                onClick={() => {
+                  ReactGA.event({ category: 'engagement', action: 'click', label: 'whatsapp_us' });
+                  window.open('https://wa.me/919950788973', '_blank');
+                }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter")
-                    window.location.href = "tel:+919950788973";
+                  if (e.key === "Enter") {
+                    ReactGA.event({ category: 'engagement', action: 'click', label: 'whatsapp_us' });
+                    window.open('https://wa.me/919950788973', '_blank');
+                  }
                 }}
               >
                 <MessageCircle className="h-5 w-5 text-yellow-300" />
@@ -209,12 +222,17 @@ const Hero = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
-                onClick={() => (window.open('https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371', '_blank'))}
+                onClick={() => {
+                  ReactGA.event({ category: 'engagement', action: 'click', label: 'visit_us' });
+                  window.open('https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371', '_blank');
+                }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter")
-                    window.location.href = "tel:+919950788973";
+                  if (e.key === "Enter") {
+                    ReactGA.event({ category: 'engagement', action: 'click', label: 'visit_us' });
+                    window.open('https://www.google.com/maps/dir/?api=1&destination=25.746793418531855,71.39670954386371', '_blank');
+                  }
                 }}
               >
                 <MapPin className="h-5 w-5 text-yellow-300" />
