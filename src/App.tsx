@@ -9,13 +9,17 @@ import About from "./pages/About";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import Login from "./pages/Login";
+import Admin from "./pages/Admin";
+import { AuthProvider } from "./hooks/useAuth";
 import GoogleAnalytics from "./utils/GoogleAnalytics";
 import { loadAdsenseScript } from "./utils/LoadAdsence";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-
   useEffect(() => {
     loadAdsenseScript();
   }, []);
@@ -27,16 +31,24 @@ const App = () => {
         <Sonner />
 
         <BrowserRouter>
-          <GoogleAnalytics />
+          <AuthProvider>
+            <GoogleAnalytics />
 
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
 
+              {/* Blog system */}
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:id" element={<BlogPost />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={<Admin />} />
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
