@@ -206,9 +206,9 @@ const BlogPost = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto max-w-7xl"
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
-          <Button variant="ghost" asChild className="-ml-2 mb-6 rounded-full font-hindi text-gray-600 hover:text-gray-900">
+          <Button variant="ghost" asChild className="-ml-4 mb-6 rounded-full font-hindi text-gray-600 hover:text-gray-900">
             <Link to="/blog" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               {hi.backToBlog}

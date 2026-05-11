@@ -9,37 +9,35 @@ type FooterProps = {
 const Footer = ({ minimal }: FooterProps) => {
   if (minimal) {
     return (
-      <footer className="bg-slate-950 text-white relative overflow-hidden">
-        <div className="container mx-auto px-4 py-8 relative">
-          <div className="grid gap-8 md:grid-cols-2">
-            <div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                Malani Barmer
-              </h3>
-              <p className="mt-4 max-w-md text-sm leading-relaxed text-gray-300">
-                Your complete solution hub for E-Mitra services, mobile electronics, and photography in Barmer.
+      <footer className="bg-slate-950 text-white">
+        <div className="container mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold text-white">Malani Barmer</h3>
+              <p className="text-sm leading-relaxed text-gray-300 max-w-lg">
+                E-Mitra, mobile electronics, and professional photography services in Barmer.
               </p>
-              <div className="mt-6 space-y-3 text-sm text-gray-300">
-                <div className="flex items-center gap-3">
-                  <MapPin className="h-5 w-5 text-yellow-400" />
-                  <span>Near IDBI Bank Opp. Railway Station, High School Road, Barmer 344001</span>
+              <div className="space-y-2 text-sm text-gray-300">
+                <div className="flex items-start gap-2">
+                  <MapPin className="mt-1 h-4 w-4 text-yellow-400" />
+                  <span>Near IDBI Bank, High School Road, Barmer 344001</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Phone className="h-5 w-5 text-yellow-400" />
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-yellow-400" />
                   <span>+91 9950788973</span>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col justify-between">
+            <div className="space-y-4">
               <div>
-                <h4 className="text-xl font-bold text-white pb-2">Quick Links</h4>
-                <ul className="mt-4 space-y-2 text-gray-300 text-sm">
+                <h4 className="text-lg font-semibold text-white">Quick Links</h4>
+                <ul className="mt-3 grid gap-2 text-sm text-gray-300">
                   <li>
                     <Link to="/blog" className="hover:text-yellow-300 transition-colors">
                       Blog
                     </Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link to="/privacy-policy" className="hover:text-yellow-300 transition-colors">
                       Privacy Policy
                     </Link>
@@ -53,10 +51,10 @@ const Footer = ({ minimal }: FooterProps) => {
                     <Link to="/about" className="hover:text-yellow-300 transition-colors">
                       About Us
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
-              <div className="mt-6 flex items-center gap-4 text-gray-300">
+              <div className="flex items-center gap-4 text-gray-300">
                 <a
                   href="https://www.instagram.com/malani_mobile_barmer/"
                   target="_blank"
@@ -77,7 +75,7 @@ const Footer = ({ minimal }: FooterProps) => {
             </div>
           </div>
 
-          <div className="mt-8 border-t border-white/10 pt-4 text-sm text-gray-400 flex flex-col gap-3 sm:flex-row sm:justify-between">
+          <div className="mt-6 border-t border-white/10 pt-4 text-sm text-gray-400 flex flex-col gap-3 sm:flex-row sm:justify-between">
             <span>© {new Date().getFullYear()} Malani Barmer. All rights reserved.</span>
             <span className="flex items-center gap-2 text-amber-300">
               <Star className="h-4 w-4" />
