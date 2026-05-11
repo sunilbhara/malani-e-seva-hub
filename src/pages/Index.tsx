@@ -11,19 +11,19 @@ import Footer from "@/components/Footer";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Adsense from "@/components/Adsense";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { FeaturedBlogSection } from "@/components/blog/FeaturedBlogSection";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       <Navigation />
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
       <main>
         <section id="home">
           <Hero />
         </section>
-        
+
+        <FeaturedBlogSection />
+
         {/* Main Services Section - Equal Priority */}
         <MainServices />
         

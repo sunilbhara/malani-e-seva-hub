@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -31,6 +33,7 @@ const App = () => {
         <Sonner />
 
         <BrowserRouter>
+          <ToastContainer position="top-right" autoClose={3200} theme="colored" newestOnTop />
           <AuthProvider>
             <GoogleAnalytics />
 

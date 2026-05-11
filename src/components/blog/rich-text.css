@@ -1,0 +1,116 @@
+/* TipTap editor + rendered HTML — Medium / Notion–inspired, Hindi-friendly */
+
+.tiptap-editor-shell .ProseMirror {
+  @apply font-hindi min-h-[280px] max-w-none px-4 py-4 text-base leading-[1.75] text-gray-900 outline-none sm:px-5 sm:py-5;
+}
+
+.tiptap-editor-shell .ProseMirror p.is-editor-empty:first-child::before {
+  @apply pointer-events-none float-left h-0 text-gray-400;
+  content: attr(data-placeholder);
+}
+
+.tiptap-editor-shell .ProseMirror-focused {
+  @apply ring-0;
+}
+
+.tiptap-editor-shell .ProseMirror h1 {
+  @apply mt-6 text-3xl font-bold tracking-tight text-gray-900 first:mt-0;
+}
+
+.tiptap-editor-shell .ProseMirror h2 {
+  @apply mt-5 text-2xl font-semibold tracking-tight text-gray-900 first:mt-0;
+}
+
+.tiptap-editor-shell .ProseMirror h3 {
+  @apply mt-4 text-xl font-semibold text-gray-900 first:mt-0;
+}
+
+.tiptap-editor-shell .ProseMirror p {
+  @apply my-3;
+}
+
+.tiptap-editor-shell .ProseMirror ul,
+.tiptap-editor-shell .ProseMirror ol {
+  @apply my-3 ml-6 list-outside;
+}
+
+.tiptap-editor-shell .ProseMirror ul {
+  @apply list-disc;
+}
+
+.tiptap-editor-shell .ProseMirror ol {
+  @apply list-decimal;
+}
+
+.tiptap-editor-shell .ProseMirror li {
+  @apply my-1;
+}
+
+.tiptap-editor-shell .ProseMirror blockquote {
+  @apply my-4 border-l-4 border-amber-400/80 pl-4 text-gray-700 italic;
+}
+
+.tiptap-editor-shell .ProseMirror a {
+  @apply font-medium text-amber-700 underline decoration-amber-300 underline-offset-2;
+}
+
+.tiptap-editor-shell .ProseMirror img {
+  @apply my-4 max-h-[420px] w-full rounded-xl object-contain ring-1 ring-black/5;
+}
+
+.tiptap-render {
+  @apply font-hindi max-w-none text-pretty leading-[1.85] text-gray-900 antialiased;
+}
+
+.tiptap-render h1 {
+  @apply mt-8 text-3xl font-bold tracking-tight first:mt-0 sm:text-4xl;
+}
+
+.tiptap-render h2 {
+  @apply mt-7 text-2xl font-semibold tracking-tight first:mt-0 sm:text-3xl;
+}
+
+.tiptap-render h3 {
+  @apply mt-6 text-xl font-semibold first:mt-0;
+}
+
+.tiptap-render p {
+  @apply my-4 text-lg sm:text-[1.05rem];
+}
+
+.tiptap-render ul,
+.tiptap-render ol {
+  @apply my-4 ml-6;
+}
+
+.tiptap-render ul {
+  @apply list-disc;
+}
+
+.tiptap-render ol {
+  @apply list-decimal;
+}
+
+.tiptap-render a {
+  @apply font-medium text-amber-700 underline decoration-amber-300 underline-offset-2;
+}
+
+.tiptap-render img {
+  @apply my-6 w-full rounded-2xl object-cover shadow-lg ring-1 ring-black/5;
+}
+
+.tiptap-render blockquote {
+  @apply my-6 border-l-4 border-amber-400/90 pl-5 text-gray-700 italic;
+}
+
+.tiptap-toolbar {
+  @apply flex flex-wrap items-center gap-1 rounded-xl border border-amber-100/90 bg-white/95 p-1.5 shadow-md backdrop-blur-sm;
+}
+
+.tiptap-toolbar button {
+  @apply rounded-lg px-2.5 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-amber-50 hover:text-amber-900;
+}
+
+.tiptap-toolbar button[data-active="true"] {
+  @apply bg-gradient-to-r from-amber-100 to-orange-100 text-amber-950;
+}

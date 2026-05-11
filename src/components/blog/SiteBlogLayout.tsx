@@ -1,0 +1,28 @@
+import { useLocation } from "react-router-dom";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { blogPageBg } from "@/lib/blogBrand";
+import { cn } from "@/lib/utils";
+
+type SiteBlogLayoutProps = {
+  children: React.ReactNode;
+  /** Extra top padding below fixed nav (nav is h-20). */
+  className?: string;
+};
+
+/**
+ * Wraps blog-related routes with the same chrome as the marketing site:
+ * shared `Navigation`, page background, and `Footer`.
+ */
+export function SiteBlogLayout({ children, className }: SiteBlogLayoutProps) {
+  const location = useLocation();
+  const isBlogIndex = location.pathname === "/blog";
+
+  return (
+    <div className={cn(blogPageBg, "text-gray-900")}>
+      <Navigation />
+      <div className={cn("pt-20", className)}>{children}</div>
+      <Footer minimal={isBlogIndex} />
+    </div>
+  );
+}

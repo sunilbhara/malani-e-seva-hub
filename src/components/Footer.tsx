@@ -1,8 +1,94 @@
 
-import { MapPin, Phone, Mail, Clock, User, Star, Instagram, Youtube, ShieldCheck, FileText, Info, LifeBuoy } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, User, Star, Instagram, Youtube, ShieldCheck, FileText, Info, LifeBuoy, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Footer = () => {
+type FooterProps = {
+  minimal?: boolean;
+};
+
+const Footer = ({ minimal }: FooterProps) => {
+  if (minimal) {
+    return (
+      <footer className="bg-slate-950 text-white relative overflow-hidden">
+        <div className="container mx-auto px-4 py-8 relative">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div>
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                Malani Barmer
+              </h3>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-gray-300">
+                Your complete solution hub for E-Mitra services, mobile electronics, and photography in Barmer.
+              </p>
+              <div className="mt-6 space-y-3 text-sm text-gray-300">
+                <div className="flex items-center gap-3">
+                  <MapPin className="h-5 w-5 text-yellow-400" />
+                  <span>Near IDBI Bank Opp. Railway Station, High School Road, Barmer 344001</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 text-yellow-400" />
+                  <span>+91 9950788973</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col justify-between">
+              <div>
+                <h4 className="text-xl font-bold text-white pb-2">Quick Links</h4>
+                <ul className="mt-4 space-y-2 text-gray-300 text-sm">
+                  <li>
+                    <Link to="/blog" className="hover:text-yellow-300 transition-colors">
+                      Blog
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/privacy-policy" className="hover:text-yellow-300 transition-colors">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/terms" className="hover:text-yellow-300 transition-colors">
+                      Terms & Conditions
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/about" className="hover:text-yellow-300 transition-colors">
+                      About Us
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+              <div className="mt-6 flex items-center gap-4 text-gray-300">
+                <a
+                  href="https://www.instagram.com/malani_mobile_barmer/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-yellow-300 transition-colors"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+                <a
+                  href="https://www.youtube.com/@MalaniMobileandElectronices"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-yellow-300 transition-colors"
+                >
+                  <Youtube className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 border-t border-white/10 pt-4 text-sm text-gray-400 flex flex-col gap-3 sm:flex-row sm:justify-between">
+            <span>© {new Date().getFullYear()} Malani Barmer. All rights reserved.</span>
+            <span className="flex items-center gap-2 text-amber-300">
+              <Star className="h-4 w-4" />
+              Rated 4.9/5 by customers
+            </span>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="custom-gradient-bg text-white relative overflow-hidden">
       {/* Background decorations */}
@@ -141,6 +227,13 @@ const Footer = () => {
                     className="transform hover:translate-x-2 transition-transform duration-200"
                   >
                     About Us
+                  </Link>
+                </li>
+
+                <li className="flex items-center space-x-2 hover:text-yellow-400 transition-colors">
+                  <BookOpen className="h-4 w-4 text-yellow-400" />
+                  <Link to="/blog" className="transform hover:translate-x-2 transition-transform duration-200">
+                    Blog
                   </Link>
                 </li>
 
