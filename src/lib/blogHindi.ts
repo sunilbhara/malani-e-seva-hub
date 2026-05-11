@@ -1,9 +1,9 @@
 /** Hindi UI copy for the blog experience (navigation may stay English). */
 export const hi = {
-  blogEyebrow: "मालनी ब्लॉग",
-  blogTitle: "ताज़ा लेख और अपडेट",
+  blogEyebrow: "मालाणी ब्लॉग",
+  blogTitle: "सरकारी नौकरी और भर्ती अपडेट",
   blogSubtitle:
-    "बारमेर की ताज़ा जानकारी, सेवाओं के उपयोग के सुझाव और समुदाय की कहानियाँ — सरल हिंदी में।",
+    "सरकारी नौकरियों, भर्ती फॉर्म, परीक्षा तिथियों, एडमिट कार्ड और रिजल्ट से जुड़ी हर महत्वपूर्ण अपडेट अब सबसे पहले पाएँ — सरल हिंदी में।",
   searchPlaceholder: "लेख खोजें…",
   filterAll: "सभी",
   filterInsights: "जानकारी",
@@ -32,7 +32,7 @@ export const hi = {
   noCover: "कोई छवि नहीं",
   backToBlog: "ब्लॉग पर वापस",
   writtenBy: "लेखक",
-  contributorLine: "मालनी ब्लॉग योगदानकर्ता",
+  contributorLine: "मालाणी ब्लॉग योगदानकर्ता",
   discussion: "चर्चा",
   discussionCount: "टिप्पणियाँ",
   commentPlaceholder: "अपनी राय लिखें…",
@@ -51,7 +51,7 @@ export const hi = {
   errorLoad: "लेख लोड नहीं हो सका।",
   homeFeaturedEyebrow: "ब्लॉग",
   homeFeaturedTitle: "नवीनतम लेख",
-  homeFeaturedSubtitle: "मालनी बारमेर की ताज़ा जानकारी और कहानियाँ।",
+  homeFeaturedSubtitle: "मालाणी बाड़मेर की ताज़ा जानकारी और कहानियाँ।",
   homeReadMore: "और पढ़ें",
   adminDashTitle: "सामग्री डैशबोर्ड",
   adminTitle: "ब्लॉग प्रबंधन",
