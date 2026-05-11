@@ -108,14 +108,19 @@ export async function createPost(input: PostInput, authorId: string) {
 }
 
 export async function updatePost(id: string, input: Partial<PostInput>) {
+  const cleanInput = Object.fromEntries(
+    Object.entries(input).filter(([_, v]) => v !== undefined)
+  ) as Partial<PostInput>;
+
   const { data, error } = await supabase
     .from("posts")
-    .update(input)
+    .update(cleanInput)
     .eq("id", id)
-    .select()
-    .single();
+    .select();
+
   if (error) throw error;
-  return data;
+
+  return data?.[0];
 }
 
 export async function deletePost(id: string) {
