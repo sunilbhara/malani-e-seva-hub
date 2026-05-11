@@ -85,7 +85,7 @@ const Blog = () => {
 
   return (
     <BlogShell>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="mx-auto max-w-7xl">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">{hi.blogEyebrow}</p>
           <HindiTypography as="h1" className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">

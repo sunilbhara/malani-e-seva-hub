@@ -21,7 +21,7 @@ export function SiteBlogLayout({ children, className }: SiteBlogLayoutProps) {
   return (
     <div className={cn(blogPageBg, "text-gray-900")}>
       <Navigation />
-      <div className={cn("pt-20", className)}>{children}</div>
+      <div className={cn("pt-24", className)}>{children}</div>
       <Footer minimal={isBlogIndex} />
     </div>
   );
