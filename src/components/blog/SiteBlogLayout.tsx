@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -17,12 +18,19 @@ type SiteBlogLayoutProps = {
 export function SiteBlogLayout({ children, className }: SiteBlogLayoutProps) {
   const location = useLocation();
   const isBlogRoute = location.pathname.startsWith("/blog");
+  const isLoginRoute = location.pathname === "/login";
+  const shouldMinimalFooter = isBlogRoute || isLoginRoute;
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div className={cn(blogPageBg, "text-gray-900")}>
       <Navigation />
       <div className={cn("pt-24", className)}>{children}</div>
-      <Footer minimal={isBlogRoute} />
+      <Footer minimal={shouldMinimalFooter} />
     </div>
   );
 }
