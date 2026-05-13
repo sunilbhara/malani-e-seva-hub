@@ -1,0 +1,11 @@
+# Malani Barmer
+
+> Authorized E-Mitra center in Barmer, Rajasthan offering government digital services, mobile electronics retail, and the Mataji photography studio.
+
+## Pages
+
+- [Home](/): Overview of all services offered by Malani Barmer.
+- [About](/about): Background, mission, and location details.
+- [Blog](/blog): Articles, updates, and guides on services.
+- [Privacy Policy](/privacy-policy): How user data is handled.
+- [Terms](/terms): Terms and conditions for using the site.
