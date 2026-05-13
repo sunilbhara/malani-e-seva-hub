@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Camera, CreditCard, Users, Globe, Shield, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import MobileSwiper from "@/components/mobile/MobileSwiper";
 import { useInView } from "react-intersection-observer";
 
 const Services = () => {
@@ -143,62 +144,81 @@ const Services = () => {
           </motion.p>
         </motion.div>
 
-        <motion.div 
-          ref={ref}
-          variants={containerVariants}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-        >
-          {services.map((service, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ 
-                scale: 1.05,
-                y: -10,
-                transition: { duration: 0.3 }
-              }}
-            >
-              <Card className="group hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden relative h-full">
-                <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
-                
-                <CardHeader className="text-center pb-4 relative">
-                  <motion.div 
-                    className={`mx-auto w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br ${service.color} rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-xl`}
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.6 }}
+        {(() => {
+          const renderCard = (service: typeof services[number], index = 0) => (
+            <Card className="group hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden relative h-full">
+              <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+              <CardHeader className="text-center pb-4 relative">
+                <motion.div
+                  className={`mx-auto w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br ${service.color} rounded-3xl flex items-center justify-center mb-6 shadow-xl`}
+                  initial={{ scale: 0.6, opacity: 0, rotate: -20 }}
+                  whileInView={{ scale: 1, opacity: 1, rotate: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 180, damping: 14 }}
+                >
+                  <service.icon className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
+                </motion.div>
+                <CardTitle className="text-xl lg:text-2xl font-bold text-gray-900">
+                  {service.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 lg:space-y-6 relative">
+                <p className="text-gray-600 leading-relaxed text-center text-sm lg:text-base">
+                  {service.description}
+                </p>
+                <div className="space-y-2 lg:space-y-3">
+                  {service.features.map((feature, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center text-xs lg:text-sm text-gray-700"
+                    >
+                      <CheckCircle className={`w-3 h-3 lg:w-4 lg:h-4 mr-3 text-green-500`} />
+                      <span className="font-medium">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          );
+
+          return (
+            <>
+              {/* Desktop / tablet grid - unchanged */}
+              <motion.div
+                ref={ref}
+                variants={containerVariants}
+                initial="hidden"
+                animate={inView ? "visible" : "hidden"}
+                className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+              >
+                {services.map((service, index) => (
+                  <motion.div
+                    key={index}
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.05, y: -10, transition: { duration: 0.3 } }}
                   >
-                    <service.icon className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
+                    {renderCard(service, index)}
                   </motion.div>
-                  <CardTitle className="text-xl lg:text-2xl font-bold text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-300">
-                    {service.title}
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent className="space-y-4 lg:space-y-6 relative">
-                  <p className="text-gray-600 leading-relaxed text-center text-sm lg:text-base">
-                    {service.description}
-                  </p>
-                  <div className="space-y-2 lg:space-y-3">
-                    {service.features.map((feature, idx) => (
-                      <motion.div 
-                        key={idx} 
-                        className="flex items-center text-xs lg:text-sm text-gray-700 group-hover:text-gray-800 transition-colors"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                        transition={{ duration: 0.5, delay: 0.1 * (index + idx) }}
-                      >
-                        <CheckCircle className={`w-3 h-3 lg:w-4 lg:h-4 bg-gradient-to-r ${service.color} rounded-full mr-3 text-green-500`} />
-                        <span className="font-medium">{feature}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Mobile-only premium showcase carousel */}
+              <div className="sm:hidden">
+                <MobileSwiper
+                  items={services}
+                  autoplayDelay={3000}
+                  slidesPerView={1.1}
+                  spaceBetween={16}
+                  paginationColorVar="#8b5cf6"
+                  slideClassName="!h-auto pb-2"
+                  renderItem={(service) => (
+                    <div className="h-full px-1">{renderCard(service)}</div>
+                  )}
+                />
+              </div>
+            </>
+          );
+        })()}
       </div>
     </section>
   );
