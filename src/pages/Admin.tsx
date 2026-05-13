@@ -80,6 +80,11 @@ const adminCopy = {
   toastPostSaved: "Post saved.",
   toastPostPublished: "Post published.",
   toastPostRemoved: "Post removed.",
+  cover: "Cover",
+  titleCol: "Title",
+  authorCol: "Author",
+  publishedCol: "Published",
+  actionsCol: "Actions",
 };
 
 
