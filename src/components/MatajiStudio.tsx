@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import BookingForm from './MatajiStudioForm';
+import MobileSwiper from "@/components/mobile/MobileSwiper";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -162,10 +163,10 @@ const MatajiStudio = () => {
 
         </motion.div>
 
-        {/* Masonry Photo Gallery */}
+        {/* Desktop / tablet masonry - unchanged */}
         <motion.div
           layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {columns.map((column, columnIndex) => (
             <div key={columnIndex} className="flex flex-col gap-6">
@@ -175,21 +176,17 @@ const MatajiStudio = () => {
                     key={photo.id}
                     layout
                     initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                    animate={{ 
-                      opacity: 1, 
-                      y: 0, 
+                    animate={{
+                      opacity: 1,
+                      y: 0,
                       scale: 1,
                       transition: { delay: (columnIndex + index) * 0.1 }
                     }}
                     exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                    whileHover={{ 
-                      y: -8,
-                      transition: { type: "spring", stiffness: 300 }
-                    }}
+                    whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
                     className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
                     onClick={() => setSelectedImage(photo)}
                   >
-                    {/* Photo */}
                     <div className="relative overflow-hidden">
                       <motion.img
                         src={photo.image}
@@ -198,23 +195,15 @@ const MatajiStudio = () => {
                         whileHover={{ scale: 1.05 }}
                         loading="lazy"
                       />
-                      
-                      {/* Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      
-                      {/* Category Badge */}
                       <Badge className="absolute top-4 left-4 bg-white/90 text-gray-700 border-0 capitalize">
                         {photo.category}
                       </Badge>
-                      
-                      {/* Title Overlay */}
                       <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                         <h3 className="font-bold text-lg mb-2">{photo.title}</h3>
                         <p className="text-sm text-gray-200">{photo.description}</p>
                       </div>
                     </div>
-
-                    {/* Hover Glow Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-400/10 to-pink-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   </motion.div>
                 ))}
@@ -222,6 +211,47 @@ const MatajiStudio = () => {
             </div>
           ))}
         </motion.div>
+
+        {/* Mobile-only cinematic storytelling carousel */}
+        <div className="md:hidden">
+          <MobileSwiper
+            key={activeCategory}
+            items={filteredPhotos}
+            variant="coverflow"
+            autoplayDelay={3500}
+            paginationColorVar="#ec4899"
+            slideClassName="!h-auto"
+            renderItem={(photo) => (
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedImage(photo)}
+                className="group relative rounded-3xl overflow-hidden shadow-2xl bg-black cursor-pointer"
+              >
+                <div className="relative aspect-[3/4] w-full overflow-hidden">
+                  <img
+                    src={photo.image}
+                    alt={photo.title}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  {/* Cinematic gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  {/* Category pill - glassmorphism */}
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-flex items-center text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30 capitalize">
+                      {photo.category}
+                    </span>
+                  </div>
+                  {/* Title block */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
+                    <h3 className="font-bold text-xl mb-1 drop-shadow-md">{photo.title}</h3>
+                    <p className="text-sm text-gray-200/90 line-clamp-2">{photo.description}</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          />
+        </div>
 
         {/* Image Modal */}
         <AnimatePresence>
