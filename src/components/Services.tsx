@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Camera, CreditCard, Users, Globe, Shield, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import MobileSwiper from "@/components/mobile/MobileSwiper";
 import { useInView } from "react-intersection-observer";
 
 const Services = () => {
