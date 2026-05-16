@@ -46,6 +46,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { SEO } from "@/components/seo/SEO";
 const adminCopy = {
   noAccess: "You do not have admin access.",
   goBlog: "Go to Blog",
@@ -80,6 +81,11 @@ const adminCopy = {
   toastPostSaved: "Post saved.",
   toastPostPublished: "Post published.",
   toastPostRemoved: "Post removed.",
+  cover: "Cover",
+  titleCol: "Title",
+  authorCol: "Author",
+  publishedCol: "Published",
+  actionsCol: "Actions",
 };
 
 
@@ -209,6 +215,7 @@ const Admin = () => {
 
   return (
     <DashboardLayout>
+      <SEO title="Admin — Malani Barmer" description="Admin dashboard" path="/admin" noindex />
       <div className="mx-auto max-w-6xl space-y-8">
         <motion.div
           initial={{ opacity: 0, y: 12 }}

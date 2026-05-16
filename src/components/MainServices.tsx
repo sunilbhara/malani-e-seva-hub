@@ -12,6 +12,7 @@ import {
   Users,
   Clock
 } from "lucide-react";
+import MobileSwiper from "@/components/mobile/MobileSwiper";
 
 const MainServices = () => {
   const [ref, inView] = useInView({
@@ -135,92 +136,98 @@ const MainServices = () => {
           </motion.div>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {services.map((service, index) => {
+        {/* Reusable card renderer for both desktop grid and mobile carousel */}
+        {(() => {
+          const renderCard = (service: typeof services[number], isMobile = false) => {
             const Icon = service.icon;
             return (
-              <motion.div
-                key={service.id}
-                variants={itemVariants}
-                whileHover={{ y: -10, scale: 1.02 }}
-                className="group relative"
-              >
-                <Card className={`h-full bg-gradient-to-br ${service.bgGradient} border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden`}>
-                  {/* Card Background Glow */}
-                  <div className={`absolute inset-0 bg-gradient-to-r ${service.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
-                  
-                  {/* Service Image */}
-                  <div className="relative h-48 overflow-hidden rounded-t-xl">
-                    <motion.img
-                      src={service.image}
-                      alt={service.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      whileHover={{ scale: 1.1 }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
-                    {/* Floating Icon */}
-                    <motion.div 
-                      className={`absolute top-4 right-4 w-12 h-12 bg-gradient-to-r ${service.gradient} rounded-xl flex items-center justify-center shadow-lg`}
-                      whileHover={{ rotate: 360, scale: 1.1 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      <Icon className="h-6 w-6 text-white" />
-                    </motion.div>
+              <Card className={`h-full bg-gradient-to-br ${service.bgGradient} border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden ${isMobile ? "rounded-3xl" : ""}`}>
+                <div className={`absolute inset-0 bg-gradient-to-r ${service.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+                <div className="relative h-44 sm:h-48 overflow-hidden rounded-t-xl">
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  <div className={`absolute top-4 right-4 w-12 h-12 bg-gradient-to-r ${service.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+                    <Icon className="h-6 w-6 text-white" />
                   </div>
-
-                  <div className="p-8 space-y-6 relative">
-                    <div className="space-y-3">
-                      <h3 className="text-2xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors">
-                        {service.title}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        {service.description}
-                      </p>
-                    </div>
-
-                    {/* Features List */}
-                    <div className="space-y-2">
-                      {service.features.map((feature, idx) => (
-                        <motion.div
-                          key={idx}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.3 + idx * 0.1 }}
-                          className="flex items-center gap-3 text-sm text-gray-700"
-                        >
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                          {feature}
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {/* Stats */}
-                    <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
-                      <Users className="h-4 w-4" />
-                      {service.stats}
-                    </div>
-
-                    {/* CTA Button */}
-                    <Button 
-                      onClick={() => scrollToSection(service.href)}
-                      className={`w-full bg-gradient-to-r ${service.gradient} hover:opacity-90 text-white font-semibold shadow-lg transform hover:scale-105 transition-all duration-300 group/btn`}
-                      size="lg"
-                    >
-                      Explore {service.title}
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                    </Button>
+                </div>
+                <div className="p-6 sm:p-8 space-y-5 relative">
+                  <div className="space-y-2">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-800">{service.title}</h3>
+                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{service.description}</p>
                   </div>
-                </Card>
-              </motion.div>
+                  <div className="space-y-2">
+                    {service.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-center gap-3 text-sm text-gray-700">
+                        <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
+                    <Users className="h-4 w-4" />
+                    {service.stats}
+                  </div>
+                  <Button
+                    onClick={() => scrollToSection(service.href)}
+                    className={`w-full bg-gradient-to-r ${service.gradient} hover:opacity-90 text-white font-semibold shadow-lg`}
+                    size="lg"
+                  >
+                    Explore {service.title}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </Card>
             );
-          })}
-        </motion.div>
+          };
+
+          return (
+            <>
+              {/* Desktop / tablet grid - unchanged */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate={inView ? "visible" : "hidden"}
+                className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
+                {services.map((service) => (
+                  <motion.div
+                    key={service.id}
+                    variants={itemVariants}
+                    whileHover={{ y: -10, scale: 1.02 }}
+                    className="group relative"
+                  >
+                    {renderCard(service)}
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Mobile-only stacked-card carousel */}
+              <div className="md:hidden">
+                <MobileSwiper
+                  items={services}
+                  variant="coverflow"
+                  autoplayDelay={3500}
+                  paginationColorVar="#3b82f6"
+                  slideClassName="!h-auto"
+                  renderItem={(service) => (
+                    <motion.div
+                      whileTap={{ scale: 0.98 }}
+                      className="group relative pb-2"
+                    >
+                      <div className={`absolute -inset-1 bg-gradient-to-r ${service.gradient} opacity-30 blur-2xl rounded-3xl pointer-events-none`} />
+                      <div className="relative">{renderCard(service, true)}</div>
+                    </motion.div>
+                  )}
+                />
+              </div>
+            </>
+          );
+        })()}
 
         {/* Bottom CTA Section */}
         <motion.div

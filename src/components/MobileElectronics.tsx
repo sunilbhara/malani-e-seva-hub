@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Smartphone, Headphones, Laptop, Camera, Filter, Star, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import MobileSwiper from "@/components/mobile/MobileSwiper";
 
 const MobileElectronics = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -117,97 +118,98 @@ const MobileElectronics = () => {
         </motion.div>
 
         {/* Products Grid */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          <AnimatePresence>
-            {filteredProducts.map((product, index) => (
-              <motion.div
-                key={product.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
-                animate={{ 
-                  opacity: 1, 
-                  scale: 1, 
-                  rotateY: 0,
-                  transition: { delay: index * 0.1 }
-                }}
-                exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
-                whileHover={{ 
-                  y: -10, 
-                  rotateY: 5,
-                  transition: { type: "spring", stiffness: 300 }
-                }}
-                className="group relative bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-200/50"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  perspective: '1000px'
-                }}
-              >
-                {/* Product Image */}
-                <div className="relative overflow-hidden h-64 bg-gradient-to-br from-gray-100 to-gray-200">
-                  <motion.img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    whileHover={{ scale: 1.1 }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  {/* Rating Badge */}
-                  <Badge className="absolute top-4 right-4 bg-yellow-500 text-white border-0">
+        {(() => {
+          const renderProduct = (product: typeof products[number], index = 0, isMobile = false) => (
+            <div
+              className={`group relative bg-white/80 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-200/50 ${isMobile ? "rounded-3xl" : "rounded-2xl"}`}
+            >
+              <div className={`relative overflow-hidden ${isMobile ? "h-56" : "h-64"} bg-gradient-to-br from-gray-100 to-gray-200`}>
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-90" />
+                <motion.div
+                  initial={{ y: -10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.1 }}
+                  className="absolute top-4 right-4"
+                >
+                  <Badge className="bg-yellow-500 text-white border-0 shadow-lg">
                     <Star className="w-3 h-3 mr-1 fill-white" />
                     {product.rating}
                   </Badge>
+                </motion.div>
+              </div>
+              <div className="p-5 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                  {product.name}
+                </h3>
+                <div className="space-y-1 mb-4">
+                  {product.features.map((feature, idx) => (
+                    <div key={idx} className="text-sm text-gray-600 flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                      {feature}
+                    </div>
+                  ))}
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-green-600">{product.price}</span>
+                  <Button
+                    className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white border-0"
+                    size="sm"
+                    onClick={() =>
+                      window.open(
+                        `https://wa.me/919950788973?text=I'm%20interested%20in%20the%20${encodeURIComponent(product.name)}%20please%20provide%20details`,
+                        "_blank"
+                      )
+                    }
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Buy Now
+                  </Button>
+                </div>
+              </div>
+            </div>
+          );
 
-                {/* Product Info */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
-                    {product.name}
-                  </h3>
-                  
-                  {/* Features */}
-                  <div className="space-y-1 mb-4">
-                    {product.features.map((feature, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 + idx * 0.1 }}
-                        className="text-sm text-gray-600 flex items-center gap-2"
-                      >
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-                        {feature}
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  {/* Price & CTA */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-green-600">
-                      
-                    </span>
-                    <Button 
-                      className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white border-0"
-                      size="sm"
-                      onClick={() =>
-                        window.open(`https://wa.me/919950788973?text=I'm%20interested%20in%20the%20${encodeURIComponent(product.name)}%20please%20provide%20details`, '_blank')
-                      }
+          return (
+            <>
+              {/* Desktop / tablet grid - unchanged */}
+              <motion.div layout className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <AnimatePresence>
+                  {filteredProducts.map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1, transition: { delay: index * 0.1 } }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      whileHover={{ y: -10, transition: { type: "spring", stiffness: 300 } }}
                     >
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      Buy Now
-                    </Button>
-                  </div>
-                </div>
-
-                {/* 3D Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-indigo-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      {renderProduct(product, index)}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+
+              {/* Mobile-only immersive product carousel */}
+              <div className="md:hidden">
+                <MobileSwiper
+                  key={activeFilter}
+                  items={filteredProducts}
+                  variant="coverflow"
+                  autoplayDelay={3200}
+                  paginationColorVar="#6366f1"
+                  slideClassName="!h-auto"
+                  renderItem={(product, idx) => renderProduct(product, idx, true)}
+                />
+              </div>
+            </>
+          );
+        })()}
 
         {/* Contact Info */}
         <motion.div

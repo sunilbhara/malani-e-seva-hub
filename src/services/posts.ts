@@ -16,11 +16,13 @@ export interface PostAuthorProfile {
 
 export interface PostWithAuthor {
   id: string;
+  slug: string;
   title: string;
   content: string;
   image_url: string | null;
   author_id: string;
   created_at: string;
+  updated_at?: string;
   author: PostAuthorProfile | null;
   slug?: string | null;
 }

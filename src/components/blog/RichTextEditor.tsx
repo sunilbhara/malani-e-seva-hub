@@ -195,7 +195,7 @@ export function RichTextEditor({ value, onChange, placeholder, className, disabl
     const cur = editor.getHTML();
     const next = value || "";
     if (cur !== next) {
-      editor.commands.setContent(next, false);
+      editor.commands.setContent(next, { emitUpdate: false });
     }
   }, [value, editor]);
 
