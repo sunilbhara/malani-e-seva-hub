@@ -36,7 +36,7 @@ export function BlogCard({ post, index = 0, className }: BlogCardProps) {
       transition={{ duration: 0.4, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       className={cn("h-full", className)}
     >
-      <Link to={`/blog/${post.id}`} className="group block h-full outline-none">
+      <Link to={`/blog/${post.slug ?? post.id}`} className="group block h-full outline-none">
         <article
           className={cn(
             glassCardClass(
