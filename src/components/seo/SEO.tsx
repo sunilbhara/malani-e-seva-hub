@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { useI18n } from "@/i18n";
 
 const SITE_URL = "https://malanibarmer.com";
 const DEFAULT_IMAGE =
@@ -31,11 +32,13 @@ export function SEO({
   keywords,
   jsonLd,
 }: SEOProps) {
+  const { messages } = useI18n();
   const url = `${SITE_URL}${path}`;
   const schemas = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
 
   return (
     <Helmet>
+      <html lang={messages.locale} />
       <title>{title}</title>
       <meta name="description" content={description} />
       {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
@@ -48,7 +51,7 @@ export function SEO({
       <meta property="og:type" content={type} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={image} />
-      <meta property="og:locale" content="en_IN" />
+      <meta property="og:locale" content={messages.locale.replace("-", "_")} />
       {publishedAt && <meta property="article:published_time" content={publishedAt} />}
       {updatedAt && <meta property="article:modified_time" content={updatedAt} />}
       {author && type === "article" && <meta property="article:author" content={author} />}

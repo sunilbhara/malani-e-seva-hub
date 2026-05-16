@@ -1,12 +1,14 @@
 
 import { MapPin, Phone, Mail, Clock, User, Star, Instagram, Youtube, ShieldCheck, FileText, Info, LifeBuoy, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useI18n } from "@/i18n";
 
 type FooterProps = {
   minimal?: boolean;
 };
 
 const Footer = ({ minimal }: FooterProps) => {
+  const { messages } = useI18n();
   if (minimal) {
     return (
       <footer className="bg-slate-950 text-white">
@@ -15,7 +17,7 @@ const Footer = ({ minimal }: FooterProps) => {
             <div className="space-y-4">
               <h3 className="text-2xl font-bold text-white">Malani Barmer</h3>
               <p className="text-sm leading-relaxed text-gray-300 max-w-lg">
-                E-Mitra, mobile electronics, and professional photography services in Barmer.
+                {messages.footer.description}
               </p>
               <div className="space-y-2 text-sm text-gray-300">
                 <div className="flex items-start gap-2">
@@ -30,11 +32,16 @@ const Footer = ({ minimal }: FooterProps) => {
             </div>
             <div className="space-y-4">
               <div>
-                <h4 className="text-lg font-semibold text-white">Quick Links</h4>
+                <h4 className="text-lg font-semibold text-white">{messages.footer.quickLinksTitle}</h4>
                 <ul className="mt-3 grid gap-2 text-sm text-gray-300">
                   <li>
                     <Link to="/blog" className="hover:text-yellow-300 transition-colors">
-                      Blog
+                      {messages.footer.links.blog}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/services" className="hover:text-yellow-300 transition-colors">
+                      {messages.footer.links.services}
                     </Link>
                   </li>
                   {/* <li>

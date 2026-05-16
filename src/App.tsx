@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +20,9 @@ import GoogleAnalytics from "./utils/GoogleAnalytics";
 import { loadAdsenseScript } from "./utils/LoadAdsence";
 
 const queryClient = new QueryClient();
+const ServicesPage = lazy(() => import("./pages/ServicesPage"));
+const MobileElectronicsPage = lazy(() => import("./pages/MobileElectronicsPage"));
+const MatajiStudioPage = lazy(() => import("./pages/MatajiStudioPage"));
 
 const App = () => {
   useEffect(() => {
@@ -37,20 +40,25 @@ const App = () => {
           <AuthProvider>
             <GoogleAnalytics />
 
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<Terms />} />
+            <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 pt-28 text-center text-gray-600">Loading...</div>}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/services" element={<ServicesPage />} />
+                <Route path="/mobile-electronics" element={<MobileElectronicsPage />} />
+                <Route path="/mataji-studio" element={<MatajiStudioPage />} />
 
-              {/* Blog system */}
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:identifier" element={<BlogPost />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/admin" element={<Admin />} />
+                {/* Blog system */}
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:identifier" element={<BlogPost />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/admin" element={<Admin />} />
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

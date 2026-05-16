@@ -11,17 +11,17 @@ import BookingForm from './MatajiStudioForm';
 import MobileSwiper from "@/components/mobile/MobileSwiper";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useI18n } from "@/i18n";
 
 const MatajiStudio = () => {
+  const { messages } = useI18n();
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const photoCategories = [
-    { id: 'all', name: 'All Photos', icon: Camera },
-    { id: 'weddings', name: 'Weddings', icon: Heart },
-    { id: 'portraits', name: 'Portraits', icon: User },
-    { id: 'events', name: 'Events', icon: Star }
-  ];
+  const photoCategories = messages.homepage.matajiStudio.categories.map((category, index) => ({
+    ...category,
+    icon: [Camera, Heart, User, Star][index],
+  }));
 
   const photos = [
     {
@@ -129,11 +129,10 @@ const MatajiStudio = () => {
           className="text-center mb-16"
         >
           <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent">
-            Mataji Studio
+            {messages.homepage.matajiStudio.title}
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Capturing life's precious moments with artistic vision and professional expertise. 
-            Every photo tells a story, let us help you tell yours beautifully.
+            {messages.homepage.matajiStudio.description}
           </p>
 
           {/* Category Filter */}
@@ -298,15 +297,10 @@ const MatajiStudio = () => {
           className="mt-16 grid md:grid-cols-2 gap-8"
         >
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Why Choose Mataji Studio?</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">{messages.homepage.matajiStudio.whyTitle}</h3>
             <div className="space-y-3">
               {[
-                'Professional equipment and lighting',
-                'Experienced photographers',
-                'Quick turnaround time',
-                'Affordable packages',
-                'Custom editing services',
-                'Digital and print delivery'
+                ...messages.homepage.matajiStudio.whyItems
               ].map((feature, idx) => (
                 <div key={idx} className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full" />
@@ -317,7 +311,7 @@ const MatajiStudio = () => {
           </div>
           
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Contact Us</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">{messages.homepage.matajiStudio.contactTitle}</h3>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-purple-500" />

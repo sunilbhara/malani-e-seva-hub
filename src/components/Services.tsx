@@ -4,8 +4,10 @@ import { FileText, Camera, CreditCard, Users, Globe, Shield, CheckCircle } from 
 import { motion } from "framer-motion";
 import MobileSwiper from "@/components/mobile/MobileSwiper";
 import { useInView } from "react-intersection-observer";
+import { useI18n } from "@/i18n";
 
 const Services = () => {
+  const { messages } = useI18n();
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -33,50 +35,18 @@ const Services = () => {
       },
     },
   };
-  const services = [
-    {
-      icon: FileText,
-      title: "Form Filling Services",
-      description: "Complete assistance for exam forms, job applications, government forms, and online registrations",
-      features: ["Exam Registration", "Job Applications", "Government Forms", "Online Applications"],
-      color: "from-blue-500 to-purple-600"
-    },
-    {
-      icon: Camera,
-      title: "Passport Size Photos",
-      description: "Professional quality passport size photos for all official documents and applications",
-      features: ["Instant Printing", "Digital Format", "All Sizes Available", "Government Standard"],
-      color: "from-green-500 to-teal-600"
-    },
-    {
-      icon: CreditCard,
-      title: "Money Transfer",
-      description: "Secure and fast money transfer services with competitive rates and instant processing",
-      features: ["Bank Transfers", "Mobile Wallets", "Cash Pickup", "International Transfers"],
-      color: "from-orange-500 to-red-600"
-    },
-    {
-      icon: Users,
-      title: "Bill Payments",
-      description: "Pay all your utility bills, mobile recharge, and government fees in one place",
-      features: ["Electricity Bills", "Mobile Recharge", "Water Bills", "Government Fees"],
-      color: "from-purple-500 to-pink-600"
-    },
-    {
-      icon: Globe,
-      title: "Digital Services",
-      description: "Complete range of digital government services and online document processing",
-      features: ["Aadhaar Services", "PAN Card", "Voter ID", "Digital Certificates"],
-      color: "from-cyan-500 to-blue-600"
-    },
-    {
-      icon: Shield,
-      title: "Insurance Services",
-      description: "Comprehensive insurance solutions for life, health, vehicle, and property protection",
-      features: ["Life Insurance", "Health Insurance", "Vehicle Insurance", "Property Insurance"],
-      color: "from-indigo-500 to-purple-600"
-    }
-  ];
+  const services = messages.homepage.services.items.map((service, index) => ({
+    ...service,
+    icon: [FileText, Camera, CreditCard, Users, Globe, Shield][index],
+    color: [
+      "from-blue-500 to-purple-600",
+      "from-green-500 to-teal-600",
+      "from-orange-500 to-red-600",
+      "from-purple-500 to-pink-600",
+      "from-cyan-500 to-blue-600",
+      "from-indigo-500 to-purple-600",
+    ][index],
+  }));
 
   return (
     <section className="py-16 lg:py-20 custom-light-gradient-bg relative overflow-hidden">
@@ -139,8 +109,7 @@ const Services = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-lg lg:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
           >
-            We provide comprehensive e-governance and digital services to make your life easier. 
-            From form filling to money transfers, we've got you covered with professional expertise.
+            {messages.homepage.services.description}
           </motion.p>
         </motion.div>
 

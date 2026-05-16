@@ -28,6 +28,9 @@ const staticEntries: Entry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/about", changefreq: "monthly", priority: "0.7" },
   { path: "/blog", changefreq: "daily", priority: "0.9" },
+  { path: "/services", changefreq: "weekly", priority: "0.9" },
+  { path: "/mobile-electronics", changefreq: "weekly", priority: "0.9" },
+  { path: "/mataji-studio", changefreq: "weekly", priority: "0.9" },
   { path: "/privacy-policy", changefreq: "yearly", priority: "0.3" },
   { path: "/terms", changefreq: "yearly", priority: "0.3" },
 ];

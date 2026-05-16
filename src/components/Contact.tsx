@@ -7,8 +7,10 @@ import { MapPin, Phone, Clock, Mail, User, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import ContactForm from "./ContactUsForm";
+import { useI18n } from "@/i18n";
 
 const Contact = () => {
+  const { messages } = useI18n();
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -88,7 +90,7 @@ const Contact = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-6 lg:mb-8"
           >
-            Contact Tarun Bharti
+            {messages.homepage.contact.title}
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -96,8 +98,7 @@ const Contact = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            Visit our center or contact us for any assistance with e-Mitra services. 
-            We're here to help you with all your government and digital service needs.
+            {messages.homepage.contact.description}
           </motion.p>
         </motion.div>
 
@@ -128,7 +129,7 @@ const Contact = () => {
                       >
                         <MapPin className="h-6 w-6 lg:h-8 lg:w-8 text-white" />
                       </motion.div>
-                      <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">Our Address</h3>
+                      <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">{messages.homepage.contact.cards.address}</h3>
                       <p className="text-gray-600 leading-relaxed text-sm lg:text-base">Near IDBI Bank Opp. Railway Station<br />High School Road<br />Barmer 344001</p>
                     </div>
                   </CardContent>
@@ -153,7 +154,7 @@ const Contact = () => {
                       >
                         <Phone className="h-6 w-6 lg:h-8 lg:w-8 text-white" />
                       </motion.div>
-                      <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">Phone Number</h3>
+                      <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">{messages.homepage.contact.cards.phone}</h3>
                       <p className="text-gray-600 text-base lg:text-lg font-semibold">+91 9950788973</p>
                     </div>
                   </CardContent>
@@ -178,7 +179,7 @@ const Contact = () => {
                       >
                         <Clock className="h-6 w-6 lg:h-8 lg:w-8 text-white" />
                       </motion.div>
-                      <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">Working Hours</h3>
+                      <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">{messages.homepage.contact.cards.hours}</h3>
                       <p className="text-gray-600 text-sm lg:text-base">Mon-Sat: 9AM-7PM<br />Sunday: 10AM-8PM</p>
                     </div>
                   </CardContent>
@@ -203,7 +204,7 @@ const Contact = () => {
                       >
                         <User className="h-6 w-6 lg:h-8 lg:w-8 text-white" />
                       </motion.div>
-                      <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">Proprietor</h3>
+                      <h3 className="font-bold text-gray-900 mb-3 text-base lg:text-lg">{messages.homepage.contact.cards.proprietor}</h3>
                       <p className="text-gray-600 text-base lg:text-lg font-semibold">Tarun Bharti</p>
                     </div>
                   </CardContent>

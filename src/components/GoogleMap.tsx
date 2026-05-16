@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { MapPin, Phone, Clock, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useI18n } from '@/i18n';
 
 interface GoogleMapProps {
   latitude: number;
@@ -13,6 +14,7 @@ interface GoogleMapProps {
 }
 
 const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: GoogleMapProps) => {
+  const { messages } = useI18n();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
@@ -213,10 +215,10 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Find Our Location
+            {messages.homepage.map.title}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Visit our authorized E-Mitra center for all your government services
+            {messages.homepage.map.description}
           </p>
         </div>
 
@@ -301,7 +303,7 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
                   <div className="flex items-center gap-3">
                     <Phone className="h-5 w-5 text-green-600" />
                     <div>
-                      <p className="text-sm text-gray-500">Phone</p>
+                      <p className="text-sm text-gray-500">{messages.homepage.map.phoneLabel}</p>
                       <p className="font-semibold text-gray-900">{phone}</p>
                     </div>
                   </div>
@@ -309,7 +311,7 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
                   <div className="flex items-center gap-3">
                     <Clock className="h-5 w-5 text-orange-600" />
                     <div>
-                      <p className="text-sm text-gray-500">Business Hours</p>
+                      <p className="text-sm text-gray-500">{messages.homepage.map.hoursLabel}</p>
                       <p className="font-semibold text-gray-900">{hours}</p>
                     </div>
                   </div>
@@ -321,7 +323,7 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
             <Card className="shadow-xl border-0 bg-gradient-to-r from-blue-600 to-indigo-600">
               <CardContent className="p-6">
                 <h4 className="text-white font-semibold mb-4 text-lg">
-                  Get Directions
+                  {messages.homepage.map.directionsTitle}
                 </h4>
                 <div className="space-y-3">
                   <Button 
@@ -330,7 +332,7 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
                     size="lg"
                   >
                     <Navigation className="h-5 w-5 mr-2" />
-                    Open in Google Maps
+                    {messages.homepage.map.googleMaps}
                   </Button>
                   <Button 
                     onClick={openInAppleMaps}
@@ -339,7 +341,7 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
                     size="lg"
                   >
                     <Navigation className="h-5 w-5 mr-2" />
-                    Open in Apple Maps
+                    {messages.homepage.map.appleMaps}
                   </Button>
                 </div>
               </CardContent>
@@ -349,10 +351,10 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
             <Card className="shadow-xl border-0 bg-gradient-to-r from-green-600 to-emerald-600">
               <CardContent className="p-6">
                 <h4 className="text-white font-semibold mb-4 text-lg">
-                  Need Help?
+                  {messages.homepage.map.helpTitle}
                 </h4>
                 <p className="text-green-100 mb-4">
-                  Call us directly for immediate assistance with your services
+                  {messages.homepage.map.helpDescription}
                 </p>
                 <Button 
                   className="w-full bg-white text-green-600 hover:bg-gray-100 font-semibold"
@@ -360,7 +362,7 @@ const GoogleMap = ({ latitude, longitude, shopName, address, phone, hours }: Goo
                   onClick={() => window.location.href = `tel:${phone}`}
                 >
                   <Phone className="h-5 w-5 mr-2" />
-                  Call Now
+                  {messages.homepage.map.callNow}
                 </Button>
               </CardContent>
             </Card>

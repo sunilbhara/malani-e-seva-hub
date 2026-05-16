@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Send, Loader2 } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useI18n } from '@/i18n';
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -24,6 +25,7 @@ type FormData = {
 };
 
 const ContactForm: React.FC = () => {
+  const { messages } = useI18n();
   const {
     register,
     handleSubmit,
@@ -42,12 +44,12 @@ const ContactForm: React.FC = () => {
     emailjs
       .send(service_id, template_id, data, public_key)
       .then(() => {
-        toast.success(' Message sent successfully!');
+        toast.success(messages.forms.contact.success);
         reset();
       })
       .catch((error) => {
         console.error('❌ EmailJS error:', error);
-        toast.error('Something went wrong. Please try again.');
+        toast.error(messages.forms.contact.error);
       })
       .finally(() => {
         setLoading(false);
@@ -61,30 +63,30 @@ const ContactForm: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"></div>
           <CardHeader className="relative">
             <CardTitle className="text-2xl lg:text-3xl text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-bold">
-              Send us a Message
+              {messages.forms.contact.title}
             </CardTitle>
             <p className="text-center text-gray-600 mt-2 text-sm lg:text-base">
-              We'll get back to you within 24 hours
+              {messages.forms.contact.subtitle}
             </p>
           </CardHeader>
           <CardContent className="space-y-4 lg:space-y-6 relative">
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <Input
-                  placeholder="Your Name"
-                  {...register('name', { required: 'Name is required' })}
+                  placeholder={messages.forms.contact.placeholders.name}
+                  {...register('name', { required: messages.forms.contact.validation.name })}
                   className="h-12 lg:h-14 border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
                 />
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
               </div>
               <div>
                 <Input
-                  placeholder="Phone Number"
+                  placeholder={messages.forms.contact.placeholders.phone}
                   {...register('phone', {
-                    required: 'Phone number is required',
+                    required: messages.forms.contact.validation.phone,
                     pattern: {
                       value: /^[0-9]{10}$/,
-                      message: 'Enter a valid 10-digit number'
+                      message: messages.forms.contact.validation.phonePattern
                     }
                   })}
                   className="h-12 lg:h-14 border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
@@ -95,12 +97,12 @@ const ContactForm: React.FC = () => {
 
             <div>
               <Input
-                placeholder="Email Address"
+                placeholder={messages.forms.contact.placeholders.email}
                 {...register('email', {
-                  required: 'Email is required',
+                  required: messages.forms.contact.validation.email,
                   pattern: {
                     value: /^\S+@\S+$/i,
-                    message: 'Enter a valid email'
+                    message: messages.forms.contact.validation.emailPattern
                   }
                 })}
                 className="h-12 lg:h-14 border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
@@ -110,8 +112,8 @@ const ContactForm: React.FC = () => {
 
             <div>
               <Input
-                placeholder="Service Required"
-                {...register('service', { required: 'Service is required' })}
+                placeholder={messages.forms.contact.placeholders.service}
+                {...register('service', { required: messages.forms.contact.validation.service })}
                 className="h-12 lg:h-14 border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
               />
               {errors.service && <p className="text-red-500 text-sm mt-1">{errors.service.message}</p>}
@@ -119,9 +121,9 @@ const ContactForm: React.FC = () => {
 
             <div>
               <Textarea
-                placeholder="Your Message"
+                placeholder={messages.forms.contact.placeholders.message}
                 rows={4}
-                {...register('message', { required: 'Message is required' })}
+                {...register('message', { required: messages.forms.contact.validation.message })}
                 className="border-2 border-gray-200 focus:border-blue-500 transition-colors bg-white/80 backdrop-blur-sm"
               />
               {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>}
@@ -138,7 +140,7 @@ const ContactForm: React.FC = () => {
                 ) : (
                   <Send className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
                 )}
-                {loading ? 'Sending...' : 'Send Message'}
+                {loading ? messages.forms.contact.submitting : messages.forms.contact.submit}
               </Button>
             </motion.div>
           </CardContent>

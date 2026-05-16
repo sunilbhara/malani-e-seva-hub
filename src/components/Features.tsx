@@ -3,8 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, Shield, Users, Award, Star, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { useI18n } from "@/i18n";
 
 const Features = () => {
+  const { messages } = useI18n();
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -32,35 +34,15 @@ const Features = () => {
       },
     },
   };
-  const features = [
-    {
-      icon: Clock,
-      title: "Lightning Fast Service",
-      description: "Quick processing and instant results for most services with minimal waiting time"
-    },
-    {
-      icon: Shield,
-      title: "100% Secure & Reliable",
-      description: "Your data is completely safe with our advanced security systems and encryption"
-    },
-    {
-      icon: Users,
-      title: "Expert Professional Support",
-      description: "Experienced and certified staff to help you with all your requirements"
-    },
-    {
-      icon: Award,
-      title: "Government Certified Center",
-      description: "Officially authorized e-Mitra service center with proper licensing"
-    }
-  ];
+  const features = messages.homepage.features.items.map((feature, index) => ({
+    ...feature,
+    icon: [Clock, Shield, Users, Award][index],
+  }));
 
-  const stats = [
-    { number: "50000+", label: "Happy Customers", icon: Users },
-    { number: "99.9%", label: "Success Rate", icon: CheckCircle },
-    { number: "24/7", label: "Support Available", icon: Clock },
-    { number: "50+", label: "Services Offered", icon: Star }
-  ];
+  const stats = messages.homepage.features.stats.map((stat, index) => ({
+    ...stat,
+    icon: [Users, CheckCircle, Clock, Star][index],
+  }));
 
   return (
     <section className="py-16 lg:py-20 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 relative overflow-hidden">
@@ -116,14 +98,13 @@ const Features = () => {
                 variants={itemVariants}
                 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent leading-tight"
               >
-                Most Trusted E-Mitra in Barmer
+                {messages.homepage.features.title}
               </motion.h2>
               <motion.p 
                 variants={itemVariants}
                 className="text-lg lg:text-xl text-gray-600 leading-relaxed"
               >
-                With years of experience and thousands of satisfied customers, 
-                we are your most reliable partner for all government and digital services in Barmer.
+                {messages.homepage.features.description}
               </motion.p>
             </motion.div>
 
@@ -198,7 +179,7 @@ const Features = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-500 rounded-3xl blur-2xl opacity-40 animate-pulse group-hover:opacity-60 transition-opacity duration-500"></div>
               <img 
                 src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80"
-                alt="Professional Services"
+                alt={messages.homepage.features.imageAlt}
                 className="relative rounded-3xl shadow-2xl w-full border-2 border-white/30"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 via-transparent to-transparent rounded-3xl"></div>

@@ -4,8 +4,10 @@ import { Smartphone, Headphones, Laptop, Camera, Filter, Star, ShoppingCart } fr
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import MobileSwiper from "@/components/mobile/MobileSwiper";
+import { useI18n } from "@/i18n";
 
 const MobileElectronics = () => {
+  const { messages } = useI18n();
   const [activeFilter, setActiveFilter] = useState('all');
 
   const products = [
@@ -65,12 +67,10 @@ const MobileElectronics = () => {
     }
   ];
 
-  const categories = [
-    { id: 'all', name: 'All Products', icon: Filter },
-    { id: 'mobiles', name: 'Mobiles', icon: Smartphone },
-    { id: 'accessories', name: 'Accessories', icon: Headphones },
-    { id: 'appliances', name: 'Appliances', icon: Laptop }
-  ];
+  const categories = messages.homepage.mobileElectronics.categories.map((category, index) => ({
+    ...category,
+    icon: [Filter, Smartphone, Headphones, Laptop][index],
+  }));
 
   const filteredProducts = activeFilter === 'all' 
     ? products 
@@ -87,10 +87,10 @@ const MobileElectronics = () => {
           className="text-center mb-16"
         >
           <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-            Malani Mobile & Electronics
+            {messages.homepage.mobileElectronics.title}
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Discover the latest in mobile technology and electronics. Premium quality, competitive prices, and expert service.
+            {messages.homepage.mobileElectronics.description}
           </p>
           
           {/* Category Filter */}
@@ -168,7 +168,7 @@ const MobileElectronics = () => {
                     }
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
-                    Buy Now
+                    {messages.homepage.mobileElectronics.buyNow}
                   </Button>
                 </div>
               </div>
@@ -219,23 +219,23 @@ const MobileElectronics = () => {
           className="mt-16 text-center bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50"
         >
           <h3 className="text-2xl font-bold text-gray-800 mb-4">
-            Visit Our Store Today!
+            {messages.homepage.mobileElectronics.contactTitle}
           </h3>
           <p className="text-gray-600 mb-6">
-            Expert advice, competitive prices, and genuine products guaranteed.
+            {messages.homepage.mobileElectronics.contactDescription}
           </p>
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-700">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full" />
-              <span>Authorized Dealer</span>
+              <span>{messages.homepage.mobileElectronics.contactHighlights[0]}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full" />
-              <span>1 Year Warranty</span>
+              <span>{messages.homepage.mobileElectronics.contactHighlights[1]}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full" />
-              <span>Easy EMI Available</span>
+              <span>{messages.homepage.mobileElectronics.contactHighlights[2]}</span>
             </div>
           </div>
         </motion.div>

@@ -13,8 +13,11 @@ import {
   Clock
 } from "lucide-react";
 import MobileSwiper from "@/components/mobile/MobileSwiper";
+import { Link } from "react-router-dom";
+import { useI18n } from "@/i18n";
 
 const MainServices = () => {
+  const { messages } = useI18n();
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -44,51 +47,17 @@ const MainServices = () => {
     },
   };
 
-  const services = [
-    {
-      id: "emitra",
-      title: "E-Mitra Services",
-      description: "Government authorized digital services for all your official needs. Fast, reliable, and secure processing.",
-      icon: FileText,
-      image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500&h=300&fit=crop",
-      features: ["Government Forms", "Certificate Applications", "Bill Payments", "Digital Services"],
-      stats: "50,000+ Documents Processed",
-      gradient: "from-blue-500 to-cyan-500",
-      bgGradient: "from-blue-50 to-cyan-50",
-      href: "#services"
-    },
-    {
-      id: "mobile",
-      title: "Mobile & Electronics", 
-      description: "Latest smartphones, gadgets, and electronics with warranty. Authorized dealer with competitive prices.",
-      icon: Smartphone,
-      image: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=500&h=300&fit=crop",
-      features: ["Latest Mobiles", "Electronics", "Accessories", "Warranties"],
-      stats: "1000+ Happy Customers",
-      gradient: "from-purple-500 to-pink-500", 
-      bgGradient: "from-purple-50 to-pink-50",
-      href: "#mobile-electronics"
-    },
-    {
-      id: "studio",
-      title: "Mataji Studio",
-      description: "Professional photography services for weddings, events, and portraits. Capturing your precious moments.",
-      icon: Camera,
-      image: "https://images.unsplash.com/photo-1650688331261-fd5e6de2e23a?w=500&h=300&fit=crop",
-      features: ["Wedding Photography", "Event Coverage", "Portrait Sessions", "Digital Albums"],
-      stats: "500+ Events Covered",
-      gradient: "from-orange-500 to-red-500",
-      bgGradient: "from-orange-50 to-red-50", 
-      href: "#mataji-studio"
-    }
-  ];
-
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const services = messages.homepage.mainServices.services.map((service, index) => ({
+    ...service,
+    icon: [FileText, Smartphone, Camera][index],
+    image: [
+      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=500&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1650688331261-fd5e6de2e23a?w=500&h=300&fit=crop",
+    ][index],
+    gradient: ["from-blue-500 to-cyan-500", "from-purple-500 to-pink-500", "from-orange-500 to-red-500"][index],
+    bgGradient: ["from-blue-50 to-cyan-50", "from-purple-50 to-pink-50", "from-orange-50 to-red-50"][index],
+  }));
 
   return (
     <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
@@ -111,27 +80,26 @@ const MainServices = () => {
               variants={itemVariants}
               className="inline-block px-6 py-3 rounded-full custom-gradient-pill"
             >
-              <span className="text-white font-semibold text-lg flex items-center gap-2">
-                <Star className="h-5 w-5 text-yellow-400" />
-                Our Core Services
-              </span>
-            </motion.div>
+                <span className="text-white font-semibold text-lg flex items-center gap-2">
+                  <Star className="h-5 w-5 text-yellow-400" />
+                  {messages.homepage.mainServices.badge}
+                </span>
+              </motion.div>
 
             
             <motion.h2 
               variants={itemVariants}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold custom-gradient-text"
             >
-              Everything You Need
-              <span className="block text-3xl sm:text-4xl lg:text-5xl mt-2">Under One Roof</span>
+              {messages.homepage.mainServices.title}
+              <span className="block text-3xl sm:text-4xl lg:text-5xl mt-2">{messages.homepage.mainServices.subtitle}</span>
             </motion.h2>
             
             <motion.p 
               variants={itemVariants}
               className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
             >
-              From government services to modern electronics and professional photography - 
-              we're your complete solution in Barmer
+              {messages.homepage.mainServices.description}
             </motion.p>
           </motion.div>
         </motion.div>
@@ -172,13 +140,14 @@ const MainServices = () => {
                     <Users className="h-4 w-4" />
                     {service.stats}
                   </div>
-                  <Button
-                    onClick={() => scrollToSection(service.href)}
+                  <Button asChild
                     className={`w-full bg-gradient-to-r ${service.gradient} hover:opacity-90 text-white font-semibold shadow-lg`}
                     size="lg"
                   >
-                    Explore {service.title}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <Link to={service.route}>
+                      {messages.homepage.mainServices.cta}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
                   </Button>
                 </div>
               </Card>
@@ -246,22 +215,22 @@ const MainServices = () => {
                 <Star className="h-6 w-6 fill-current" />
               </div>
               <h3 className="text-3xl font-bold text-gray-900">
-                Trusted by 50,000+ Customers in Barmer
+                {messages.homepage.mainServices.trustTitle}
               </h3>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-gray-600">
                 <div className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-blue-500" />
-                  <span>Quick Service</span>
+                  <span>{messages.homepage.mainServices.trustItems[0]}</span>
                 </div>
                 <div className="hidden sm:block w-1 h-1 bg-gray-400 rounded-full"></div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-green-500" />
-                  <span>Government Authorized</span>
+                  <span>{messages.homepage.mainServices.trustItems[1]}</span>
                 </div>
                 <div className="hidden sm:block w-1 h-1 bg-gray-400 rounded-full"></div>
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5 text-purple-500" />
-                  <span>24/7 Support</span>
+                  <span>{messages.homepage.mainServices.trustItems[2]}</span>
                 </div>
               </div>
             </div>

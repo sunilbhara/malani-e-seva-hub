@@ -13,6 +13,7 @@ import ReactGA from "react-ga4";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
+import { useI18n } from "@/i18n";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -35,6 +36,8 @@ const carouselImages = [
 
 
 const Hero = () => {
+  const { messages } = useI18n();
+
   return (
     <section className="relative h-screen w-full overflow-hidden text-white">
 
@@ -53,7 +56,7 @@ const Hero = () => {
             <img
               src={img.src}
               className="w-full h-full object-cover animate-kenburns"
-              alt="hero"
+              alt={messages.hero.imageAlt}
             />
           </SwiperSlide>
         ))}
@@ -98,7 +101,7 @@ const Hero = () => {
 
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/20 backdrop-blur-md rounded-full border border-yellow-400/30">
             <Star className="h-4 w-4 text-yellow-300" />
-            Authorized E-Mitra Center
+            {messages.hero.badge}
           </div>
 
           {/* TITLE */}
@@ -142,7 +145,7 @@ const Hero = () => {
                   ?.scrollIntoView({ behavior: "smooth" });
               }}
             >
-              Get Started
+              {messages.hero.primaryCta}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
 
@@ -155,7 +158,7 @@ const Hero = () => {
                   ?.scrollIntoView({ behavior: "smooth" })
               }
             >
-              Explore Services
+              {messages.hero.secondaryCta}
             </Button>
 
           </div>
@@ -177,12 +180,12 @@ const Hero = () => {
               className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg backdrop-blur-md border border-white/20 hover:bg-white/20 transition"
             >
               <MessageCircle size={16} />
-              WhatsApp
+              {messages.hero.whatsapp}
             </a>
 
             <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg backdrop-blur-md border border-white/20">
               <MapPin size={16} />
-              Barmer
+              {messages.hero.location}
             </div>
 
           </div>
@@ -193,12 +196,12 @@ const Hero = () => {
 
             <span className="flex items-center gap-1">
               <CheckCircle className="text-green-400" size={16} />
-              Govt Authorized
+              {messages.hero.trustItems[0]}
             </span>
 
             <span className="flex items-center gap-1">
               <CheckCircle className="text-green-400" size={16} />
-              24/7 Support
+              {messages.hero.trustItems[1]}
             </span>
 
           </div>

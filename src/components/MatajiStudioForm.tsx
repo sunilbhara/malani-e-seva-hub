@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Calendar, Send, Loader2 } from "lucide-react";
+import { useI18n } from "@/i18n";
 
 // ✅ Define the form data type
 type BookingFormData = {
@@ -27,6 +28,7 @@ type BookingFormData = {
 };
 
 export default function BookingForm() {
+  const { messages } = useI18n();
   const {
     register,
     handleSubmit,
@@ -45,12 +47,12 @@ export default function BookingForm() {
     emailjs
       .send(service_id, template_id, data, public_key)
       .then(() => {
-        toast.success("Booking request sent successfully!");
+        toast.success(messages.forms.booking.success);
         reset();
       })
       .catch((error) => {
         console.error("❌ EmailJS error:", error);
-        toast.error("Failed to send booking request. Please try again after some time.");
+        toast.error(messages.forms.booking.error);
         reset();
       })
       .finally(() => {
@@ -67,24 +69,24 @@ export default function BookingForm() {
           onClick={() => ReactGA.event({ category: 'engagement', action: 'book_photo_session_click', label: 'book_photo_session' })}
         >
           <Calendar className="w-5 h-5 mr-2" />
-          Book a Photo Session
+          {messages.forms.booking.trigger}
         </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Book Your Session
+            {messages.forms.booking.title}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name">{messages.forms.booking.labels.name}</Label>
             <Input
               id="name"
-              placeholder="Enter your full name"
-              {...register("name", { required: "Name is required" })}
+              placeholder={messages.forms.booking.placeholders.name}
+              {...register("name", { required: messages.forms.booking.validation.name })}
             />
             {errors.name && (
               <p className="text-red-500 text-sm">{errors.name.message}</p>
@@ -92,11 +94,11 @@ export default function BookingForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="phone">{messages.forms.booking.labels.phone}</Label>
             <Input
               id="phone"
-              placeholder="10-digit phone number"
-              {...register("phone", { required: "Phone number is required", pattern: { value: /^[0-9]{10}$/, message: "Enter a valid 10-digit number" } })}
+              placeholder={messages.forms.booking.placeholders.phone}
+              {...register("phone", { required: messages.forms.booking.validation.phone, pattern: { value: /^[0-9]{10}$/, message: messages.forms.booking.validation.phonePattern } })}
             />
             {errors.phone && (
               <p className="text-red-500 text-sm">{errors.phone.message}</p>
@@ -104,16 +106,16 @@ export default function BookingForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email">{messages.forms.booking.labels.email}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="your@email.com"
+              placeholder={messages.forms.booking.placeholders.email}
               {...register("email", {
-                required: "Email is required",
+                required: messages.forms.booking.validation.email,
                 pattern: {
                   value: /^\S+@\S+$/i,
-                  message: "Invalid email address",
+                  message: messages.forms.booking.validation.emailPattern,
                 },
               })}
             />
@@ -123,19 +125,18 @@ export default function BookingForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="session-type">Session Type</Label>
+            <Label htmlFor="session-type">{messages.forms.booking.labels.sessionType}</Label>
             <select
               id="session-type"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               {...register("sessionType", {
-                required: "Session type is required",
+                required: messages.forms.booking.validation.sessionType,
               })}
             >
-              <option value="">Select a session</option>
-              <option>Wedding Photography</option>
-              <option>Portrait Session</option>
-              <option>Event Coverage</option>
-              <option>Family Photos</option>
+              <option value="">{messages.forms.booking.placeholders.sessionType}</option>
+              {messages.forms.booking.options.map((option) => (
+                <option key={option}>{option}</option>
+              ))}
             </select>
             {errors.sessionType && (
               <p className="text-red-500 text-sm">
@@ -145,11 +146,11 @@ export default function BookingForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="date">Preferred Date</Label>
+            <Label htmlFor="date">{messages.forms.booking.labels.date}</Label>
             <Input
               id="date"
               type="date"
-              {...register("date", { required: "Date is required" })}
+              {...register("date", { required: messages.forms.booking.validation.date })}
             />
             {errors.date && (
               <p className="text-red-500 text-sm">{errors.date.message}</p>
@@ -157,10 +158,10 @@ export default function BookingForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">Additional Details</Label>
+            <Label htmlFor="message">{messages.forms.booking.labels.message}</Label>
             <Textarea
               id="message"
-              placeholder="Tell us about your photography needs..."
+              placeholder={messages.forms.booking.placeholders.message}
               {...register("message")}
             />
           </div>
@@ -173,12 +174,12 @@ export default function BookingForm() {
             {loading ? (
               <>
                 <Loader2 className="animate-spin w-4 h-4" />
-                Sending...
+                {messages.forms.booking.submitting}
               </>
             ) : (
               <>
                 <Send className="w-4 h-4" />
-                Send Booking Request
+                {messages.forms.booking.submit}
               </>
             )}
           </Button>

@@ -4,11 +4,14 @@ import { Menu, X, Phone, MapPin, BookOpen, LogIn, LogOut, LayoutDashboard } from
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { logout } from "@/services/auth";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useI18n } from "@/i18n";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, role } = useAuth();
+  const { messages } = useI18n();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,27 +33,16 @@ const Navigation = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isBlogSurface]);
 
-  const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "E-Mitra Services", href: "#services" },
-    { name: "Mobile & Electronics", href: "#mobile-electronics" },
-    { name: "Mataji Studio", href: "#mataji-studio" },
-    { name: "Location", href: "#location" },
-    { name: "Contact", href: "#contact" },
-  ];
+  const navItems = messages.navigation.items;
 
-  const scrollToSection = (href: string) => {
-    const sectionId = href.replace("#", "");
+  const handleNavItem = (item: (typeof navItems)[number]) => {
+    const sectionId = item.section;
 
-    if (location.pathname !== "/") {
-      navigate("/");
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) element.scrollIntoView({ behavior: "smooth" });
-      }, 300);
-    } else {
+    if (location.pathname === "/" && sectionId) {
       const element = document.getElementById(sectionId);
       if (element) element.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate(item.route);
     }
 
     setIsOpen(false);
@@ -83,22 +75,22 @@ const Navigation = () => {
               <h1 className="text-lg font-bold bg-gradient-to-r from-[#ef4444] via-[#b45309] to-[#f59e0b] bg-clip-text text-transparent">
                 Malani Barmer
               </h1>
-              <p className={`text-xs ${headerSolid ? "text-gray-600" : "text-white/90"}`}>Complete Solutions Hub</p>
+              <p className={`text-xs ${headerSolid ? "text-gray-600" : "text-white/90"}`}>{messages.navigation.brandTagline}</p>
             </div>
           </motion.div>
 
           <div className="hidden items-center space-x-6 lg:flex">
             {navItems.map((item, index) => (
               <motion.button
-                key={item.name}
-                onClick={() => scrollToSection(item.href)}
+                key={item.label}
+                onClick={() => handleNavItem(item)}
                 className={linkClass}
                 whileHover={{ y: -2 }}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.08 }}
               >
-                {item.name}
+                {item.label}
                 <span
                   className={`absolute bottom-0 left-0 h-0.5 w-0 ${
                     headerSolid ? "bg-yellow-600" : "bg-yellow-400"
@@ -112,13 +104,14 @@ const Navigation = () => {
               onMouseDown={() => setIsOpen(false)}
             >
               <BookOpen className="h-4 w-4" />
-              Blog
+              {messages.navigation.blog}
               <span
                 className={`absolute bottom-0 left-0 h-0.5 w-0 ${
                   headerSolid ? "bg-yellow-600" : "bg-yellow-400"
                 } transition-all duration-300 group-hover:w-full`}
               />
             </Link>
+            <LanguageSwitcher />
           </div>
 
           <div className="hidden items-center space-x-3 lg:flex">
@@ -132,7 +125,7 @@ const Navigation = () => {
                 }`}
               >
                 <LayoutDashboard className="h-4 w-4" />
-                Admin
+                {messages.navigation.admin}
               </Link>
             )}
             {user ? (
@@ -146,7 +139,7 @@ const Navigation = () => {
                 }`}
               >
                 <LogOut className="h-4 w-4" />
-                Logout
+                {messages.navigation.logout}
               </button>
             ) : (
               <Link
@@ -158,7 +151,7 @@ const Navigation = () => {
                 }`}
               >
                 <LogIn className="h-4 w-4" />
-                Login
+                {messages.navigation.login}
               </Link>
             )}
 
@@ -216,14 +209,14 @@ const Navigation = () => {
             <div className="container mx-auto space-y-2 px-4 py-6">
               {navItems.map((item, index) => (
                 <motion.button
-                  key={item.name}
-                  onClick={() => scrollToSection(item.href)}
+                  key={item.label}
+                  onClick={() => handleNavItem(item)}
                   className="block w-full rounded-lg px-4 py-3 text-left font-semibold text-gray-800 hover:bg-amber-50 hover:text-amber-800"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.06 }}
                 >
-                  {item.name}
+                  {item.label}
                 </motion.button>
               ))}
               <Link
@@ -232,20 +225,23 @@ const Navigation = () => {
                 onClick={() => setIsOpen(false)}
               >
                 <BookOpen className="h-4 w-4" />
-                Blog
+                {messages.navigation.blog}
               </Link>
+              <div className="px-4 py-2">
+                <LanguageSwitcher />
+              </div>
               {role === "admin" && (
                 <Link to="/admin" className="block rounded-lg px-4 py-3 font-semibold text-gray-800 hover:bg-amber-50" onClick={() => setIsOpen(false)}>
-                  Admin
+                  {messages.navigation.admin}
                 </Link>
               )}
               {user ? (
                 <button type="button" className="block w-full rounded-lg px-4 py-3 text-left font-semibold text-gray-800 hover:bg-gray-50" onClick={() => logout()}>
-                  Logout
+                  {messages.navigation.logout}
                 </button>
               ) : (
                 <Link to="/login" className="block rounded-lg px-4 py-3 font-semibold text-amber-800 hover:bg-amber-50" onClick={() => setIsOpen(false)}>
-                  Login
+                  {messages.navigation.login}
                 </Link>
               )}
 
@@ -256,7 +252,7 @@ const Navigation = () => {
                 </div>
                 <div className="flex items-center space-x-3 text-sm font-medium text-gray-700">
                   <MapPin className="h-4 w-4 text-amber-600" />
-                  <span>Near IDBI Bank, Barmer</span>
+                  <span>{messages.navigation.mobileAddress}</span>
                 </div>
               </div>
             </div>
