@@ -13,6 +13,7 @@ import { SiteBlogLayout } from "@/components/blog/SiteBlogLayout";
 import { HindiTypography } from "@/components/blog/HindiTypography";
 import { brandCtaClass, brandHeadingClass } from "@/lib/blogBrand";
 import { cn } from "@/lib/utils";
+import { SEO } from "@/components/seo/SEO";
 
 const Login = () => {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -67,6 +68,7 @@ const Login = () => {
 
   return (
     <SiteBlogLayout className="min-h-[calc(100vh-5rem)] pb-8">
+      <SEO title="Login — Malani Barmer" description="Sign in to Malani Barmer" path="/login" noindex />
       <div className="relative mx-auto grid min-h-[70vh] max-w-6xl items-center gap-10 px-4 py-10 lg:grid-cols-2 lg:px-8">
         <motion.div
           initial={{ opacity: 0, x: -24 }}

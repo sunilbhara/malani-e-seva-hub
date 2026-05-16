@@ -12,10 +12,17 @@ import FloatingActionButton from "@/components/FloatingActionButton";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Adsense from "@/components/Adsense";
 import { FeaturedBlogSection } from "@/components/blog/FeaturedBlogSection";
+import { SEO } from "@/components/seo/SEO";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <SEO
+        title="Malani Barmer — E-Mitra, Mobile Electronics & Mataji Studio"
+        description="Authorized E-Mitra center in Barmer, Rajasthan offering government services, mobile electronics, and professional Mataji photography studio under one roof."
+        path="/"
+        keywords={["E-Mitra Barmer", "mobile electronics Barmer", "Mataji studio", "photography Barmer", "government services Rajasthan"]}
+      />
       <Navigation />
       <main>
         <section id="home">

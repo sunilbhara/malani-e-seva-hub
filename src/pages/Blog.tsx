@@ -14,6 +14,7 @@ import { hi } from "@/lib/blogHindi";
 import { brandCtaClass } from "@/lib/blogBrand";
 import { HindiTypography } from "@/components/blog/HindiTypography";
 import { cn } from "@/lib/utils";
+import { SEO } from "@/components/seo/SEO";
 
 const CATEGORIES: { id: string; label: string; match: (p: PostWithStats) => boolean }[] = [
   { id: "all", label: hi.filterAll, match: () => true },
@@ -85,6 +86,12 @@ const Blog = () => {
 
   return (
     <BlogShell>
+      <SEO
+        title="Blog — Malani Barmer | E-Mitra, Mobile & Photography Updates"
+        description="Latest updates, guides and news from Malani Barmer on E-Mitra government services, mobile electronics, and Mataji photography studio in Barmer, Rajasthan."
+        path="/blog"
+        keywords={["Malani Barmer blog", "E-Mitra Barmer", "government jobs Rajasthan", "mobile electronics Barmer"]}
+      />
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">{hi.blogEyebrow}</p>

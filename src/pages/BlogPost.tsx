@@ -6,16 +6,17 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { getPostById, getPosts } from "@/services/posts";
+import { getPostBySlug, getPosts } from "@/services/posts";
 import { getComments, addComment } from "@/services/comments";
 import { getLikesCount, hasUserLiked, likePost, unlikePost } from "@/services/likes";
 import { useAuth } from "@/hooks/useAuth";
-import { readTimeMinutes } from "@/lib/blogUtils";
+import { readTimeMinutes, postExcerpt, stripHtml } from "@/lib/blogUtils";
 import { hi } from "@/lib/blogHindi";
 import { brandCtaClass } from "@/lib/blogBrand";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { BlogShell } from "@/components/blog/BlogShell";
+import { SEO } from "@/components/seo/SEO";
 import { AuthorCard } from "@/components/blog/AuthorCard";
 import { CommentCard, type CommentWithUser } from "@/components/blog/CommentCard";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
@@ -26,9 +27,9 @@ import type { PostWithAuthor } from "@/services/posts";
 import { cn } from "@/lib/utils";
 
 const BlogPost = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
-  const [post, setPost] = useState<Awaited<ReturnType<typeof getPostById>>>(null);
+  const [post, setPost] = useState<Awaited<ReturnType<typeof getPostBySlug>>>(null);
   const [related, setRelated] = useState<PostWithAuthor[]>([]);
   const [comments, setComments] = useState<CommentWithUser[]>([]);
   const [likes, setLikes] = useState(0);
@@ -37,27 +38,42 @@ const BlogPost = () => {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [likeBusy, setLikeBusy] = useState(false);
+  const id = post?.id;
 
   useEffect(() => {
-    if (!id) return;
+    if (!slug) return;
     setLoading(true);
-    Promise.all([
-      getPostById(id),
-      getComments(id),
-      getLikesCount(id),
-      user ? hasUserLiked(id, user.id) : Promise.resolve(false),
-      getPosts(),
-    ])
-      .then(([p, c, l, hl, allPosts]) => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const p = await getPostBySlug(slug);
+        if (cancelled) return;
         setPost(p);
+        if (!p) {
+          setLoading(false);
+          return;
+        }
+        const [c, l, hl, allPosts] = await Promise.all([
+          getComments(p.id),
+          getLikesCount(p.id),
+          user ? hasUserLiked(p.id, user.id) : Promise.resolve(false),
+          getPosts(),
+        ]);
+        if (cancelled) return;
         setComments(c as CommentWithUser[]);
         setLikes(l);
         setLiked(hl);
-        setRelated(allPosts.filter((x) => x.id !== id).slice(0, 3));
-      })
-      .catch(() => toast.error(hi.toastLoadFail))
-      .finally(() => setLoading(false));
-  }, [id, user]);
+        setRelated(allPosts.filter((x) => x.id !== p.id).slice(0, 3));
+      } catch {
+        toast.error(hi.toastLoadFail);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, user]);
 
   async function toggleLike() {
     if (!user || !id) {
@@ -197,8 +213,47 @@ const BlogPost = () => {
     </div>
   );
 
+  const description = postExcerpt(post.content) || stripHtml(post.content).slice(0, 160);
+  const authorName = post.author?.full_name || "Malani Barmer";
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description,
+    image: post.image_url ? [post.image_url] : undefined,
+    datePublished: post.created_at,
+    dateModified: post.updated_at || post.created_at,
+    author: { "@type": "Person", name: authorName },
+    publisher: {
+      "@type": "Organization",
+      name: "Malani Barmer",
+      logo: { "@type": "ImageObject", url: "https://malanibarmer.com/favicon.ico" },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://malanibarmer.com/blog/${post.slug}` },
+  };
+  const breadcrumbs = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://malanibarmer.com/" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: "https://malanibarmer.com/blog" },
+      { "@type": "ListItem", position: 3, name: post.title, item: `https://malanibarmer.com/blog/${post.slug}` },
+    ],
+  };
+
   return (
     <BlogShell>
+      <SEO
+        title={`${post.title} — Malani Barmer Blog`}
+        description={description}
+        path={`/blog/${post.slug}`}
+        image={post.image_url || undefined}
+        type="article"
+        publishedAt={post.created_at}
+        updatedAt={post.updated_at || post.created_at}
+        author={authorName}
+        jsonLd={[articleSchema, breadcrumbs]}
+      />
       <AnimatePresence mode="wait">
         <motion.div
           key={post.id}

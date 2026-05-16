@@ -28,7 +28,7 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
             transition={{ delay: i * 0.06, duration: 0.35 }}
           >
             <Link
-              to={`/blog/${p.id}`}
+              to={`/blog/${p.slug ?? p.id}`}
               className={glassCardClass(
                 "group flex gap-4 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-amber-900/10",
               )}
