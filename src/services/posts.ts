@@ -15,12 +15,25 @@ export interface PostAuthorProfile {
 
 export interface PostWithAuthor {
   id: string;
+  slug: string;
   title: string;
   content: string;
   image_url: string | null;
   author_id: string;
   created_at: string;
+  updated_at?: string;
   author: PostAuthorProfile | null;
+}
+
+/** Client-side slugify; the DB trigger will dedupe if needed. */
+export function slugify(input: string): string {
+  return (
+    input
+      .toLowerCase()
+      .normalize("NFKD")
+      .replace(/[^a-z0-9\u0900-\u097F]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "post"
+  );
 }
 
 export type PostWithStats = PostWithAuthor & {
