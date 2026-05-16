@@ -27,9 +27,9 @@ import type { PostWithAuthor } from "@/services/posts";
 import { cn } from "@/lib/utils";
 
 const BlogPost = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
-  const [post, setPost] = useState<Awaited<ReturnType<typeof getPostById>>>(null);
+  const [post, setPost] = useState<Awaited<ReturnType<typeof getPostBySlug>>>(null);
   const [related, setRelated] = useState<PostWithAuthor[]>([]);
   const [comments, setComments] = useState<CommentWithUser[]>([]);
   const [likes, setLikes] = useState(0);
@@ -38,27 +38,42 @@ const BlogPost = () => {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [likeBusy, setLikeBusy] = useState(false);
+  const id = post?.id;
 
   useEffect(() => {
-    if (!id) return;
+    if (!slug) return;
     setLoading(true);
-    Promise.all([
-      getPostById(id),
-      getComments(id),
-      getLikesCount(id),
-      user ? hasUserLiked(id, user.id) : Promise.resolve(false),
-      getPosts(),
-    ])
-      .then(([p, c, l, hl, allPosts]) => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const p = await getPostBySlug(slug);
+        if (cancelled) return;
         setPost(p);
+        if (!p) {
+          setLoading(false);
+          return;
+        }
+        const [c, l, hl, allPosts] = await Promise.all([
+          getComments(p.id),
+          getLikesCount(p.id),
+          user ? hasUserLiked(p.id, user.id) : Promise.resolve(false),
+          getPosts(),
+        ]);
+        if (cancelled) return;
         setComments(c as CommentWithUser[]);
         setLikes(l);
         setLiked(hl);
-        setRelated(allPosts.filter((x) => x.id !== id).slice(0, 3));
-      })
-      .catch(() => toast.error(hi.toastLoadFail))
-      .finally(() => setLoading(false));
-  }, [id, user]);
+        setRelated(allPosts.filter((x) => x.id !== p.id).slice(0, 3));
+      } catch {
+        toast.error(hi.toastLoadFail);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, user]);
 
   async function toggleLike() {
     if (!user || !id) {
