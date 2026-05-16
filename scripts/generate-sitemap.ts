@@ -4,6 +4,7 @@
  * `public/sitemap.xml` with static routes + every published blog post
  * fetched from Supabase.
  */
+import 'dotenv/config'
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
@@ -14,7 +15,7 @@ const SUPABASE_URL =
   process.env.VITE_SUPABASE_URL || "https://plizeqndbyscfyboalcd.supabase.co";
 const SUPABASE_ANON_KEY =
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsaXplcW5kYnlzY2Z5Ym9hbGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MzIxMzcsImV4cCI6MjA5NDAwODEzN30.EnxhPHb93opK0_LnI8N8XQPj8_q-hI1_qaEI2c26xm8";
+  "Pj8_q-hI1_qaEI2c26xm8";
 
 interface Entry {
   path: string;
