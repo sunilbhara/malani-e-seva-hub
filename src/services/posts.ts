@@ -47,7 +47,7 @@ export type PostWithStats = PostWithAuthor & {
 export async function getPosts(): Promise<PostWithAuthor[]> {
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, title, content, image_url, author_id, created_at")
+    .select("id, slug, title, content, image_url, author_id, created_at, updated_at")
     .order("created_at", { ascending: false });
   if (error) throw error;
   if (!posts || posts.length === 0) return [];
@@ -94,14 +94,9 @@ export async function getPostsWithStats(): Promise<PostWithStats[]> {
   }));
 }
 
-export async function getPostById(id: string) {
-  const { data: post, error } = await supabase
-    .from("posts")
-    .select("id, title, content, image_url, author_id, created_at, updated_at")
-    .eq("id", id)
-    .maybeSingle();
-  if (error) throw error;
-  if (!post) return null;
+const POST_SELECT = "id, slug, title, content, image_url, author_id, created_at, updated_at";
+
+async function attachAuthor<T extends { author_id: string }>(post: T) {
   const { data: author } = await supabase
     .from("profiles")
     .select("id, full_name, avatar_url")
@@ -110,10 +105,28 @@ export async function getPostById(id: string) {
   return { ...post, author: author ?? null };
 }
 
+export async function getPostById(id: string) {
+  const { data: post, error } = await supabase.from("posts").select(POST_SELECT).eq("id", id).maybeSingle();
+  if (error) throw error;
+  if (!post) return null;
+  return attachAuthor(post);
+}
+
+/** Look up a post by SEO slug. Falls back to UUID if the value looks like one. */
+export async function getPostBySlug(slugOrId: string) {
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+  const column = isUuid ? "id" : "slug";
+  const { data: post, error } = await supabase.from("posts").select(POST_SELECT).eq(column, slugOrId).maybeSingle();
+  if (error) throw error;
+  if (!post) return null;
+  return attachAuthor(post);
+}
+
 export async function createPost(input: PostInput, authorId: string) {
+  const slug = slugify(input.title);
   const { data, error } = await supabase
     .from("posts")
-    .insert({ ...input, author_id: authorId })
+    .insert({ ...input, author_id: authorId, slug })
     .select()
     .single();
   if (error) throw error;
