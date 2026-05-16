@@ -28,7 +28,6 @@ import { cn } from "@/lib/utils";
 
 const BlogPost = () => {
   const { identifier } = useParams<{ identifier: string }>();
-  const id = identifier; // keep variable name compatibility
   const { user } = useAuth();
   const [post, setPost] = useState<Awaited<ReturnType<typeof getPostByIdentifier>>>(null);
   const [related, setRelated] = useState<PostWithAuthor[]>([]);
@@ -39,53 +38,65 @@ const BlogPost = () => {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [likeBusy, setLikeBusy] = useState(false);
-  const id = post?.id;
+  const postId = post?.id;
 
   useEffect(() => {
-    if (!slug) return;
-    setLoading(true);
-    Promise.all([
-      getPostByIdentifier(id),
-      getComments(id),
-      getLikesCount(id),
-      user ? hasUserLiked(id, user.id) : Promise.resolve(false),
-      getPosts(),
-    ])
-      .then(([p, c, l, hl, allPosts]) => {
-        setPost(p);
-        if (!p) {
-          setLoading(false);
-          return;
-        }
-        const [c, l, hl, allPosts] = await Promise.all([
-          getComments(p.id),
-          getLikesCount(p.id),
-          user ? hasUserLiked(p.id, user.id) : Promise.resolve(false),
+    if (!identifier) return;
+
+    let cancelled = false;
+    const loadPost = async () => {
+      setLoading(true);
+
+      try {
+        const fetchedPost = await getPostByIdentifier(identifier);
+        if (cancelled) return;
+
+        setPost(fetchedPost);
+        if (!fetchedPost) return;
+
+        const [fetchedComments, fetchedLikes, fetchedLiked, allPosts] = await Promise.all([
+          getComments(fetchedPost.id),
+          getLikesCount(fetchedPost.id),
+          user ? hasUserLiked(fetchedPost.id, user.id) : Promise.resolve(false),
           getPosts(),
         ]);
+
         if (cancelled) return;
-        setComments(c as CommentWithUser[]);
-        setLikes(l);
-        setLiked(hl);
-        setRelated(allPosts.filter((x) => x.id !== id).slice(0, 3));
-      })
-      .catch(() => toast.error(hi.toastLoadFail))
-      .finally(() => setLoading(false));
-  }, [id, user]);
+
+        setComments(fetchedComments as CommentWithUser[]);
+        setLikes(fetchedLikes);
+        setLiked(fetchedLiked);
+        setRelated(allPosts.filter((x) => x.id !== fetchedPost.id).slice(0, 3));
+      } catch {
+        if (!cancelled) {
+          toast.error(hi.toastLoadFail);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadPost();
+    return () => {
+      cancelled = true;
+    };
+  }, [identifier, user]);
 
   // If the user visited the old UUID URL, redirect to the slug URL for SEO
   useEffect(() => {
-    if (!id || !post) return;
-    const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+    if (!postId || !post) return;
+    const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(postId);
     if (isUuid && post.slug) {
       // Replace the URL with the SEO slug version
       const newUrl = `/blog/${post.slug}`;
       window.history.replaceState({}, document.title, newUrl);
     }
-  }, [id, post]);
+  }, [postId, post]);
 
   async function toggleLike() {
-    if (!user || !id) {
+    if (!user || !postId) {
       toast.info(hi.toastSignInLike);
       return;
     }
@@ -102,9 +113,9 @@ const BlogPost = () => {
     }
     try {
       if (prevLiked) {
-        await unlikePost(id, user.id);
+        await unlikePost(postId, user.id);
       } else {
-        await likePost(id, user.id);
+        await likePost(postId, user.id);
         toast.success(hi.toastThanksLike);
       }
     } catch {
@@ -118,12 +129,12 @@ const BlogPost = () => {
 
   async function onAddComment(e: FormEvent) {
     e.preventDefault();
-    if (!user || !id || !comment.trim()) return;
+    if (!user || !postId || !comment.trim()) return;
     setSubmitting(true);
     try {
-      await addComment(id, user.id, comment.trim());
+      await addComment(postId, user.id, comment.trim());
       setComment("");
-      const fresh = await getComments(id);
+      const fresh = await getComments(postId);
       setComments(fresh as CommentWithUser[]);
       toast.success(hi.toastCommentOk);
     } catch {
