@@ -80,7 +80,7 @@ const Services = () => {
       </div>
 
       <div className="container mx-auto px-4 relative">
-        <motion.div 
+        {/* <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.8 }}
@@ -111,7 +111,7 @@ const Services = () => {
           >
             {messages.homepage.services.description}
           </motion.p>
-        </motion.div>
+        </motion.div> */}
 
         {(() => {
           const renderCard = (service: typeof services[number], index = 0) => (

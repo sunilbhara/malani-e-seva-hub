@@ -48,6 +48,8 @@ export function MobileSwiper<T>({
     pagination: { clickable: true, dynamicBullets: true },
   };
 
+  items = items.length <= 3 ? [...items, ...items, ...items] : items; // Duplicate if too few for good looping
+
   const variantProps: SwiperOptions =
     variant === "coverflow"
       ? {
