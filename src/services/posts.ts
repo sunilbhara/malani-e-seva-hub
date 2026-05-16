@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { postExcerpt, readTimeMinutes } from "@/lib/blogUtils";
+import { slugify } from "transliteration";
 
 export interface PostInput {
   title: string;
@@ -21,6 +22,7 @@ export interface PostWithAuthor {
   author_id: string;
   created_at: string;
   author: PostAuthorProfile | null;
+  slug?: string | null;
 }
 
 export type PostWithStats = PostWithAuthor & {
@@ -34,7 +36,7 @@ export type PostWithStats = PostWithAuthor & {
 export async function getPosts(): Promise<PostWithAuthor[]> {
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, title, content, image_url, author_id, created_at")
+    .select("id, title, content, image_url, author_id, created_at, slug")
     .order("created_at", { ascending: false });
   if (error) throw error;
   if (!posts || posts.length === 0) return [];
@@ -84,7 +86,7 @@ export async function getPostsWithStats(): Promise<PostWithStats[]> {
 export async function getPostById(id: string) {
   const { data: post, error } = await supabase
     .from("posts")
-    .select("id, title, content, image_url, author_id, created_at, updated_at")
+    .select("id, title, content, image_url, author_id, created_at, updated_at, slug")
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
@@ -97,10 +99,41 @@ export async function getPostById(id: string) {
   return { ...post, author: author ?? null };
 }
 
+export async function getPostByIdentifier(identifier: string) {
+  const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
+  const column = isUuid ? "id" : "slug";
+  const { data: post, error } = await supabase
+    .from("posts")
+    .select("id, title, content, image_url, author_id, created_at, updated_at, slug")
+    .eq(column, identifier)
+    .maybeSingle();
+  if (error) throw error;
+  if (!post) return null;
+  const { data: author } = await supabase
+    .from("profiles")
+    .select("id, full_name, avatar_url")
+    .eq("id", post.author_id)
+    .maybeSingle();
+  return { ...post, author: author ?? null };
+}
+
 export async function createPost(input: PostInput, authorId: string) {
+  // Generate SEO-friendly multilingual slug in application code (stable once created)
+  const base = slugify(input.title || "", { lowercase: true, separator: "-" }).replace(/(^-+|-+$)/g, "");
+  const safeBase = base || "post";
+  let candidate = safeBase;
+  let i = 1;
+  while (true) {
+    const { data: exists, error: e } = await supabase.from("posts").select("id").eq("slug", candidate).limit(1);
+    if (e) throw e;
+    if (!exists || exists.length === 0) break;
+    i += 1;
+    candidate = `${safeBase}-${i}`;
+  }
+
   const { data, error } = await supabase
     .from("posts")
-    .insert({ ...input, author_id: authorId })
+    .insert({ ...input, author_id: authorId, slug: candidate })
     .select()
     .single();
   if (error) throw error;

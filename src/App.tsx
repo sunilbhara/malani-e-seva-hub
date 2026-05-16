@@ -45,7 +45,7 @@ const App = () => {
 
               {/* Blog system */}
               <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:id" element={<BlogPost />} />
+              <Route path="/blog/:identifier" element={<BlogPost />} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
 

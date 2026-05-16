@@ -284,7 +284,7 @@ const Admin = () => {
                         )}
                       </TableCell>
                       <TableCell className="max-w-[200px] font-hindi font-medium text-gray-900 sm:max-w-xs">
-                        <Link to={`/blog/${row.id}`} target="_blank" rel="noreferrer" className="hover:text-amber-800 hover:underline">
+                        <Link to={`/blog/${row.slug ?? row.id}`} target="_blank" rel="noreferrer" className="hover:text-amber-800 hover:underline">
                           {row.title}
                         </Link>
                       </TableCell>
@@ -295,7 +295,7 @@ const Admin = () => {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
                           <Button type="button" variant="ghost" size="icon" asChild title={adminCopy.preview}>
-                            <a href={`/blog/${row.id}`} target="_blank" rel="noreferrer">
+                            <a href={`/blog/${row.slug ?? row.id}`} target="_blank" rel="noreferrer">
                               <ExternalLink className="h-4 w-4" />
                             </a>
                           </Button>

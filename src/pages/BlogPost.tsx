@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { getPostById, getPosts } from "@/services/posts";
+import { getPostByIdentifier, getPosts } from "@/services/posts";
 import { getComments, addComment } from "@/services/comments";
 import { getLikesCount, hasUserLiked, likePost, unlikePost } from "@/services/likes";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,9 +26,10 @@ import type { PostWithAuthor } from "@/services/posts";
 import { cn } from "@/lib/utils";
 
 const BlogPost = () => {
-  const { id } = useParams<{ id: string }>();
+  const { identifier } = useParams<{ identifier: string }>();
+  const id = identifier; // keep variable name compatibility
   const { user } = useAuth();
-  const [post, setPost] = useState<Awaited<ReturnType<typeof getPostById>>>(null);
+  const [post, setPost] = useState<Awaited<ReturnType<typeof getPostByIdentifier>>>(null);
   const [related, setRelated] = useState<PostWithAuthor[]>([]);
   const [comments, setComments] = useState<CommentWithUser[]>([]);
   const [likes, setLikes] = useState(0);
@@ -42,7 +43,7 @@ const BlogPost = () => {
     if (!id) return;
     setLoading(true);
     Promise.all([
-      getPostById(id),
+      getPostByIdentifier(id),
       getComments(id),
       getLikesCount(id),
       user ? hasUserLiked(id, user.id) : Promise.resolve(false),
@@ -58,6 +59,17 @@ const BlogPost = () => {
       .catch(() => toast.error(hi.toastLoadFail))
       .finally(() => setLoading(false));
   }, [id, user]);
+
+  // If the user visited the old UUID URL, redirect to the slug URL for SEO
+  useEffect(() => {
+    if (!id || !post) return;
+    const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+    if (isUuid && post.slug) {
+      // Replace the URL with the SEO slug version
+      const newUrl = `/blog/${post.slug}`;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, [id, post]);
 
   async function toggleLike() {
     if (!user || !id) {

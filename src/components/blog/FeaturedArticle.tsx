@@ -85,7 +85,7 @@ export function FeaturedArticle({ post }: FeaturedArticleProps) {
           </div>
 
           <Button asChild size="lg" className={`mt-8 w-fit px-8 ${brandCtaClass}`}>
-            <Link to={`/blog/${post.id}`} className="gap-2">
+            <Link to={`/blog/${post.slug ?? post.id}`} className="gap-2">
               {hi.readArticle}
               <ArrowRight className="h-4 w-4" />
             </Link>
