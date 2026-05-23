@@ -15,6 +15,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import Profile from "./pages/Profile";
 import { AuthProvider } from "./hooks/useAuth";
 import GoogleAnalytics from "./utils/GoogleAnalytics";
 import { loadAdsenseScript } from "./utils/LoadAdsence";
@@ -53,6 +54,7 @@ const App = () => {
                 {/* Blog system */}
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:identifier" element={<BlogPost />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/admin" element={<Admin />} />
 

@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import MobileSwiper from "@/components/mobile/MobileSwiper";
 import { useInView } from "react-intersection-observer";
 import { useI18n } from "@/i18n";
+import DesktopCircularCarousel from "./Desktop/DesktopCircularCarousel";
+import { cn } from "@/lib/utils";
 
 const Services = () => {
   const { messages } = useI18n();
@@ -36,8 +38,9 @@ const Services = () => {
     },
   };
   const services = messages.homepage.services.items.map((service, index) => ({
+    id: service.title,
     ...service,
-    icon: [FileText, Camera, CreditCard, Users, Globe, Shield][index],
+    icon: [FileText, Camera, CreditCard, Users, Globe, Shield][index] ?? Shield,
     color: [
       "from-blue-500 to-purple-600",
       "from-green-500 to-teal-600",
@@ -114,55 +117,66 @@ const Services = () => {
         </motion.div> */}
 
         {(() => {
-          const renderCard = (service: typeof services[number], index = 0) => (
-            <Card className="group hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden relative h-full">
+          const renderCard = (service: typeof services[number], index = 0, compact = false, active = true) => (
+            <Card
+              className={cn(
+                "group relative h-full overflow-hidden border-0 bg-white/85 shadow-lg backdrop-blur-sm transition-all duration-500 hover:shadow-2xl",
+                compact ? "rounded-2xl" : "",
+                compact && !active && "bg-white/70",
+              )}
+            >
               <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
-              <CardHeader className="text-center pb-4 relative">
+              <CardHeader className={cn("relative text-center", compact ? "pb-3" : "pb-4")}>
                 <motion.div
-                  className={`mx-auto w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br ${service.color} rounded-3xl flex items-center justify-center mb-6 shadow-xl`}
+                  className={cn(
+                    `mx-auto flex items-center justify-center bg-gradient-to-br ${service.color} shadow-xl`,
+                    compact ? "mb-4 h-16 w-16 rounded-2xl" : "mb-6 h-16 w-16 rounded-3xl lg:h-20 lg:w-20",
+                  )}
                   initial={{ scale: 0.6, opacity: 0, rotate: -20 }}
                   whileInView={{ scale: 1, opacity: 1, rotate: 0 }}
                   viewport={{ once: true }}
                   transition={{ type: "spring", stiffness: 180, damping: 14 }}
                 >
-                  <service.icon className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
+                  <service.icon className={cn("text-white", compact ? "h-8 w-8" : "h-8 w-8 lg:h-10 lg:w-10")} />
                 </motion.div>
-                <CardTitle className="text-xl lg:text-2xl font-bold text-gray-900">
+                <CardTitle className={cn("font-bold text-gray-900", compact ? "text-xl" : "text-xl lg:text-2xl")}>
                   {service.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 lg:space-y-6 relative">
-                <p className="text-gray-600 leading-relaxed text-center text-sm lg:text-base">
-                  {service.description}
-                </p>
-                <div className="space-y-2 lg:space-y-3">
-                  {service.features.map((feature, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center text-xs lg:text-sm text-gray-700"
-                    >
-                      <CheckCircle className={`w-3 h-3 lg:w-4 lg:h-4 mr-3 text-green-500`} />
-                      <span className="font-medium">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
+              {(!compact || active) && (
+                <CardContent className={cn("relative", compact ? "space-y-4 px-5 pb-5" : "space-y-4 lg:space-y-6")}>
+                  <p className={cn("text-center leading-relaxed text-gray-600", compact ? "line-clamp-3 text-sm" : "text-sm lg:text-base")}>
+                    {service.description}
+                  </p>
+                  <div className={cn(compact ? "space-y-2" : "space-y-2 lg:space-y-3")}>
+                    {service.features.slice(0, compact ? 3 : service.features.length).map((feature, idx) => (
+                      <div
+                        key={idx}
+                        className={cn("flex items-center text-gray-700", compact ? "text-xs" : "text-xs lg:text-sm")}
+                      >
+                        <CheckCircle className={`w-3 h-3 lg:w-4 lg:h-4 mr-3 text-green-500`} />
+                        <span className="font-medium">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              )}
             </Card>
           );
 
           return (
             <>
-              {/* Desktop / tablet grid - unchanged */}
+              {/* Tablet grid */}
               <motion.div
                 ref={ref}
                 variants={containerVariants}
                 initial="hidden"
                 animate={inView ? "visible" : "hidden"}
-                className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+                className="hidden gap-6 sm:grid sm:grid-cols-2 lg:hidden"
               >
                 {services.map((service, index) => (
                   <motion.div
-                    key={index}
+                    key={service.id}
                     variants={itemVariants}
                     whileHover={{ scale: 1.05, y: -10, transition: { duration: 0.3 } }}
                   >
@@ -170,6 +184,27 @@ const Services = () => {
                   </motion.div>
                 ))}
               </motion.div>
+
+              {/* Desktop circular carousel */}
+              <div className="hidden lg:block">
+                <DesktopCircularCarousel
+                  items={services}
+                  cardWidth={330}
+                  cardHeight={420}
+                  radiusX={390}
+                  radiusY={90}
+                  renderItem={(service, { active }) => (
+                    <div
+                      className={cn(
+                        "h-full transition",
+                        active ? "cursor-default" : "cursor-pointer",
+                      )}
+                    >
+                      {renderCard(service, 0, true, active)}
+                    </div>
+                  )}
+                />
+              </div>
 
               {/* Mobile-only premium showcase carousel */}
               <div className="sm:hidden">

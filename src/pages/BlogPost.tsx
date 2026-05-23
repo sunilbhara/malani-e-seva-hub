@@ -1,14 +1,23 @@
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useMemo, useState, FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, MessageCircle, Share2, ArrowLeft } from "lucide-react";
+import { Bookmark, CheckCircle2, ExternalLink, Heart, MessageCircle, Share2, ArrowLeft, Text } from "lucide-react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { getPostByIdentifier, getPosts } from "@/services/posts";
+import { getPostByIdentifier, getPosts, incrementShareCount, recordPostView } from "@/services/posts";
 import { getComments, addComment } from "@/services/comments";
 import { getLikesCount, hasUserLiked, likePost, unlikePost } from "@/services/likes";
+import {
+  bookmarkPost,
+  getReactionCounts,
+  getUserReactions,
+  hasUserBookmarked,
+  toggleReaction,
+  unbookmarkPost,
+  type ReactionType,
+} from "@/services/blogExtras";
 import { useAuth } from "@/hooks/useAuth";
 import { readTimeMinutes, postExcerpt, stripHtml } from "@/lib/blogUtils";
 import { hi } from "@/lib/blogHindi";
@@ -34,6 +43,11 @@ const BlogPost = () => {
   const [comments, setComments] = useState<CommentWithUser[]>([]);
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [bookmarkBusy, setBookmarkBusy] = useState(false);
+  const [reactionCounts, setReactionCounts] = useState<Record<ReactionType, number>>({ helpful: 0, important: 0, informative: 0, urgent: 0 });
+  const [userReactions, setUserReactions] = useState<Set<ReactionType>>(new Set());
+  const [fontScale, setFontScale] = useState(1);
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -54,10 +68,13 @@ const BlogPost = () => {
         setPost(fetchedPost);
         if (!fetchedPost) return;
 
-        const [fetchedComments, fetchedLikes, fetchedLiked, allPosts] = await Promise.all([
+        const [fetchedComments, fetchedLikes, fetchedLiked, fetchedBookmarked, fetchedReactionCounts, fetchedUserReactions, allPosts] = await Promise.all([
           getComments(fetchedPost.id),
           getLikesCount(fetchedPost.id),
           user ? hasUserLiked(fetchedPost.id, user.id) : Promise.resolve(false),
+          user ? hasUserBookmarked(fetchedPost.id, user.id) : Promise.resolve(false),
+          getReactionCounts(fetchedPost.id),
+          user ? getUserReactions(fetchedPost.id, user.id) : Promise.resolve(new Set<ReactionType>()),
           getPosts(),
         ]);
 
@@ -66,7 +83,11 @@ const BlogPost = () => {
         setComments(fetchedComments as CommentWithUser[]);
         setLikes(fetchedLikes);
         setLiked(fetchedLiked);
+        setBookmarked(fetchedBookmarked);
+        setReactionCounts(fetchedReactionCounts);
+        setUserReactions(fetchedUserReactions);
         setRelated(allPosts.filter((x) => x.id !== fetchedPost.id).slice(0, 3));
+        void recordPostView(fetchedPost.id, user?.id);
       } catch {
         if (!cancelled) {
           toast.error(hi.toastLoadFail);
@@ -83,6 +104,16 @@ const BlogPost = () => {
       cancelled = true;
     };
   }, [identifier, user]);
+
+  const headings = useMemo(() => {
+    if (!post?.content || typeof document === "undefined") return [];
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = post.content;
+    return Array.from(wrapper.querySelectorAll("h2, h3")).slice(0, 8).map((heading, index) => ({
+      id: `section-${index}`,
+      text: heading.textContent?.trim() || `Section ${index + 1}`,
+    }));
+  }, [post?.content]);
 
   // If the user visited the old UUID URL, redirect to the slug URL for SEO
   useEffect(() => {
@@ -127,6 +158,50 @@ const BlogPost = () => {
     }
   }
 
+  async function toggleBookmark() {
+    if (!user || !postId) {
+      toast.info("Please sign in to save this post.");
+      return;
+    }
+    if (bookmarkBusy) return;
+    const previous = bookmarked;
+    setBookmarkBusy(true);
+    setBookmarked(!previous);
+    try {
+      if (previous) await unbookmarkPost(postId, user.id);
+      else {
+        await bookmarkPost(postId, user.id);
+        toast.success("Post saved.");
+      }
+    } catch {
+      setBookmarked(previous);
+      toast.error("Bookmark update failed.");
+    } finally {
+      setBookmarkBusy(false);
+    }
+  }
+
+  async function onReaction(reaction: ReactionType) {
+    if (!user || !postId) {
+      toast.info("Please sign in to react.");
+      return;
+    }
+    const active = userReactions.has(reaction);
+    try {
+      await toggleReaction(postId, user.id, reaction, active);
+      const next = new Set(userReactions);
+      if (active) next.delete(reaction);
+      else next.add(reaction);
+      setUserReactions(next);
+      setReactionCounts((current) => ({
+        ...current,
+        [reaction]: Math.max(0, current[reaction] + (active ? -1 : 1)),
+      }));
+    } catch {
+      toast.error("Reaction update failed.");
+    }
+  }
+
   async function onAddComment(e: FormEvent) {
     e.preventDefault();
     if (!user || !postId || !comment.trim()) return;
@@ -154,6 +229,7 @@ const BlogPost = () => {
     } else {
       void navigator.clipboard.writeText(url).then(done);
     }
+    if (postId) void incrementShareCount(postId, post?.share_count ?? 0).catch(() => undefined);
   }
 
   if (loading) {
@@ -230,17 +306,30 @@ const BlogPost = () => {
       >
         <Share2 className="h-5 w-5 text-amber-800" />
       </Button>
+      <Button
+        type="button"
+        variant={bookmarked ? "default" : "outline"}
+        size="icon"
+        disabled={bookmarkBusy}
+        className={cn("h-12 w-12 rounded-2xl border-amber-200 bg-white shadow-sm", bookmarked && brandCtaClass)}
+        onClick={() => void toggleBookmark()}
+        aria-label="Save post"
+      >
+        <Bookmark className={cn("h-5 w-5", bookmarked ? "fill-current text-white" : "text-amber-800")} />
+      </Button>
     </div>
   );
 
   const description = postExcerpt(post.content) || stripHtml(post.content).slice(0, 160);
+  const seoTitle = post.seo_title || `${post.title} - Malani Barmer Blog`;
+  const seoDescription = post.seo_description || description;
   const authorName = post.author?.full_name || "Malani Barmer";
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
-    description,
-    image: post.image_url ? [post.image_url] : undefined,
+    description: seoDescription,
+    image: post.og_image_url || post.image_url ? [post.og_image_url || post.image_url] : undefined,
     datePublished: post.created_at,
     dateModified: post.updated_at || post.created_at,
     author: { "@type": "Person", name: authorName },
@@ -265,9 +354,9 @@ const BlogPost = () => {
     <BlogShell>
       <SEO
         title={`${post.title} — Malani Barmer Blog`}
-        description={description}
+        description={seoDescription}
         path={`/blog/${post.slug}`}
-        image={post.image_url || undefined}
+        image={post.og_image_url || post.image_url || undefined}
         type="article"
         publishedAt={post.created_at}
         updatedAt={post.updated_at || post.created_at}
@@ -308,6 +397,25 @@ const BlogPost = () => {
                     <MessageCircle className="h-4 w-4 text-sky-600" />
                     {comments.length} {hi.comments}
                   </span>
+                  {post.category && (
+                    <>
+                      <span className="hidden sm:inline">·</span>
+                      <span>{post.category}</span>
+                    </>
+                  )}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {(post.tags ?? []).map((tag) => (
+                    <span key={tag} className="rounded-full bg-amber-50 px-3 py-1 font-hindi text-xs font-semibold text-amber-900">
+                      {tag}
+                    </span>
+                  ))}
+                  {post.is_verified && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 font-hindi text-xs font-semibold text-emerald-700">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      Verified
+                    </span>
+                  )}
                 </div>
               </header>
 
@@ -323,9 +431,71 @@ const BlogPost = () => {
                 </motion.div>
               )}
 
-              <div className="mt-10 max-w-3xl">
+              {(post.official_link || post.source_url) && (
+                <div className="mt-8 max-w-3xl rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 font-hindi text-sm text-emerald-950">
+                  <p className="mb-2 font-semibold">Official information</p>
+                  <div className="flex flex-wrap gap-2">
+                    {post.official_link && (
+                      <Button asChild variant="outline" size="sm" className="rounded-full">
+                        <a href={post.official_link} target="_blank" rel="noreferrer">
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Official Link
+                        </a>
+                      </Button>
+                    )}
+                    {post.source_url && (
+                      <Button asChild variant="outline" size="sm" className="rounded-full">
+                        <a href={post.source_url} target="_blank" rel="noreferrer">
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Source
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {headings.length > 0 && (
+                <nav className="mt-8 max-w-3xl rounded-2xl border border-amber-100 bg-white/80 p-4">
+                  <p className="mb-3 font-hindi text-sm font-semibold text-gray-900">Table of contents</p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {headings.map((heading) => (
+                      <span key={heading.id} className="font-hindi text-sm text-amber-800">
+                        {heading.text}
+                      </span>
+                    ))}
+                  </div>
+                </nav>
+              )}
+
+              <div className="mt-6 flex max-w-3xl items-center justify-end gap-2">
+                <Text className="h-4 w-4 text-gray-500" />
+                {[0.95, 1, 1.08].map((scale) => (
+                  <Button key={scale} type="button" variant={fontScale === scale ? "default" : "outline"} size="sm" className="rounded-full" onClick={() => setFontScale(scale)}>
+                    {scale === 0.95 ? "A-" : scale === 1 ? "A" : "A+"}
+                  </Button>
+                ))}
+              </div>
+
+              <div className="mt-4 max-w-3xl" style={{ fontSize: `${fontScale}rem` }}>
                 <PostBody content={post.content} className="text-gray-900" />
               </div>
+
+              <section className="mt-10 max-w-3xl rounded-2xl border border-amber-100 bg-white/80 p-4">
+                <p className="mb-3 font-hindi text-sm font-semibold text-gray-900">Post reactions</p>
+                <div className="flex flex-wrap gap-2">
+                  {([
+                    ["helpful", "Helpful"],
+                    ["important", "Important"],
+                    ["informative", "Informative"],
+                    ["urgent", "Urgent"],
+                  ] as Array<[ReactionType, string]>).map(([key, label]) => (
+                    <Button key={key} type="button" variant={userReactions.has(key) ? "default" : "outline"} size="sm" className={cn("rounded-full font-hindi", userReactions.has(key) && brandCtaClass)} onClick={() => void onReaction(key)}>
+                      {label} · {reactionCounts[key]}
+                    </Button>
+                  ))}
+                </div>
+              </section>
 
               <div className="mt-12 max-w-3xl lg:hidden">
                 <AuthorCard author={post.author} />

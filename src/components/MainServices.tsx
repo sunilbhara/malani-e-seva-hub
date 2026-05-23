@@ -15,6 +15,7 @@ import {
 import MobileSwiper from "@/components/mobile/MobileSwiper";
 import { Link } from "react-router-dom";
 import { useI18n } from "@/i18n";
+import DesktopCircularCarousel from "./Desktop/DesktopCircularCarousel";
 
 const MainServices = () => {
   const { messages } = useI18n();
@@ -174,6 +175,7 @@ const MainServices = () => {
                   </motion.div>
                 ))}
               </motion.div>
+              
 
               {/* Mobile-only stacked-card carousel */}
               <div className="md:hidden">

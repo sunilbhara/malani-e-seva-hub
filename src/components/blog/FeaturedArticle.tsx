@@ -49,11 +49,19 @@ export function FeaturedArticle({ post }: FeaturedArticleProps) {
 
         <div className="flex flex-col justify-center p-6 sm:p-10 lg:pl-4">
           <Badge className="mb-4 w-fit border-0 bg-gradient-to-r from-[#ef4444] via-[#b45309] to-[#f59e0b] px-3 py-1 text-white shadow-md">
-            {hi.featured}
+            {post.category || hi.featured}
           </Badge>
+          {post.is_verified && <Badge className="mb-3 w-fit border-0 bg-emerald-600 text-white">Verified source</Badge>}
           <HindiTypography as="h1" className="text-balance text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-[2.25rem] xl:text-4xl">
             {post.title}
           </HindiTypography>
+          {(post.tags ?? []).length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(post.tags ?? []).slice(0, 5).map((tag) => (
+                <Badge key={tag} variant="secondary" className="font-hindi">{tag}</Badge>
+              ))}
+            </div>
+          )}
           <HindiTypography as="p" className="mt-4 text-pretty text-base text-gray-600 sm:text-lg">
             {post.excerpt}
           </HindiTypography>

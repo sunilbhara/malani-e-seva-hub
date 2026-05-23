@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { MessageCircle, Heart, Clock, User } from "lucide-react";
+import { Bookmark, Eye, MessageCircle, Heart, Clock, User } from "lucide-react";
 import type { PostWithStats } from "@/services/posts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -59,8 +59,9 @@ export function BlogCard({ post, index = 0, className }: BlogCardProps) {
             )}
             <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
               <Badge className="border-0 bg-white/90 text-xs font-semibold text-amber-900 shadow-sm backdrop-blur-md">
-                {hi.article}
+                {post.category || hi.article}
               </Badge>
+              {post.is_verified && <Badge className="border-0 bg-emerald-600 text-xs text-white shadow-sm">Verified</Badge>}
             </div>
           </div>
 
@@ -68,6 +69,15 @@ export function BlogCard({ post, index = 0, className }: BlogCardProps) {
             <HindiTypography as="h3" className="line-clamp-2 text-lg font-semibold text-gray-900 group-hover:text-amber-800">
               {post.title}
             </HindiTypography>
+            {(post.tags ?? []).length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {(post.tags ?? []).slice(0, 3).map((tag) => (
+                  <Badge key={tag} variant="secondary" className="font-hindi text-[10px]">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            )}
             <p className="mt-2 line-clamp-2 flex-1 font-hindi text-sm leading-relaxed text-gray-600">{post.excerpt}</p>
 
             <div className="mt-4 flex items-center gap-3 border-t border-amber-100/80 pt-4">
@@ -85,6 +95,14 @@ export function BlogCard({ post, index = 0, className }: BlogCardProps) {
               <span className="inline-flex items-center gap-1">
                 <Heart className="h-3.5 w-3.5 text-rose-500" aria-hidden />
                 {post.likes_count}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <Eye className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
+                {post.views_count}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <Bookmark className="h-3.5 w-3.5 text-violet-600" aria-hidden />
+                {post.bookmarks_count}
               </span>
               <span className="inline-flex items-center gap-1">
                 <MessageCircle className="h-3.5 w-3.5 text-sky-600" aria-hidden />
