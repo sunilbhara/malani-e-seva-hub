@@ -8,8 +8,8 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 const SITE_URL = process.env.VITE_SITE_URL || 'https://malanibarmer.com';
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error('Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables');
-  process.exit(1);
+  console.warn('[sitemap] Skipping sitemap generation: SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set. (This is expected in the Lovable dev sandbox; configure these in your Netlify build env for production.)');
+  process.exit(0);
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
