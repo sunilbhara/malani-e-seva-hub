@@ -267,16 +267,13 @@ const Admin = () => {
     }
     setGeminiLoading(true);
     try {
-      const text = await generateHindiBlogWithGemini(geminiInput);
-      if (text) {
-        setField("content", text.replace(/\n{2,}/g, "\n\n"));
-        if (!form.title) {
-          const titleMatch = text.match(/(?:SEO Friendly Title|Title|शीर्षक)[:：]\s*(.+)/i);
-          if (titleMatch?.[1]) setField("title", titleMatch[1].replace(/^["“”]+|["“”]+$/g, "").slice(0, 180));
-        }
-        const metaMatch = text.match(/(?:Meta Description|मेटा डिस्क्रिप्शन)[:：]\s*(.+)/i);
-        if (metaMatch?.[1]) setField("seoDescription", metaMatch[1].slice(0, 170));
+      const result = await generateHindiBlogWithGemini(geminiInput);
+      if (result?.content) {
+        setField("content", result.content.replace(/\n{2,}/g, "\n\n"));
+        if (!form.title && result.title) setField("title", result.title.slice(0, 180));
+        if (result.metaDescription) setField("seoDescription", result.metaDescription.slice(0, 170));
         setGeminiOpen(false);
+        setGeminiInput("");
         toast.success("Gemini draft added to editor.");
       }
     } catch (err) {

@@ -78,33 +78,87 @@ export type Database = {
       posts: {
         Row: {
           author_id: string
+          canonical_url: string | null
+          category: string | null
+          comments_count: number
           content: string
           created_at: string
           id: string
           image_url: string | null
+          is_verified: boolean
+          language: string
+          likes_count: number
+          official_link: string | null
+          og_image_url: string | null
+          post_type: string
+          published_at: string | null
+          scheduled_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          share_count: number
           slug: string
+          source_url: string | null
+          status: string
+          tags: string[]
           title: string
           updated_at: string
+          views_count: number
         }
         Insert: {
           author_id: string
+          canonical_url?: string | null
+          category?: string | null
+          comments_count?: number
           content: string
           created_at?: string
           id?: string
           image_url?: string | null
+          is_verified?: boolean
+          language?: string
+          likes_count?: number
+          official_link?: string | null
+          og_image_url?: string | null
+          post_type?: string
+          published_at?: string | null
+          scheduled_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          share_count?: number
           slug: string
+          source_url?: string | null
+          status?: string
+          tags?: string[]
           title: string
           updated_at?: string
+          views_count?: number
         }
         Update: {
           author_id?: string
+          canonical_url?: string | null
+          category?: string | null
+          comments_count?: number
           content?: string
           created_at?: string
           id?: string
           image_url?: string | null
+          is_verified?: boolean
+          language?: string
+          likes_count?: number
+          official_link?: string | null
+          og_image_url?: string | null
+          post_type?: string
+          published_at?: string | null
+          scheduled_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          share_count?: number
           slug?: string
+          source_url?: string | null
+          status?: string
+          tags?: string[]
           title?: string
           updated_at?: string
+          views_count?: number
         }
         Relationships: []
       }
