@@ -7,21 +7,54 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies and build output
 node_modules
 dist
 dist-ssr
-*.local
+dist-e2e
+dev-dist
+coverage
+*.tsbuildinfo
+
+# Secrets — never commit real keys (this repository is public).
+# Only .env.example (placeholders) and .env.e2e (fake test values) are committed.
 .env
+.env.*
+*.local
+!.env.example
+!.env.e2e
+# Database certificates / private keys (e.g. prod-ca-2021.crt for the region migration)
+*.crt
+*.pem
+*.key
+*.p12
+*.pfx
+# Supabase CLI local state (contains project ref, pooler URL)
+supabase/.temp/
+supabase/.branches/
+# Netlify CLI local state
+.netlify/
+
+# Internal security audit — lists weaknesses; keep it out of the public repo
+docs/Malani_Application_Audit_Issues_and_Fixes.docx
+
+# Playwright
+playwright-report
+test-results
+blob-report
+playwright/.cache
+
+# Personal tooling
+.claude/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
-supabase/.temp/*

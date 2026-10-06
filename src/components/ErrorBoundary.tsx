@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -6,55 +6,52 @@ interface Props {
 }
 
 interface State {
-  hasError: boolean;
-  error?: Error;
+  error: Error | null;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+const RELOAD_KEY = "malani-chunk-reload";
+
+/** After a new deploy, old lazy chunks no longer exist; one reload fetches the new ones. */
+function isChunkError(error: Error): boolean {
+  return /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module/i.test(error.message);
+}
+
+export default class ErrorBoundary extends Component<Props, State> {
+  state: State = { error: null };
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return { error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("ErrorBoundary", error, info.componentStack);
+    if (isChunkError(error)) {
+      try {
+        if (!sessionStorage.getItem(RELOAD_KEY)) {
+          sessionStorage.setItem(RELOAD_KEY, "1");
+          window.location.reload();
+        }
+      } catch {
+        // ignore
+      }
+    }
   }
 
   render() {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
-            <div className="text-red-500 mb-4">
-              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
-            <p className="text-gray-600 mb-4">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Refresh Page
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    return this.props.children;
+    if (!this.state.error) return this.props.children;
+    if (this.props.fallback) return this.props.fallback;
+    return (
+      <div role="alert" className="container-page flex min-h-[50vh] flex-col items-center justify-center py-12 text-center">
+        <p className="font-hindi text-xl font-bold">कुछ गड़बड़ हो गई</p>
+        <p className="mt-2 max-w-sm font-hindi text-small text-muted-foreground">पेज लोड नहीं हो सका। कृपया पेज दोबारा खोलें। समस्या बनी रहे तो इंटरनेट कनेक्शन जाँचें।</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="mt-5 h-11 rounded-xl bg-primary px-5 font-hindi font-semibold text-primary-foreground"
+        >
+          दोबारा खोलें
+        </button>
+      </div>
+    );
   }
 }
-
-export default ErrorBoundary;

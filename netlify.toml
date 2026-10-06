@@ -1,12 +1,52 @@
 [build]
   publish = "dist"
-  command = "npm run build"
+  # Type-check, lint and unit-test before every deploy so broken code never ships.
+  command = "npm run ci"
 
-# Serve sitemap.xml with correct content-type
+[build.environment]
+  NODE_VERSION = "22"
+
+# Netlify Edge Functions live in netlify/edge-functions and declare their own paths:
+#   blog-og  → /blog/*       (correct WhatsApp/Facebook link previews)
+#   sitemap  → /sitemap.xml  (live sitemap)
+
+# ---------------------------------------------------------------------------
+# Security headers (audit S8)
+# ---------------------------------------------------------------------------
 [[headers]]
-  for = "/sitemap.xml"
+  for = "/*"
   [headers.values]
-    Content-Type = "application/xml; charset=utf-8"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+    # Report-only first: AdSense and Google Maps load from many domains. After a week with
+    # no violations in the browser console, rename this header to Content-Security-Policy.
+    Content-Security-Policy-Report-Only = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.adtrafficquality.google https://maps.googleapis.com https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.cloudinary.com https://api.emailjs.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.adtrafficquality.google https://maps.googleapis.com https://challenges.cloudflare.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.google.com https://*.google.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'"
+
+# Hashed build assets never change: cache them for a year.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The service worker must always be revalidated so updates reach users.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
     Cache-Control = "public, max-age=3600"
 
 [[headers]]
@@ -16,12 +56,6 @@
     Cache-Control = "public, max-age=3600"
 
 # Explicit pass-through so the SPA fallback never swallows these files
-[[redirects]]
-  from = "/sitemap.xml"
-  to = "/sitemap.xml"
-  status = 200
-  force = true
-
 [[redirects]]
   from = "/robots.txt"
   to = "/robots.txt"

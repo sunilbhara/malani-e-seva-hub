@@ -1,7 +1,6 @@
 import type { FaqItem, LanguageOption, NavItem } from "./types";
 
 export const languageOptions: LanguageOption[] = [
-  { value: "default", label: "Default" },
   { value: "hi", label: "हिंदी" },
   { value: "en", label: "English" },
 ];
@@ -466,3 +465,6 @@ export const defaultMessages = {
 };
 
 export type MessageCatalog = typeof defaultMessages;
+
+/** Locale overrides only need the keys they translate; the rest falls back to the base catalog. */
+export type DeepPartial<T> = T extends readonly unknown[] ? T : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> } : T;
