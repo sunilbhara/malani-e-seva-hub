@@ -1,10 +1,53 @@
+import { MessageCircle } from "lucide-react";
 import { ServicePageTemplate } from "@/components/seo/ServicePageTemplate";
+import { EMITRA_GROUPS } from "@/config/emitraServices";
+import { whatsappHref } from "@/lib/business";
+import { formatRupees } from "@/lib/format";
 import { useI18n } from "@/i18n";
+
+function PriceList() {
+  return (
+    <section aria-labelledby="price-heading">
+      <h2 id="price-heading" className="font-hindi text-xl font-bold sm:text-2xl">सेवाएँ, शुल्क और ज़रूरी दस्तावेज़</h2>
+      <p className="mt-1 font-hindi text-small text-muted-foreground">दुकान आने से पहले देख लें कि कौनसे दस्तावेज़ लाने हैं।</p>
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        {EMITRA_GROUPS.map((group) => (
+          <article key={group.title} className="rounded-2xl border bg-card p-5">
+            <h3 className="font-hindi text-lg font-semibold">{group.title}</h3>
+            <ul className="mt-3 divide-y">
+              {group.services.map((s) => (
+                <li key={s.name} className="py-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="font-hindi font-medium">{s.name}</p>
+                    {s.price !== null ? (
+                      <span className="shrink-0 font-semibold tabular">{formatRupees(s.price)}</span>
+                    ) : (
+                      <a
+                        href={whatsappHref(`नमस्ते, "${s.name}" का शुल्क क्या है?`)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex shrink-0 items-center gap-1 font-hindi text-small font-semibold text-primary"
+                      >
+                        <MessageCircle className="h-4 w-4" /> दाम पूछें
+                      </a>
+                    )}
+                  </div>
+                  {s.documents.length > 0 && (
+                    <p className="mt-1 font-hindi text-small text-muted-foreground">लाएँ: {s.documents.join(", ")}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export default function ServicesPage() {
   const { messages } = useI18n();
   const page = messages.seoPages.services;
-
   return (
     <ServicePageTemplate
       path="/services"
@@ -22,30 +65,16 @@ export default function ServicesPage() {
       faqs={messages.seoPages.faqs.services}
       ctaTitle={page.ctaTitle}
       ctaDescription={page.ctaDescription}
-      ctaPrimary={page.ctaPrimary}
-      ctaPrimaryHref="/#contact"
-      ctaSecondary={page.ctaSecondary}
-      ctaSecondaryHref="/mobile-electronics"
+      whatsappText="नमस्ते, मुझे ई-मित्र सेवा के बारे में जानकारी चाहिए।"
       relatedTitle={messages.seoPages.common.relatedLabel}
       relatedLinks={[
-        {
-          title: messages.footer.links.mobile,
-          description: "Explore our dedicated mobile showroom page for gadgets, accessories and buyer guidance.",
-          to: "/mobile-electronics",
-        },
-        {
-          title: messages.footer.links.studio,
-          description: "Visit the Mataji Studio page for pre wedding, haldi and couple photography services.",
-          to: "/mataji-studio",
-        },
+        { title: messages.footer.links.mobile, description: "मोबाइल, एक्सेसरीज़ और इलेक्ट्रॉनिक्स", to: "/mobile-electronics" },
+        { title: messages.footer.links.studio, description: "पासपोर्ट फोटो, शादी और प्री-वेडिंग फोटोग्राफी", to: "/mataji-studio" },
+        { title: "सरकारी नौकरियाँ", description: "नई भर्ती और अंतिम तिथियाँ", to: "/jobs" },
       ]}
       breadcrumbHome={messages.seoPages.common.breadcrumbHome}
-      locationTitle={messages.seoPages.common.locationTitle}
-      locationText={messages.seoPages.common.locationText}
-      blogTitle={messages.seoPages.common.blogTitle}
-      blogDescription={messages.seoPages.common.blogDescription}
-      blogCta={messages.seoPages.common.blogCta}
-      overviewLabel={messages.seoPages.common.overviewLabel}
-    />
+    >
+      <PriceList />
+    </ServicePageTemplate>
   );
 }

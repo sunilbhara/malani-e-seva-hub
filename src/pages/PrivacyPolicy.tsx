@@ -1,85 +1,51 @@
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
-import { Card, CardContent } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { LegalPage } from "@/components/common/LegalPage";
+import { BUSINESS, fullAddress, telHref } from "@/lib/business";
 
-const PrivacyPolicy = () => {
+/** Privacy notice aligned with India's Digital Personal Data Protection Act, 2023. */
+export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      <Navigation />
+    <LegalPage title="प्राइवेसी पॉलिसी" path="/privacy-policy" description="मालाणी बाड़मेर आपकी जानकारी कैसे इकट्ठा, इस्तेमाल और सुरक्षित करता है।" updated="5 अक्टूबर 2026">
+      <p>यह नीति बताती है कि {BUSINESS.name} (malanibarmer.com) आपकी व्यक्तिगत जानकारी कैसे इकट्ठा करता है, क्यों करता है, और आप उस पर क्या नियंत्रण रखते हैं। हम भारत के डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम, 2023 का पालन करते हैं।</p>
 
-      <main className="container mx-auto px-4 pt-32 pb-16">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold text-center mb-10 text-gray-800"
-        >
-          Privacy Policy
-        </motion.h1>
+      <h2>हम कौनसी जानकारी लेते हैं</h2>
+      <ul>
+        <li><strong>खाता:</strong> नाम, ईमेल और (Google से साइन इन करने पर) प्रोफ़ाइल फोटो। पासवर्ड हम नहीं देख सकते — वह सुरक्षित रूप से एन्क्रिप्ट रहता है।</li>
+        <li><strong>आपकी गतिविधि:</strong> सेव की गई नौकरियाँ, रिमाइंडर, फॉलो की गई भर्तियाँ, आपके सवाल-जवाब, क्विज़ स्कोर और आपकी पसंद (योग्यता, विभाग, ज़िला)।</li>
+        <li><strong>ईमेल अलर्ट:</strong> आपका ईमेल और आपकी सहमति का रिकॉर्ड — केवल तब जब आप खुद सब्सक्राइब करें और ईमेल से पुष्टि करें।</li>
+        <li><strong>नोटिफ़िकेशन:</strong> अगर आप नोटिफ़िकेशन चालू करते हैं, तो आपके ब्राउज़र का पुश पता (इसमें आपका नाम या नंबर नहीं होता)।</li>
+        <li><strong>गिनती के लिए:</strong> एक बेतरतीब (random) विज़िटर आईडी, ताकि व्यूज़ और शेयर सही गिने जा सकें। इससे आपकी पहचान नहीं होती।</li>
+        <li><strong>संपर्क / बुकिंग फॉर्म:</strong> नाम, फोन, ईमेल और संदेश — केवल आपको जवाब देने के लिए।</li>
+      </ul>
 
-        <Card className="shadow-lg border border-gray-200">
-          <CardContent className="space-y-6 text-gray-700 leading-relaxed pt-6">
+      <h2>हम जानकारी का उपयोग क्यों करते हैं</h2>
+      <ul>
+        <li>आपको आपकी पसंद की नौकरियाँ, रिमाइंडर और भर्ती अपडेट दिखाने/भेजने के लिए।</li>
+        <li>आपके सवालों का जवाब देने और साइट को स्पैम से सुरक्षित रखने के लिए।</li>
+        <li>यह समझने के लिए कि कौनसी जानकारी उपयोगी है (Google Analytics — गिनती के रूप में)।</li>
+        <li>विज्ञापन दिखाने के लिए (Google AdSense), जिससे यह सेवा मुफ़्त रहती है।</li>
+      </ul>
+      <p>हम आपकी जानकारी बेचते नहीं हैं।</p>
 
-            <p>
-              At <strong>Malani Barmer</strong>, we value your privacy and are
-              committed to protecting your personal information. This Privacy
-              Policy explains how we collect, use, and safeguard your data when
-              you visit our website.
-            </p>
+      <h2>कौन-कौन सी सेवाएँ इस्तेमाल होती हैं</h2>
+      <p>डेटा भारत (मुंबई) स्थित सर्वर पर Supabase में रखा जाता है। फोटो Cloudinary पर, ईमेल Resend से, संपर्क फॉर्म EmailJS से, और आँकड़े/विज्ञापन Google से संचालित होते हैं। ये सेवाएँ केवल अपना काम करने के लिए ही जानकारी इस्तेमाल करती हैं।</p>
 
-            <h2 className="text-xl font-semibold">Information We Collect</h2>
-            <p>
-              When you interact with our website or contact us, we may collect
-              basic information such as your name, phone number, email address,
-              and any message you submit through the contact form.
-            </p>
+      <h2>आपके अधिकार</h2>
+      <ul>
+        <li><strong>देखना और सुधारना:</strong> अपना नाम और पसंद <Link to="/profile">प्रोफ़ाइल</Link> में बदलें।</li>
+        <li><strong>हटाना:</strong> <Link to="/profile">प्रोफ़ाइल</Link> → “खाता हमेशा के लिए हटाएँ” से अपना खाता और उससे जुड़ी सारी जानकारी तुरंत हटाएँ।</li>
+        <li><strong>सहमति वापस लेना:</strong> हर ईमेल में अनसब्सक्राइब लिंक है; नोटिफ़िकेशन प्रोफ़ाइल या ब्राउज़र सेटिंग से बंद करें।</li>
+        <li><strong>शिकायत:</strong> नीचे दिए संपर्क पर लिखें। संतुष्ट न होने पर आप भारत के डेटा संरक्षण बोर्ड से संपर्क कर सकते हैं।</li>
+      </ul>
 
-            <h2 className="text-xl font-semibold">How We Use Your Information</h2>
-            <ul className="list-disc ml-6 space-y-2">
-              <li>To respond to customer inquiries</li>
-              <li>To provide our services</li>
-              <li>To improve our website and user experience</li>
-              <li>To communicate important service updates</li>
-            </ul>
+      <h2>कितने समय तक रखते हैं</h2>
+      <p>खाते की जानकारी तब तक रहती है जब तक आप खाता नहीं हटाते। संपर्क फॉर्म के संदेश काम पूरा होने के बाद ज़रूरत न होने पर हटा दिए जाते हैं।</p>
 
-            <h2 className="text-xl font-semibold">Google AdSense</h2>
-            <p>
-              Our website may display advertisements through Google AdSense.
-              Google may use cookies to show relevant ads based on your browsing
-              history and interests.
-            </p>
+      <h2>सुरक्षा</h2>
+      <p>हर डेटाबेस टेबल पर पंक्ति-स्तर सुरक्षा (row-level security) है — हर व्यक्ति केवल अपनी निजी जानकारी देख सकता है। कनेक्शन HTTPS से एन्क्रिप्टेड हैं।</p>
 
-            <h2 className="text-xl font-semibold">Third-Party Services</h2>
-            <p>
-              We may use trusted third-party services such as Google Maps,
-              analytics tools, and communication platforms to improve our
-              services.
-            </p>
-
-            <h2 className="text-xl font-semibold">Your Privacy Rights</h2>
-            <p>
-              You have the right to request access to or deletion of your
-              personal data collected through this website.
-            </p>
-
-            <h2 className="text-xl font-semibold">Contact Us</h2>
-            <p>
-              If you have any questions about this Privacy Policy, please contact
-              us at:
-            </p>
-
-            <p className="font-medium">
-              📍 Near IDBI Bank, Barmer, Rajasthan <br />
-              📞 +91 9950788973
-            </p>
-
-          </CardContent>
-        </Card>
-      </main>
-
-      <Footer />
-    </div>
+      <h2>संपर्क</h2>
+      <p>{BUSINESS.nameHi}, {fullAddress("hi")}<br />फोन: <a href={telHref}>{BUSINESS.phone}</a></p>
+    </LegalPage>
   );
-};
-
-export default PrivacyPolicy;
+}

@@ -1,37 +1,56 @@
-import 'dotenv/config'
-import { createClient } from '@supabase/supabase-js';
-import fs from 'fs';
-import path from 'path';
+// Writes a static fallback public/sitemap.xml. Production serves the live sitemap from the
+// Netlify edge function (netlify/edge-functions/sitemap.ts); run this only for local checks.
+// Uses the publishable (anon) key: RLS already exposes published posts to everyone.
+import "dotenv/config";
+import { createClient } from "@supabase/supabase-js";
+import fs from "node:fs";
+import path from "node:path";
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
-const SITE_URL = process.env.VITE_SITE_URL || 'https://malanibarmer.com';
+const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const SITE_URL = (process.env.VITE_SITE_URL || "https://malanibarmer.com").replace(/\/$/, "");
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.warn('[sitemap] Skipping sitemap generation: SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set. (This is expected in the Lovable dev sandbox; configure these in your Netlify build env for production.)');
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.warn("[sitemap] Skipped: VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY not set.");
   process.exit(0);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const { routes } = JSON.parse(fs.readFileSync(path.resolve("config/public-routes.json"), "utf8"));
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+const escape = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 async function run() {
-  const { data: posts, error } = await supabase.from('posts').select('slug, updated_at, created_at').not('slug', 'is', null).order('created_at', { ascending: false });
-  if (error) throw error;
-  const staticPaths = ["/", "/about", "/privacy-policy", "/terms", "/blog", "/services", "/mobile-electronics", "/mataji-studio"];
-  const today = new Date().toISOString().split("T")[0];
-  const staticItems = staticPaths.map((route) => {
-    const loc = `${SITE_URL}${route}`;
-    return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`;
-  });
-  const postItems = (posts || []).map((p) => {
-    const loc = `${SITE_URL}/blog/${p.slug}`;
-    const lastmod = (p.updated_at || p.created_at || '').split('T')[0];
-    return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`;
-  });
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...staticItems, ...postItems].join('\n')}\n</urlset>`;
-  const out = path.resolve(process.cwd(), 'public', 'sitemap.xml');
-  fs.writeFileSync(out, xml, 'utf8');
-  console.log('Wrote sitemap to', out);
+  const posts = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("slug, updated_at, published_at")
+      .eq("status", "published")
+      .not("slug", "is", null)
+      .order("published_at", { ascending: false })
+      .range(from, from + 999);
+    if (error) throw error;
+    posts.push(...data);
+    if (data.length < 1000) break;
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  const items = [
+    ...routes.map((r) => ({ loc: `${SITE_URL}${r.path}`, lastmod: today, changefreq: r.changefreq, priority: r.priority })),
+    ...posts.map((p) => ({ loc: `${SITE_URL}/blog/${encodeURIComponent(p.slug)}`, lastmod: (p.updated_at || p.published_at || "").slice(0, 10) })),
+  ];
+  const body = items
+    .map((i) => {
+      const extra = (i.changefreq ? `\n    <changefreq>${i.changefreq}</changefreq>` : "") + (i.priority != null ? `\n    <priority>${i.priority.toFixed(1)}</priority>` : "");
+      return `  <url>\n    <loc>${escape(i.loc)}</loc>\n    <lastmod>${i.lastmod}</lastmod>${extra}\n  </url>`;
+    })
+    .join("\n");
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
+  const out = path.resolve("public", "sitemap.xml");
+  fs.writeFileSync(out, xml, "utf8");
+  console.log(`[sitemap] Wrote ${items.length} URLs to ${out}`);
 }
 
-run().catch((e) => { console.error(e); process.exit(1); });
+run().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { defaultMessages, languageOptions, type MessageCatalog } from "./defaultMessages";
+import { defaultMessages, languageOptions, type DeepPartial, type MessageCatalog } from "./defaultMessages";
 import { hindiOverrides } from "./hindiOverrides";
 import type { Language } from "./types";
 
@@ -9,7 +9,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function deepMerge<T>(base: T, override?: Partial<T>): T {
+function deepMerge<T>(base: T, override?: DeepPartial<T>): T {
   if (!override) return base;
   const result: Record<string, unknown> = { ...(base as Record<string, unknown>) };
 
@@ -20,7 +20,7 @@ function deepMerge<T>(base: T, override?: Partial<T>): T {
       return;
     }
     if (isObject(baseValue) && isObject(value)) {
-      result[key] = deepMerge(baseValue, value);
+      result[key] = deepMerge(baseValue, value as DeepPartial<typeof baseValue>);
       return;
     }
     result[key] = value;
@@ -31,7 +31,7 @@ function deepMerge<T>(base: T, override?: Partial<T>): T {
 
 const catalogs: Record<Language, MessageCatalog> = {
   default: defaultMessages,
-  hi: deepMerge(defaultMessages, hindiOverrides),
+  hi: deepMerge<MessageCatalog>(defaultMessages, hindiOverrides),
   en: defaultMessages,
 };
 
@@ -44,14 +44,22 @@ type I18nContextValue = {
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
+  // Hindi-first (Blueprint §3): readers get Hindi unless they chose English before.
   const [language, setLanguage] = useState<Language>(() => {
-    if (typeof window === "undefined") return "default";
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    return saved === "hi" || saved === "en" || saved === "default" ? saved : "default";
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEY);
+      return saved === "hi" || saved === "en" || saved === "default" ? saved : "hi";
+    } catch {
+      return "hi";
+    }
   });
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, language);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, language);
+    } catch {
+      // storage unavailable
+    }
     document.documentElement.lang = catalogs[language].locale;
   }, [language]);
 

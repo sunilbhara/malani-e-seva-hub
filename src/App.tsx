@@ -1,71 +1,83 @@
-import { Suspense, lazy, useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { lazy } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/hooks/useAuth";
+import { ThemeProvider } from "@/lib/theme";
+import { queryClient } from "@/lib/queryClient";
+import { AppShell } from "@/components/layout/AppShell";
 import Index from "./pages/Index";
-import About from "./pages/About";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import Terms from "./pages/Terms";
-import NotFound from "./pages/NotFound";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import Login from "./pages/Login";
-import Admin from "./pages/Admin";
-import Profile from "./pages/Profile";
-import { AuthProvider } from "./hooks/useAuth";
-import GoogleAnalytics from "./utils/GoogleAnalytics";
-import { loadAdsenseScript } from "./utils/LoadAdsence";
 
-const queryClient = new QueryClient();
+// Every page except the home page is code-split (audit P1).
+const Listing = lazy(() => import("./pages/Listing"));
+const PostPage = lazy(() => import("./pages/PostPage"));
+const MyJobs = lazy(() => import("./pages/MyJobs"));
+const Today = lazy(() => import("./pages/Today"));
+const Quiz = lazy(() => import("./pages/Quiz"));
+const Login = lazy(() => import("./pages/Login"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Newsletter = lazy(() => import("./pages/Newsletter"));
 const ServicesPage = lazy(() => import("./pages/ServicesPage"));
 const MobileElectronicsPage = lazy(() => import("./pages/MobileElectronicsPage"));
 const MatajiStudioPage = lazy(() => import("./pages/MatajiStudioPage"));
+const About = lazy(() => import("./pages/About"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminPosts = lazy(() => import("./pages/admin/AdminPosts"));
+const PostEditor = lazy(() => import("./pages/admin/PostEditor"));
+const AdminModeration = lazy(() => import("./pages/admin/AdminModeration"));
+const AdminQuiz = lazy(() => import("./pages/admin/AdminQuiz"));
 
-const App = () => {
-  useEffect(() => {
-    loadAdsenseScript();
-  }, []);
-
+export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-
-        <BrowserRouter>
-          <ToastContainer position="top-right" autoClose={3200} theme="colored" newestOnTop />
-          <AuthProvider>
-            <GoogleAnalytics />
-
-            <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 pt-28 text-center text-gray-600">Loading...</div>}>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider delayDuration={300}>
+          <BrowserRouter>
+            <AuthProvider>
               <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/services" element={<ServicesPage />} />
-                <Route path="/mobile-electronics" element={<MobileElectronicsPage />} />
-                <Route path="/mataji-studio" element={<MatajiStudioPage />} />
-
-                {/* Blog system */}
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:identifier" element={<BlogPost />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/admin" element={<Admin />} />
-
-                <Route path="*" element={<NotFound />} />
+                  <Route element={<AppShell />}>
+                    <Route index element={<Index />} />
+                    <Route path="jobs" element={<Listing kind="jobs" />} />
+                    <Route path="admit-card" element={<Listing kind="admit" />} />
+                    <Route path="result" element={<Listing kind="result" />} />
+                    <Route path="blog" element={<Listing kind="all" />} />
+                    <Route path="blog/:identifier" element={<PostPage />} />
+                    <Route path="today" element={<Today />} />
+                    <Route path="quiz" element={<Quiz />} />
+                    <Route path="my" element={<MyJobs />} />
+                    <Route path="login" element={<Login />} />
+                    <Route path="auth/reset" element={<ResetPassword />} />
+                    <Route path="profile" element={<Profile />} />
+                    <Route path="newsletter" element={<Newsletter />} />
+                    <Route path="services" element={<ServicesPage />} />
+                    <Route path="mobile-electronics" element={<MobileElectronicsPage />} />
+                    <Route path="mataji-studio" element={<MatajiStudioPage />} />
+                    <Route path="about" element={<About />} />
+                    <Route path="privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="terms" element={<Terms />} />
+                    <Route path="admin" element={<AdminLayout />}>
+                      <Route index element={<AdminDashboard />} />
+                      <Route path="posts" element={<AdminPosts />} />
+                      <Route path="posts/new" element={<PostEditor key="new" />} />
+                      <Route path="posts/:id" element={<PostEditor />} />
+                      <Route path="moderation" element={<AdminModeration />} />
+                      <Route path="quiz" element={<AdminQuiz />} />
+                    </Route>
+                    <Route path="home" element={<Navigate to="/" replace />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
               </Routes>
-            </Suspense>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+              <Toaster />
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
-};
-
-export default App;
+}

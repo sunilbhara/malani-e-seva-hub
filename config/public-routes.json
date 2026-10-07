@@ -1,0 +1,18 @@
+{
+  "comment": "Indexable static routes. Used by the sitemap edge function and scripts/generate-sitemap.mjs. Keep in sync with src/App.tsx.",
+  "routes": [
+    { "path": "/", "changefreq": "daily", "priority": 1.0 },
+    { "path": "/jobs", "changefreq": "hourly", "priority": 0.9 },
+    { "path": "/admit-card", "changefreq": "daily", "priority": 0.8 },
+    { "path": "/result", "changefreq": "daily", "priority": 0.8 },
+    { "path": "/today", "changefreq": "hourly", "priority": 0.8 },
+    { "path": "/blog", "changefreq": "daily", "priority": 0.7 },
+    { "path": "/quiz", "changefreq": "daily", "priority": 0.6 },
+    { "path": "/services", "changefreq": "monthly", "priority": 0.7 },
+    { "path": "/mobile-electronics", "changefreq": "monthly", "priority": 0.6 },
+    { "path": "/mataji-studio", "changefreq": "monthly", "priority": 0.6 },
+    { "path": "/about", "changefreq": "yearly", "priority": 0.4 },
+    { "path": "/privacy-policy", "changefreq": "yearly", "priority": 0.2 },
+    { "path": "/terms", "changefreq": "yearly", "priority": 0.2 }
+  ]
+}

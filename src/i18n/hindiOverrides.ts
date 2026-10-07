@@ -1,6 +1,6 @@
-import type { MessageCatalog } from "./defaultMessages";
+import type { DeepPartial, MessageCatalog } from "./defaultMessages";
 
-export const hindiOverrides: Partial<MessageCatalog> = {
+export const hindiOverrides: DeepPartial<MessageCatalog> = {
   locale: "hi-IN",
   languageSwitcher: {
     label: "भाषा",

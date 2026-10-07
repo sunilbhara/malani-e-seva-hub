@@ -1,123 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="hi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Malani Barmer — E-Mitra, Mobile & Photo Studio</title>
-    <meta name="description" content="Authorized E-Mitra center in Barmer, Rajasthan. Government services, mobile electronics, and Mataji photography studio — all under one roof." />
-    <!-- Canonical is set per-route via react-helmet-async -->
-    <meta name="keywords" content="Malani Barmer, E-Mitra Services Barmer, Mobile Electronics Barmer, Mataji Studio Photography, Digital Services Rajasthan, Government Services Barmer, Tarun Bharti, Online Services Barmer, Electronic Shop Barmer" />
-    <meta name="author" content="Tarun Bharti - Malani Barmer" />
-    <meta name="robots" content="index, follow" />
-    <meta name="language" content="English" />
-    <meta name="revisit-after" content="7 days" />
-    <meta name="geo.region" content="IN-RJ" />
-    <meta name="geo.placename" content="Barmer, Rajasthan" />
-    <meta name="geo.position" content="25.7521;71.3967" />
-    <meta name="ICBM" content="25.7521, 71.3967" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>सरकारी नौकरी, एडमिट कार्ड, रिजल्ट — बाड़मेर | मालाणी</title>
+    <meta name="description" content="राजस्थान और केंद्र की नई सरकारी भर्तियाँ, अंतिम तिथि, एडमिट कार्ड और रिजल्ट — सरल हिंदी में। फॉर्म भरवाने के लिए मालाणी ई-मित्र, बाड़मेर।" data-rh="true" />
+    <meta name="theme-color" content="#1E3A8A" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="canonical" href="https://malanibarmer.com/" data-rh="true" />
 
-    <!-- Open Graph tags -->
-    <meta property="og:title" content="Malani Barmer — E-Mitra, Mobile & Photo Studio" />
-    <meta property="og:description" content="Authorized E-Mitra center in Barmer, Rajasthan. Government services, mobile electronics, and professional photography." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://malanibarmer.com" />
-    <meta property="og:image" content="https://res.cloudinary.com/duovfafmc/image/upload/v1757222789/0022_jfozz9.jpg" />
-    <meta property="og:locale" content="en_IN" />
-    <meta property="business:contact_data:locality" content="Barmer" />
-    <meta property="business:contact_data:region" content="Rajasthan" />
-    <meta property="business:contact_data:country_name" content="India" />
-    <meta property="site_name" content="Malani Barmer" />
+    <!-- Default social tags. data-rh lets react-helmet replace them on each route; the blog-og
+         edge function rewrites them for crawlers that do not run JavaScript (audit G1). -->
+    <meta property="og:site_name" content="मालाणी बाड़मेर" data-rh="true" />
+    <meta property="og:type" content="website" data-rh="true" />
+    <meta property="og:title" content="सरकारी नौकरी, एडमिट कार्ड, रिजल्ट — बाड़मेर | मालाणी" data-rh="true" />
+    <meta property="og:description" content="नई सरकारी भर्तियाँ, अंतिम तिथि, एडमिट कार्ड और रिजल्ट — सरल हिंदी में।" data-rh="true" />
+    <meta property="og:url" content="https://malanibarmer.com/" data-rh="true" />
+    <meta property="og:image" content="https://res.cloudinary.com/duovfafmc/image/upload/v1757222789/0022_jfozz9.jpg" data-rh="true" />
+    <meta property="og:locale" content="hi_IN" data-rh="true" />
+    <meta name="twitter:card" content="summary_large_image" data-rh="true" />
+    <meta name="twitter:title" content="सरकारी नौकरी, एडमिट कार्ड, रिजल्ट — बाड़मेर | मालाणी" data-rh="true" />
+    <meta name="twitter:description" content="नई सरकारी भर्तियाँ, अंतिम तिथि, एडमिट कार्ड और रिजल्ट — सरल हिंदी में।" data-rh="true" />
+    <meta name="twitter:image" content="https://res.cloudinary.com/duovfafmc/image/upload/v1757222789/0022_jfozz9.jpg" data-rh="true" />
 
-    <!-- Twitter Card tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Malani Barmer - E-Mitra Services, Mobile Electronics & Photography" />
-    <meta name="twitter:description" content="Comprehensive services in Barmer: E-Mitra, Mobile Electronics, and Professional Photography by Tarun Bharti." />
-    <meta name="twitter:image" content="https://res.cloudinary.com/duovfafmc/image/upload/v1757222789/0022_jfozz9.jpg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://lncyzrytctqijvhjprtu.supabase.co" crossorigin />
 
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Malani Barmer",
-      "description": "E-Mitra services, mobile electronics, and professional photography in Barmer, Rajasthan",
-      "image": "https://res.cloudinary.com/duovfafmc/image/upload/v1757222789/0022_jfozz9.jpg",
-      "url": "https://malanibarmer.com",
-      "logo": "https://malanibarmer.com/favicon.ico",
-      "telephone": "+91 9950788973",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Near IDBI Bank Opp. Railway Station High School Road",
-        "addressLocality": "Barmer",
-        "addressRegion": "Rajasthan",
-        "postalCode": "344001",
-        "addressCountry": "IN"
-      },
-      "sameAs": [
-        "https://www.instagram.com/malani_mobile_barmer/",
-        "https://www.youtube.com/@MalaniMobileandElectronices",
-        "https://malanibarmer.com"
-      ],
-      "owner": {
-        "@type": "Person",
-        "name": "Tarun Bharti"
-      },
-      "openingHours": "Mo-Sa 09:00-19:00, Su 10:00-20:00",
-      "priceRange": "$$",
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Services",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "E-Mitra Services",
-              "description": "Government authorized digital services"
-            }
-          },
-          {
-            "@type": "Offer", 
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Mobile Electronics",
-              "description": "Latest mobile phones and electronic gadgets"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service", 
-              "name": "Photography Studio",
-              "description": "Professional photography for events and portraits"
-            }
-          }
-        ]
-      }
-    }
+    <!-- Apply the saved theme before first paint to avoid a light flash in dark mode. -->
+    <script>
+      (function () {
+        try {
+          var p = JSON.parse(localStorage.getItem("malani-theme") || '"system"');
+          var dark = p === "dark" || (p === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+        } catch (e) {}
+      })();
     </script>
-
-    <script
-      async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=%VITE_ADSENSE_CLIENT%"
-      crossorigin="anonymous"
-    ></script>
   </head>
-
   <body>
+    <noscript>
+      <p style="font-family: sans-serif; padding: 1rem">यह साइट चलाने के लिए JavaScript चालू करें। / Please enable JavaScript.</p>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
