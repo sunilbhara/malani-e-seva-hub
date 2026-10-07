@@ -1,13 +1,37 @@
 /// <reference types="vitest" />
-import { defineConfig, type PluginOption } from "vite";
+import { defineConfig, loadEnv, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { VitePWA } from "vite-plugin-pwa";
 import { componentTagger } from "lovable-tagger";
 
+/**
+ * AdSense site verification: Google's reviewers look for the account meta tag and the official
+ * loader in every page's <head>. Injected only when VITE_ADSENSE_CLIENT is a real publisher id,
+ * so dev and E2E builds never contact Google.
+ */
+function adsenseHead(client: string | undefined): PluginOption {
+  return {
+    name: "adsense-head",
+    transformIndexHtml() {
+      if (!client || !/^ca-pub-\d{16}$/.test(client)) return [];
+      return [
+        { tag: "meta", attrs: { name: "google-adsense-account", content: client }, injectTo: "head" },
+        {
+          tag: "script",
+          attrs: { async: true, src: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`, crossorigin: "anonymous" },
+          injectTo: "head",
+        },
+      ];
+    },
+  };
+}
+
 export default defineConfig(async ({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "VITE_");
   const plugins: PluginOption[] = [
     react(),
+    adsenseHead(env.VITE_ADSENSE_CLIENT),
     mode === "development" && componentTagger(),
     // PWA: installable app, offline reading and web push (audit P5, Blueprint Loop 1).
     VitePWA({

@@ -22,6 +22,7 @@ const LINKS = [
       { to: "/mobile-electronics", label: "मोबाइल और इलेक्ट्रॉनिक्स" },
       { to: "/mataji-studio", label: "माताजी स्टूडियो" },
       { to: "/about", label: "हमारे बारे में" },
+      { to: "/contact", label: "संपर्क करें" },
     ],
   },
   {
@@ -29,6 +30,7 @@ const LINKS = [
     items: [
       { to: "/privacy-policy", label: "प्राइवेसी पॉलिसी" },
       { to: "/terms", label: "नियम और शर्तें" },
+      { to: "/disclaimer", label: "अस्वीकरण" },
       { to: "/blog", label: "सभी लेख" },
     ],
   },
