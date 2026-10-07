@@ -1,9 +1,11 @@
 // Sunday weekly email digest to confirmed subscribers (Blueprint Loop 1).
-// Run weekly by pg_cron. Idempotent per week via newsletter_sends.
+// Run weekly by pg_cron; only the database may call it. Idempotent per calendar week via newsletter_sends.
 import { json, siteUrl } from "../_shared/http.ts";
 import { adminClient } from "../_shared/supabase.ts";
 import { emailConfigured, sendEmails } from "../_shared/email.ts";
 import { digestEmail, type DigestItem } from "../newsletter/templates.ts";
+import { isInternalCall } from "../_shared/internal.ts";
+import { weekStartIst } from "./week.ts";
 
 function istDate(offsetDays = 0): string {
   const now = new Date(Date.now() + 330 * 60_000 + offsetDays * 86_400_000);
@@ -12,10 +14,12 @@ function istDate(offsetDays = 0): string {
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  const admin = adminClient();
+  if (!(await isInternalCall(req, admin))) return json({ error: "Forbidden" }, 403);
   if (!emailConfigured()) return json({ status: "skipped", reason: "email not configured" });
 
-  const admin = adminClient();
-  const weekStart = istDate(-6);
+  // One digest per calendar week (Monday-based, IST), however often this is called.
+  const weekStart = weekStartIst();
   const { error: claimError } = await admin.from("newsletter_sends").insert({ week_start: weekStart });
   if (claimError) return json({ status: "skipped", reason: "already sent" });
 

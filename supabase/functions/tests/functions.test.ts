@@ -8,6 +8,8 @@ import { confirmEmail, digestEmail, isValidEmail } from "../newsletter/templates
 import { postTopics, pushPayload, telegramMessage, type PublishedPost } from "../on-publish/message.ts";
 import { reminderText } from "../send-reminders/text.ts";
 import { isAllowedPushEndpoint } from "../_shared/pushHosts.ts";
+import { safeEqual } from "../_shared/internal.ts";
+import { weekStartIst } from "../weekly-digest/week.ts";
 
 Deno.test("sanitizeHtml keeps allowed tags and strips scripts, styles and attributes", () => {
   const html = `<h2 class="x" onclick="alert(1)">शीर्षक</h2><script>alert(1)</script><p style="color:red">पाठ <img src=x onerror=alert(1)></p><a href="javascript:alert(1)">bad</a><a href="https://rpsc.rajasthan.gov.in">ok</a><!-- c -->`;
@@ -171,4 +173,20 @@ Deno.test("push endpoints are limited to real Web Push services (SSRF guard)", (
     "https://169.254.169.254/latest",
     "not a url",
   ]) assert(!isAllowedPushEndpoint(bad), bad);
+});
+
+Deno.test("internal token comparison is exact and rejects empty values", () => {
+  assert(safeEqual("abc123", "abc123"));
+  assert(!safeEqual("abc123", "abc124"));
+  assert(!safeEqual("abc123", "abc12"));
+  assert(!safeEqual("", ""));
+});
+
+Deno.test("weekly digest uses one Monday-based IST week, whatever day it runs", () => {
+  // 2026-10-04 is a Sunday; 02:30 UTC = 08:00 IST (cron time).
+  assertEquals(weekStartIst(new Date("2026-10-04T02:30:00Z")), "2026-09-28");
+  assertEquals(weekStartIst(new Date("2026-10-05T02:30:00Z")), "2026-10-05"); // Monday
+  assertEquals(weekStartIst(new Date("2026-10-07T12:00:00Z")), "2026-10-05"); // Wednesday, same week
+  assertEquals(weekStartIst(new Date("2026-10-11T18:00:00Z")), "2026-10-05"); // Sunday 23:30 IST
+  assertEquals(weekStartIst(new Date("2026-10-11T18:31:00Z")), "2026-10-12"); // Monday 00:01 IST
 });

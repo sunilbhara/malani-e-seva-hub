@@ -4,6 +4,7 @@ import { json, siteUrl } from "../_shared/http.ts";
 import { adminClient } from "../_shared/supabase.ts";
 import { sendPush, type PushTarget } from "../_shared/push.ts";
 import { reminderText } from "./text.ts";
+import { isInternalCall } from "../_shared/internal.ts";
 
 interface DueReminder {
   reminder_id: string;
@@ -20,6 +21,7 @@ interface DueReminder {
 Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const admin = adminClient();
+  if (!(await isInternalCall(req, admin))) return json({ error: "Forbidden" }, 403);
   const { data, error } = await admin.rpc("due_reminders");
   if (error) {
     console.error("due_reminders failed", error);
