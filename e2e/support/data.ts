@@ -187,3 +187,15 @@ export function seedQuiz() {
     { id: "e2e30000-0000-4000-8000-000000000002", quiz_date: istToday(), position: 2, question: "बाड़मेर राजस्थान के किस भाग में है?", options: ["उत्तर", "पूर्व", "पश्चिम", "दक्षिण"], correct_index: 2, explanation: null },
   ];
 }
+
+export function seedCatalog() {
+  const img = (id: string) => `https://images.unsplash.com/photo-${id}?w=800&h=800&fit=crop`;
+  const base = { image_path: null, is_active: true, created_at: "2026-10-01T00:00:00Z" };
+  return [
+    { ...base, id: "e2e40000-0000-4000-8000-000000000001", kind: "product", category: "mobiles", title: "Redmi Note 14", price: 17999, features: ["5110mAh बैटरी", "50MP कैमरा"], image_url: img("p1"), sort_order: 10 },
+    { ...base, id: "e2e40000-0000-4000-8000-000000000002", kind: "product", category: "accessories", title: "boAt Airdopes 141", price: null, features: [], image_url: img("p2"), sort_order: 20 },
+    { ...base, id: "e2e40000-0000-4000-8000-000000000003", kind: "product", category: "mobiles", title: "पुराना मॉडल (छुपा)", price: 9999, features: [], image_url: img("p3"), sort_order: 30, is_active: false },
+    { ...base, id: "e2e40000-0000-4000-8000-000000000004", kind: "studio_photo", category: "weddings", title: "शादी के पल", price: null, features: [], image_url: img("s1"), sort_order: 10 },
+    { ...base, id: "e2e40000-0000-4000-8000-000000000005", kind: "studio_photo", category: "portraits", title: "फैमिली पोर्ट्रेट", price: null, features: [], image_url: img("s2"), sort_order: 20 },
+  ];
+}

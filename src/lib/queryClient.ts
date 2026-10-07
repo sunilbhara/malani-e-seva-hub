@@ -23,6 +23,8 @@ export const queryKeys = {
   follows: (userId: string) => ["follows", userId] as const,
   reminders: (userId: string) => ["reminders", userId] as const,
   quiz: (date: string) => ["quiz", date] as const,
+  catalog: (kind: string) => ["catalog", kind] as const,
+  adminCatalog: (kind: string) => ["admin", "catalog", kind] as const,
   adminPosts: (params: unknown) => ["admin", "posts", params] as const,
   analytics: ["admin", "analytics"] as const,
   moderation: ["admin", "moderation"] as const,

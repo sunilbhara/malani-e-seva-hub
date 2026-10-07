@@ -32,6 +32,7 @@ const AdminPosts = lazy(() => import("./pages/admin/AdminPosts"));
 const PostEditor = lazy(() => import("./pages/admin/PostEditor"));
 const AdminModeration = lazy(() => import("./pages/admin/AdminModeration"));
 const AdminQuiz = lazy(() => import("./pages/admin/AdminQuiz"));
+const AdminCatalog = lazy(() => import("./pages/admin/AdminCatalog"));
 
 export default function App() {
   return (
@@ -68,6 +69,7 @@ export default function App() {
                       <Route path="posts/:id" element={<PostEditor />} />
                       <Route path="moderation" element={<AdminModeration />} />
                       <Route path="quiz" element={<AdminQuiz />} />
+                      <Route path="catalog" element={<AdminCatalog />} />
                     </Route>
                     <Route path="home" element={<Navigate to="/" replace />} />
                     <Route path="*" element={<NotFound />} />

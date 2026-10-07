@@ -84,11 +84,25 @@ export function createSupabaseMock() {
       updateUser: vi.fn(async () => ({ data: {}, error: null })),
     },
     functions: { invoke: vi.fn(async () => ({ data: null as unknown, error: null as unknown })) },
+    storage: { from: vi.fn((bucket: string) => storageBucket(bucket)) },
   };
+
+  const storageApi = {
+    upload: vi.fn(async (_path: string, _body: unknown, _opts?: unknown) => ({ data: {} as unknown, error: null as unknown })),
+    remove: vi.fn(async (_paths: string[]) => ({ data: [] as unknown, error: null as unknown })),
+  };
+  function storageBucket(bucket: string) {
+    return {
+      upload: storageApi.upload,
+      remove: storageApi.remove,
+      getPublicUrl: (path: string) => ({ data: { publicUrl: `https://mock.supabase.co/storage/v1/object/public/${bucket}/${path}` } }),
+    };
+  }
 
   return {
     supabase,
     calls,
+    storage: storageApi,
     /** Registers a result for matching calls (later registrations win). */
     on(m: Matcher | ((c: QueryCall) => boolean), result: QueryResult | ((c: QueryCall) => QueryResult)) {
       responders.push((c) => (matches(c, m) ? (typeof result === "function" ? result(c) : result) : undefined));
@@ -103,6 +117,8 @@ export function createSupabaseMock() {
     reset() {
       calls.length = 0;
       responders.length = 0;
+      storageApi.upload.mockClear();
+      storageApi.remove.mockClear();
       authListeners.length = 0;
     },
   };

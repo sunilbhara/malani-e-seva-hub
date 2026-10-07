@@ -4,7 +4,7 @@
 // important database rules (drafts hidden from readers, admin-only writes, one view per
 // visitor), and records every call so tests can assert what the app sent.
 import type { BrowserContext, Request, Route } from "@playwright/test";
-import { RECRUITMENTS, TEST_USERS, day, istToday, seedPosts, seedQuiz, type Post } from "./data";
+import { RECRUITMENTS, TEST_USERS, day, istToday, seedCatalog, seedPosts, seedQuiz, type Post } from "./data";
 
 export const MOCK_HOST = "e2e-mock.supabase.co";
 export const STORAGE_KEY = "sb-e2e-mock-auth-token";
@@ -119,6 +119,9 @@ function applyFilters(rows: Row[], query: URLSearchParams): Row[] {
 export class MockBackend {
   posts: Post[] = seedPosts();
   quiz = seedQuiz();
+  catalog: Row[] = seedCatalog();
+  /** Paths uploaded to / removed from storage buckets. */
+  storage = { uploaded: [] as string[], removed: [] as string[] };
   recruitments = [...RECRUITMENTS];
   users: User[] = [TEST_USERS.reader, TEST_USERS.admin];
   tables: Record<string, Row[]> = {
@@ -202,6 +205,7 @@ export class MockBackend {
     if (method === "OPTIONS") return route.fulfill({ status: 204, headers: cors() });
     if (path.startsWith("/auth/v1/")) return this.auth(route, path, url, body, user);
     if (path.startsWith("/functions/v1/")) return this.functions(route, path.split("/").pop()!, body, user);
+    if (path.startsWith("/storage/v1/")) return this.storageApi(route, method, path.slice("/storage/v1/".length), body, user);
     if (path.startsWith("/rest/v1/rpc/")) return this.rpc(route, path.split("/").pop()!, body, user);
     if (path.startsWith("/rest/v1/")) return this.rest(route, req, path.slice("/rest/v1/".length), url.searchParams, body, user);
     return json(route, 404, { message: "unknown endpoint" });
@@ -235,6 +239,24 @@ export class MockBackend {
     }
     if (endpoint === "authorize") return route.fulfill({ status: 200, contentType: "text/html", body: "<h1>Google sign-in (mock)</h1>" });
     return json(route, 404, { message: `auth ${endpoint} not mocked` });
+  }
+
+  // --- Storage (catalog bucket) ------------------------------------------------
+  private storageApi(route: Route, method: string, rest: string, body: any, user: User | null) {
+    if (method === "GET" && rest.startsWith("object/public/")) return route.fulfill({ status: 200, contentType: "image/png", body: PIXEL, headers: cors() });
+    if (user?.role !== "admin") return json(route, 403, { statusCode: "403", error: "Unauthorized", message: "new row violates row-level security policy" });
+    if (method === "POST" && rest.startsWith("object/")) {
+      const key = rest.slice("object/".length);
+      this.storage.uploaded.push(key);
+      return json(route, 200, { Key: key, Id: "e2e-object" });
+    }
+    if (method === "DELETE" && rest.startsWith("object/")) {
+      const bucket = rest.slice("object/".length);
+      const prefixes: string[] = body?.prefixes ?? [];
+      this.storage.removed.push(...prefixes.map((p) => `${bucket}/${p}`));
+      return json(route, 200, prefixes.map((name) => ({ name })));
+    }
+    return json(route, 404, { message: `storage ${rest} not mocked` });
   }
 
   // --- Edge functions ---------------------------------------------------------
@@ -398,6 +420,24 @@ export class MockBackend {
         return respond([row], 201);
       }
       return respond(applyFilters(this.recruitments, query));
+    }
+    if (table === "catalog_items") {
+      if (method === "GET") return respond(applyFilters(this.catalog.filter((r) => isAdmin || r.is_active), query));
+      if (!isAdmin) return json(route, 403, { code: "42501", message: "new row violates row-level security policy" });
+      if (method === "POST") {
+        const row = Array.isArray(body) ? body[0] : body;
+        this.catalog.push({ id: `e2e49999-0000-4000-8000-${String(this.catalog.length + 1).padStart(12, "0")}`, created_at: new Date().toISOString(), ...row });
+        return route.fulfill({ status: 201, headers: cors() });
+      }
+      if (method === "PATCH") {
+        applyFilters(this.catalog, query).forEach((r) => Object.assign(r, body));
+        return route.fulfill({ status: 204, headers: cors() });
+      }
+      if (method === "DELETE") {
+        const doomed = new Set(applyFilters(this.catalog, query));
+        this.catalog = this.catalog.filter((r) => !doomed.has(r));
+        return route.fulfill({ status: 204, headers: cors() });
+      }
     }
     if (table === "quiz_questions") {
       if (method === "GET") return respond(applyFilters(this.quiz.map(({ correct_index: _c, ...q }) => q), query));

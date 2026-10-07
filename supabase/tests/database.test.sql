@@ -609,6 +609,8 @@ EXCEPTION WHEN others THEN
 END $$;
 
 -- Quiz ------------------------------------------------------------------------------------------------
+-- Live data may already hold today's quiz; clear it inside this never-committed transaction.
+DELETE FROM public.quiz_questions WHERE quiz_date IN ((now() AT TIME ZONE 'Asia/Kolkata')::date, (now() AT TIME ZONE 'Asia/Kolkata')::date + 1);
 INSERT INTO public.quiz_questions (quiz_date, position, question, options, correct_index, explanation) VALUES
   ((now() AT TIME ZONE 'Asia/Kolkata')::date, 1, 'राजस्थान की राजधानी?', ARRAY['जोधपुर', 'जयपुर', 'बाड़मेर', 'अजमेर'], 1, 'जयपुर'),
   ((now() AT TIME ZONE 'Asia/Kolkata')::date, 2, 'बाड़मेर किस दिशा में है?', ARRAY['उत्तर', 'पूर्व', 'पश्चिम', 'दक्षिण'], 2, NULL),
@@ -666,6 +668,92 @@ BEGIN
 END $$;
 SELECT pg_temp.ok('likes and bookmarks counters still work',
   (SELECT likes_count = 1 AND bookmarks_count = 1 FROM public.posts WHERE id = 'bbbbbbbb-0000-4000-8000-000000000001'));
+
+-- Internal function token ---------------------------------------------------------------------
+SELECT pg_temp.ok('internal token: exists and is 64 hex characters',
+  (SELECT value ~ '^[0-9a-f]{64}$' FROM public.app_settings WHERE key = 'internal_function_token'));
+SELECT pg_temp.ok('internal token: anon and signed-in users cannot read app_settings',
+  NOT has_table_privilege('anon', 'public.app_settings', 'SELECT') AND NOT has_table_privilege('authenticated', 'public.app_settings', 'SELECT'));
+SELECT pg_temp.ok('internal token: only the database can call call_edge_function',
+  NOT has_function_privilege('anon', 'public.call_edge_function(text, jsonb)', 'EXECUTE')
+  AND NOT has_function_privilege('authenticated', 'public.call_edge_function(text, jsonb)', 'EXECUTE'));
+
+-- Shop catalog ---------------------------------------------------------------------
+DO $$
+BEGIN
+  PERFORM pg_temp.as_user('aaaaaaaa-0000-4000-8000-000000000001');
+  INSERT INTO public.catalog_items (id, kind, category, title, price, features, image_url, image_path, sort_order, is_active) VALUES
+    ('cccccccc-0000-4000-8000-000000000001', 'product', 'mobiles', 'Test Phone', 9999, ARRAY['A'], 'https://example.test/a.webp', 'product/a.webp', 1000, true),
+    ('cccccccc-0000-4000-8000-000000000002', 'product', 'mobiles', 'Hidden Phone', NULL, '{}', 'https://example.test/b.webp', NULL, 1001, false);
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('catalog: admin can add items', true);
+EXCEPTION WHEN others THEN
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('catalog: admin can add items', false, SQLERRM);
+END $$;
+DO $$
+DECLARE n INTEGER;
+BEGIN
+  PERFORM pg_temp.as_anon();
+  SELECT count(*) INTO n FROM public.catalog_items WHERE id::text LIKE 'cccccccc-%';
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('catalog: visitors see active items only', n = 1, n::text);
+END $$;
+DO $$
+DECLARE n INTEGER;
+BEGIN
+  PERFORM pg_temp.as_user('aaaaaaaa-0000-4000-8000-000000000001');
+  SELECT count(*) INTO n FROM public.catalog_items WHERE id::text LIKE 'cccccccc-%';
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('catalog: admin sees hidden items too', n = 2, n::text);
+END $$;
+DO $$
+DECLARE n INTEGER;
+BEGIN
+  PERFORM pg_temp.as_user('aaaaaaaa-0000-4000-8000-000000000002');
+  UPDATE public.catalog_items SET price = 1 WHERE id = 'cccccccc-0000-4000-8000-000000000001';
+  GET DIAGNOSTICS n = ROW_COUNT;
+  DELETE FROM public.catalog_items WHERE id = 'cccccccc-0000-4000-8000-000000000001';
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('catalog: readers cannot change or delete items',
+    n = 0 AND (SELECT price FROM public.catalog_items WHERE id = 'cccccccc-0000-4000-8000-000000000001') = 9999, n::text);
+END $$;
+DO $$
+BEGIN
+  PERFORM pg_temp.as_user('aaaaaaaa-0000-4000-8000-000000000002');
+  INSERT INTO public.catalog_items (kind, category, title, image_url) VALUES ('product', 'mobiles', 'Spam', 'https://example.test/x.webp');
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('catalog: readers cannot add items', false);
+EXCEPTION WHEN insufficient_privilege THEN
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('catalog: readers cannot add items', true);
+END $$;
+DO $$
+BEGIN
+  INSERT INTO public.catalog_items (kind, category, title, image_url) VALUES ('studio_photo', 'mobiles', 'Wrong', 'https://example.test/x.webp');
+  PERFORM pg_temp.ok('catalog: category must belong to the kind', false);
+EXCEPTION WHEN check_violation THEN
+  PERFORM pg_temp.ok('catalog: category must belong to the kind', true);
+END $$;
+DO $$
+BEGIN
+  INSERT INTO public.catalog_items (kind, category, title, image_url) VALUES ('product', 'mobiles', 'Bad URL', 'javascript:alert(1)');
+  PERFORM pg_temp.ok('catalog: image URL must be https', false);
+EXCEPTION WHEN check_violation THEN
+  PERFORM pg_temp.ok('catalog: image URL must be https', true);
+END $$;
+DO $$
+BEGIN
+  INSERT INTO public.catalog_items (kind, category, title, price, image_url) VALUES ('studio_photo', 'weddings', 'Priced photo', 100, 'https://example.test/x.webp');
+  PERFORM pg_temp.ok('catalog: studio photos cannot carry a price', false);
+EXCEPTION WHEN check_violation THEN
+  PERFORM pg_temp.ok('catalog: studio photos cannot carry a price', true);
+END $$;
+SELECT pg_temp.ok('catalog: storage bucket is public, 512 KB, WebP/JPEG only',
+  (SELECT public AND file_size_limit = 524288 AND allowed_mime_types <@ ARRAY['image/webp', 'image/jpeg'] FROM storage.buckets WHERE id = 'catalog'));
+SELECT pg_temp.ok('catalog: only admins may write to the bucket',
+  (SELECT count(*) FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname LIKE 'Admins % catalog images'
+     AND (coalesce(qual, '') || coalesce(with_check, '')) LIKE '%has_role%') = 4);
 
 SELECT n, CASE WHEN ok THEN 'PASS' ELSE 'FAIL' END AS result, name, detail FROM results ORDER BY n;
 -- No COMMIT: the transaction is discarded when the session ends.
