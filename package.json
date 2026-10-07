@@ -61,6 +61,7 @@
     "react-hook-form": "^7.62.0",
     "react-router-dom": "^6.26.2",
     "sonner": "^1.5.0",
+    "swiper": "^12.2.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "transliteration": "^2.6.1"

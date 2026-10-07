@@ -1,25 +1,45 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Carousel } from "@/components/common/Carousel";
 import { ServicePageTemplate } from "@/components/seo/ServicePageTemplate";
 import { whatsappHref } from "@/lib/business";
+import { formatPrice } from "@/lib/catalogImage";
+import { queryKeys } from "@/lib/queryClient";
+import { listCatalog, type CatalogItem } from "@/services/catalog";
 import { useI18n } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-const PRODUCTS = [
-  { id: 1, name: "iPhone 15 Pro", category: "mobiles", price: "₹1,34,900", image: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=480&h=480&fit=crop&auto=format&q=70", features: ["A17 Pro Chip", "48MP Camera", "Titanium Build"] },
-  { id: 2, name: "Samsung Galaxy S24", category: "mobiles", price: "₹79,999", image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=480&h=480&fit=crop&auto=format&q=70", features: ["AI Photography", "120Hz Display", "5000mAh Battery"] },
-  { id: 3, name: "Sony WH-1000XM5", category: "accessories", price: "₹29,990", image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=480&h=480&fit=crop&auto=format&q=70", features: ["Noise Cancelling", "30hr Battery", "Premium Sound"] },
-  { id: 4, name: "MacBook Air M3", category: "appliances", price: "₹1,14,900", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=480&h=480&fit=crop&auto=format&q=70", features: ["M3 Chip", "18hr Battery", "Liquid Retina"] },
-  { id: 5, name: "AirPods Pro", category: "accessories", price: "₹24,900", image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=480&h=480&fit=crop&auto=format&q=70", features: ["Active Noise Cancel", "Spatial Audio", "MagSafe Case"] },
-  { id: 6, name: 'LG OLED TV 55"', category: "appliances", price: "₹1,49,990", image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=480&h=480&fit=crop&auto=format&q=70", features: ["4K OLED", "Smart TV", "Dolby Vision"] },
-];
+function ProductCard({ p }: { p: CatalogItem }) {
+  const price = formatPrice(p.price);
+  return (
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm">
+      <img src={p.image_url} alt={p.title} width={800} height={800} loading="lazy" decoding="async" className="aspect-square w-full bg-muted object-cover" />
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <h3 className="font-semibold leading-snug">{p.title}</h3>
+        <p className="text-lg font-bold tabular">{price ?? <span className="font-hindi text-base font-semibold text-muted-foreground">दाम के लिए पूछें</span>}</p>
+        {p.features.length > 0 && (
+          <ul className="flex flex-wrap gap-1">
+            {p.features.map((f) => <li key={f} className="rounded-full bg-muted px-2 py-0.5 text-caption font-normal text-muted-foreground">{f}</li>)}
+          </ul>
+        )}
+        <Button asChild variant="whatsapp" size="sm" className="mt-auto font-hindi">
+          <a href={whatsappHref(`नमस्ते, मुझे ${p.title} के बारे में जानकारी चाहिए (दाम और उपलब्धता)।`)} target="_blank" rel="noopener noreferrer">
+            <MessageCircle /> पूछें
+          </a>
+        </Button>
+      </div>
+    </article>
+  );
+}
 
 function ProductGrid() {
   const { messages } = useI18n();
   const [filter, setFilter] = useState("all");
   const categories = messages.homepage.mobileElectronics.categories;
-  const products = filter === "all" ? PRODUCTS : PRODUCTS.filter((p) => p.category === filter);
+  const { data = [], isLoading, isError } = useQuery({ queryKey: queryKeys.catalog("product"), queryFn: () => listCatalog("product") });
+  const products = filter === "all" ? data : data.filter((p) => p.category === filter);
   return (
     <section aria-labelledby="products-heading">
       <h2 id="products-heading" className="font-hindi text-xl font-bold sm:text-2xl">{messages.homepage.mobileElectronics.title}</h2>
@@ -34,24 +54,16 @@ function ProductGrid() {
           ))}
         </div>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-3">
-        {products.map((p) => (
-          <article key={p.id} className="flex flex-col overflow-hidden rounded-2xl border bg-card">
-            <img src={p.image} alt={p.name} width={480} height={480} loading="lazy" decoding="async" className="aspect-square w-full object-cover" />
-            <div className="flex flex-1 flex-col gap-2 p-3 sm:p-4">
-              <h3 className="font-semibold leading-snug">{p.name}</h3>
-              <p className="text-lg font-bold tabular">{p.price}</p>
-              <ul className="hidden flex-wrap gap-1 sm:flex">
-                {p.features.map((f) => <li key={f} className="rounded-full bg-muted px-2 py-0.5 text-caption font-normal text-muted-foreground">{f}</li>)}
-              </ul>
-              <Button asChild variant="whatsapp" size="sm" className="mt-auto font-hindi">
-                <a href={whatsappHref(`नमस्ते, मुझे ${p.name} के बारे में जानकारी चाहिए (दाम और उपलब्धता)।`)} target="_blank" rel="noopener noreferrer">
-                  <MessageCircle /> पूछें
-                </a>
-              </Button>
-            </div>
-          </article>
-        ))}
+      <div className="mt-4">
+        {isLoading ? (
+          <div aria-hidden className="mx-auto aspect-[4/5] w-4/5 max-w-sm animate-pulse rounded-2xl bg-muted" />
+        ) : isError ? (
+          <p className="font-hindi text-small text-muted-foreground">प्रोडक्ट अभी लोड नहीं हो सके। कृपया थोड़ी देर बाद देखें या WhatsApp करें।</p>
+        ) : products.length === 0 ? (
+          <p className="font-hindi text-small text-muted-foreground">इस श्रेणी में अभी कोई प्रोडक्ट नहीं है। जानकारी के लिए WhatsApp करें।</p>
+        ) : (
+          <Carousel key={filter} label="प्रोडक्ट" items={products} getKey={(p) => p.id} renderItem={(p) => <ProductCard p={p} />} />
+        )}
       </div>
     </section>
   );

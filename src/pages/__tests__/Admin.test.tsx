@@ -79,7 +79,7 @@ describe("Admin access", () => {
     renderRoute(adminTree, { route: "/admin" });
     expect(screen.getByText("dashboard")).toBeInTheDocument();
     const nav = screen.getByRole("navigation", { name: "एडमिन" });
-    expect(within(nav).getAllByRole("link").map((l) => l.getAttribute("href"))).toEqual(["/admin", "/admin/posts", "/admin/posts/new", "/admin/moderation", "/admin/quiz"]);
+    expect(within(nav).getAllByRole("link").map((l) => l.getAttribute("href"))).toEqual(["/admin", "/admin/posts", "/admin/posts/new", "/admin/moderation", "/admin/quiz", "/admin/catalog"]);
   });
 });
 

@@ -1,30 +1,22 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Carousel } from "@/components/common/Carousel";
 import { ServicePageTemplate } from "@/components/seo/ServicePageTemplate";
 import { BookingForm } from "@/components/services/EnquiryForms";
+import { queryKeys } from "@/lib/queryClient";
+import { listCatalog, type CatalogItem } from "@/services/catalog";
 import { useI18n } from "@/i18n";
 import { cn } from "@/lib/utils";
-
-const PHOTOS = [
-  { id: 1, category: "weddings", title: "Royal Wedding Ceremony", image: "https://images.unsplash.com/photo-1587271636175-90d58cdad458?w=800&auto=format&q=70&fit=crop" },
-  { id: 2, category: "portraits", title: "Professional Portrait", image: "https://images.unsplash.com/photo-1587027512547-81850a319ff5?w=600&h=800&fit=crop&auto=format&q=70" },
-  { id: 3, category: "events", title: "Mega Event", image: "https://images.unsplash.com/photo-1587271407850-8d438ca9fdf2?w=800&auto=format&q=70&fit=crop" },
-  { id: 4, category: "events", title: "Haldi Shoot", image: "https://images.unsplash.com/photo-1645856052472-95fe99103c11?w=800&fit=crop&auto=format&q=70" },
-  { id: 5, category: "portraits", title: "Family Portrait", image: "https://images.unsplash.com/photo-1640953148126-1962ec17a92b?w=800&fit=crop&auto=format&q=70" },
-  { id: 6, category: "events", title: "Birthday Celebration", image: "https://images.unsplash.com/photo-1756621716907-6451161cd100?w=600&h=800&auto=format&fit=crop&q=70" },
-  { id: 7, category: "weddings", title: "Couple Photoshoot", image: "https://res.cloudinary.com/duovfafmc/image/upload/f_auto,q_auto,w_800/matajiphoto1_itgrfu.jpg" },
-  { id: 8, category: "events", title: "Independence Day Event", image: "https://images.unsplash.com/photo-1597536980706-7cdd82f1bb16?w=800&auto=format&fit=crop&q=70" },
-  { id: 9, category: "weddings", title: "Wedding Moments", image: "https://images.unsplash.com/photo-1633104502699-b2ecf0fee294?w=600&h=800&fit=crop&auto=format&q=70" },
-  { id: 10, category: "weddings", title: "Pre-Wedding Shoot", image: "https://images.unsplash.com/photo-1677770753024-25f65003625b?w=600&h=800&fit=crop&auto=format&q=70" },
-  { id: 11, category: "weddings", title: "Couple Portrait", image: "https://res.cloudinary.com/duovfafmc/image/upload/f_auto,q_auto,w_800/pci2_e5lwhc.jpg" },
-];
 
 function Gallery() {
   const { messages } = useI18n();
   const [filter, setFilter] = useState("all");
-  const [open, setOpen] = useState<(typeof PHOTOS)[number] | null>(null);
-  const photos = filter === "all" ? PHOTOS : PHOTOS.filter((p) => p.category === filter);
+  const [open, setOpen] = useState<CatalogItem | null>(null);
+  const { data = [], isLoading, isError } = useQuery({ queryKey: queryKeys.catalog("studio_photo"), queryFn: () => listCatalog("studio_photo") });
+  const photos = filter === "all" ? data : data.filter((p) => p.category === filter);
+  const categoryName = (id: string) => messages.homepage.matajiStudio.categories.find((c) => c.id === id)?.name ?? id;
   return (
     <section aria-labelledby="gallery-heading">
       <h2 id="gallery-heading" className="font-hindi text-xl font-bold sm:text-2xl">{messages.homepage.matajiStudio.title}</h2>
@@ -39,17 +31,42 @@ function Gallery() {
           ))}
         </div>
       </div>
-      <div className="mt-4 columns-2 gap-3 md:columns-3">
-        {photos.map((p) => (
-          <button key={p.id} type="button" onClick={() => setOpen(p)} className="mb-3 block w-full overflow-hidden rounded-xl border focus-visible:ring-2 focus-visible:ring-ring">
-            <img src={p.image} alt={p.title} loading="lazy" decoding="async" className="w-full object-cover transition-transform duration-300 hover:scale-[1.02]" />
-          </button>
-        ))}
+      <div className="mt-4">
+        {isLoading ? (
+          <div aria-hidden className="mx-auto aspect-[3/4] w-4/5 max-w-sm animate-pulse rounded-2xl bg-muted" />
+        ) : isError ? (
+          <p className="font-hindi text-small text-muted-foreground">फोटो अभी लोड नहीं हो सकीं। कृपया थोड़ी देर बाद देखें।</p>
+        ) : photos.length === 0 ? (
+          <p className="font-hindi text-small text-muted-foreground">इस श्रेणी में अभी कोई फोटो नहीं है।</p>
+        ) : (
+          <Carousel
+            key={filter}
+            label="स्टूडियो फोटो"
+            mobilePerView={1.6}
+            items={photos}
+            getKey={(p) => p.id}
+            renderItem={(p) => (
+              <button
+                type="button"
+                onClick={() => setOpen(p)}
+                aria-label={`${p.title} — बड़ी फोटो देखें`}
+                className="group relative block aspect-[3/4] w-full overflow-hidden rounded-2xl bg-muted shadow-md focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <img src={p.image_url} alt="" width={900} height={1200} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                <span className="absolute left-3 top-3 rounded-full border border-white/40 bg-black/35 px-2.5 py-1 font-hindi text-caption font-semibold text-white backdrop-blur-sm">
+                  {categoryName(p.category)}
+                </span>
+                <span className="absolute inset-x-0 bottom-0 p-4 text-left font-hindi text-lg font-bold text-white drop-shadow">{p.title}</span>
+              </button>
+            )}
+          />
+        )}
       </div>
       <Dialog open={Boolean(open)} onOpenChange={(v) => !v && setOpen(null)}>
         <DialogContent className="max-w-3xl p-2">
           <DialogTitle className="sr-only">{open?.title}</DialogTitle>
-          {open && <img src={open.image} alt={open.title} className="max-h-[80vh] w-full rounded-lg object-contain" />}
+          {open && <img src={open.image_url} alt={open.title} className="max-h-[80vh] w-full rounded-lg object-contain" />}
         </DialogContent>
       </Dialog>
     </section>

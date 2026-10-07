@@ -50,6 +50,51 @@ export type Database = {
         }
         Relationships: []
       }
+      catalog_items: {
+        Row: {
+          category: string
+          created_at: string
+          features: string[]
+          id: string
+          image_path: string | null
+          image_url: string
+          is_active: boolean
+          kind: string
+          price: number | null
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          features?: string[]
+          id?: string
+          image_path?: string | null
+          image_url: string
+          is_active?: boolean
+          kind: string
+          price?: number | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          features?: string[]
+          id?: string
+          image_path?: string | null
+          image_url?: string
+          is_active?: boolean
+          kind?: string
+          price?: number | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       comment_reports: {
         Row: {
           comment_id: string

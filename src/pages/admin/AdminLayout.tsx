@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Link, NavLink, Navigate, Outlet, useLocation } from "react-router-dom";
-import { Brain, FileText, LayoutDashboard, MessageSquareWarning, PenSquare } from "lucide-react";
+import { Brain, FileText, LayoutDashboard, MessageSquareWarning, PenSquare, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/seo/SEO";
 import { PageSpinner } from "@/components/common/PageSpinner";
@@ -13,6 +13,7 @@ const TABS = [
   { to: "/admin/posts/new", label: "नई पोस्ट", icon: PenSquare },
   { to: "/admin/moderation", label: "सवाल", icon: MessageSquareWarning },
   { to: "/admin/quiz", label: "क्विज़", icon: Brain },
+  { to: "/admin/catalog", label: "दुकान", icon: Store },
 ];
 
 /** Admin area. The UI check is convenience only — every write is enforced by RLS in the database. */
