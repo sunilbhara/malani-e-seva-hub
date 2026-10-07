@@ -24,7 +24,7 @@
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     # Report-only first: AdSense and Google Maps load from many domains. After a week with
     # no violations in the browser console, rename this header to Content-Security-Policy.
-    Content-Security-Policy-Report-Only = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.adtrafficquality.google https://maps.googleapis.com https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.cloudinary.com https://api.emailjs.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.adtrafficquality.google https://maps.googleapis.com https://challenges.cloudflare.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.google.com https://*.google.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'"
+    Content-Security-Policy-Report-Only = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.adtrafficquality.google https://maps.googleapis.com https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co https://*.doubleclick.net https://*.googlesyndication.com wss://*.supabase.co https://api.cloudinary.com https://api.emailjs.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.adtrafficquality.google https://maps.googleapis.com https://challenges.cloudflare.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.google.com https://*.google.com https://googleads.g.doubleclick.net https://*.doubleclick.net https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.adtrafficquality.google https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'"
 
 # Hashed build assets never change: cache them for a year.
 [[headers]]
@@ -59,6 +59,12 @@
 [[redirects]]
   from = "/robots.txt"
   to = "/robots.txt"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/ads.txt"
+  to = "/ads.txt"
   status = 200
   force = true
 

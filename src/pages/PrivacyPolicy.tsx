@@ -5,7 +5,7 @@ import { BUSINESS, fullAddress, telHref } from "@/lib/business";
 /** Privacy notice aligned with India's Digital Personal Data Protection Act, 2023. */
 export default function PrivacyPolicy() {
   return (
-    <LegalPage title="प्राइवेसी पॉलिसी" path="/privacy-policy" description="मालाणी बाड़मेर आपकी जानकारी कैसे इकट्ठा, इस्तेमाल और सुरक्षित करता है।" updated="5 अक्टूबर 2026">
+    <LegalPage title="प्राइवेसी पॉलिसी" path="/privacy-policy" description="मालाणी बाड़मेर आपकी जानकारी कैसे इकट्ठा, इस्तेमाल और सुरक्षित करता है।" updated="7 अक्टूबर 2026">
       <p>यह नीति बताती है कि {BUSINESS.name} (malanibarmer.com) आपकी व्यक्तिगत जानकारी कैसे इकट्ठा करता है, क्यों करता है, और आप उस पर क्या नियंत्रण रखते हैं। हम भारत के डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम, 2023 का पालन करते हैं।</p>
 
       <h2>हम कौनसी जानकारी लेते हैं</h2>
@@ -29,6 +29,21 @@ export default function PrivacyPolicy() {
 
       <h2>कौन-कौन सी सेवाएँ इस्तेमाल होती हैं</h2>
       <p>डेटा भारत (मुंबई) स्थित सर्वर पर Supabase में रखा जाता है। फोटो Cloudinary पर, ईमेल Resend से, संपर्क फॉर्म EmailJS से, और आँकड़े/विज्ञापन Google से संचालित होते हैं। ये सेवाएँ केवल अपना काम करने के लिए ही जानकारी इस्तेमाल करती हैं।</p>
+
+      <h2>कुकीज़ और विज्ञापन (Google AdSense)</h2>
+      <ul>
+        <li>इस साइट पर Google AdSense के ज़रिए विज्ञापन दिखाए जाते हैं। Google समेत तीसरे पक्ष के विक्रेता (third-party vendors) कुकीज़ का उपयोग करके आपकी इस और दूसरी वेबसाइटों पर पिछली विज़िट के आधार पर विज्ञापन दिखाते हैं।</li>
+        <li>Google की विज्ञापन कुकीज़ (जैसे DoubleClick कुकी) Google और उसके भागीदारों को इस साइट और इंटरनेट की दूसरी साइटों पर आपकी विज़िट के आधार पर विज्ञापन दिखाने देती हैं।</li>
+        <li>
+          आप <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google विज्ञापन सेटिंग</a> में जाकर व्यक्तिगत विज्ञापन बंद कर सकते हैं, या{" "}
+          <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">www.aboutads.info</a> पर तीसरे पक्ष के विक्रेताओं की कुकीज़ बंद कर सकते हैं।
+        </li>
+        <li>
+          Google आपकी जानकारी कैसे इस्तेमाल करता है:{" "}
+          <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">policies.google.com/technologies/partner-sites</a>
+        </li>
+        <li>हम ख़ुद आपकी विज़िट के आधार पर विज्ञापन नहीं चुनते और विज्ञापनदाताओं को आपका नाम, ईमेल या फ़ोन नहीं देते।</li>
+      </ul>
 
       <h2>आपके अधिकार</h2>
       <ul>

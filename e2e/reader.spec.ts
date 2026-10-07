@@ -289,6 +289,8 @@ test.describe("Static pages and 404", () => {
     ["/mobile-electronics", /मोबाइल/],
     ["/mataji-studio", /फोटोग्राफ/],
     ["/about", "हमारे बारे में"],
+    ["/contact", "संपर्क करें"],
+    ["/disclaimer", "अस्वीकरण (Disclaimer)"],
     ["/privacy-policy", "प्राइवेसी पॉलिसी"],
     ["/terms", "नियम और शर्तें"],
   ] as const) {

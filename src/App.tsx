@@ -23,6 +23,8 @@ const ServicesPage = lazy(() => import("./pages/ServicesPage"));
 const MobileElectronicsPage = lazy(() => import("./pages/MobileElectronicsPage"));
 const MatajiStudioPage = lazy(() => import("./pages/MatajiStudioPage"));
 const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Disclaimer = lazy(() => import("./pages/Disclaimer"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -60,6 +62,8 @@ export default function App() {
                     <Route path="mobile-electronics" element={<MobileElectronicsPage />} />
                     <Route path="mataji-studio" element={<MatajiStudioPage />} />
                     <Route path="about" element={<About />} />
+                    <Route path="contact" element={<Contact />} />
+                    <Route path="disclaimer" element={<Disclaimer />} />
                     <Route path="privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="terms" element={<Terms />} />
                     <Route path="admin" element={<AdminLayout />}>
