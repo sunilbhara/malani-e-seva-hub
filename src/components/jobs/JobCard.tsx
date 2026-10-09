@@ -34,7 +34,8 @@ export function JobCard({ post, className, compact = false }: { post: PostListIt
   return (
     <article
       className={cn(
-        "group relative flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-1 transition-[box-shadow,border-color] hover:border-input hover:shadow-2",
+        // min-w-0: never let a long organisation name widen the card (it truncates instead).
+        "group relative flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-4 shadow-1 transition-[box-shadow,border-color] hover:border-input hover:shadow-2",
         // Closed jobs are muted with a tinted background, not opacity, so text keeps WCAG AA contrast.
         closed && "bg-muted/60",
         className,
@@ -46,7 +47,7 @@ export function JobCard({ post, className, compact = false }: { post: PostListIt
           {post.organisation && (
             <>
               <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-border" />
-              <span className="truncate font-semibold text-muted-foreground">{post.organisation}</span>
+              <span className="min-w-0 truncate font-semibold text-muted-foreground">{post.organisation}</span>
             </>
           )}
         </p>

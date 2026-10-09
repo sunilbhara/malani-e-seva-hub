@@ -254,7 +254,7 @@ export default function Listing({ kind }: { kind: ListingKind }) {
         ))}
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {query.isLoading && Array.from({ length: 6 }, (_, i) => <JobCardSkeleton key={i} />)}
         {items.map((post, index) => (
           <FragmentWithAlert key={post.id} index={index}>

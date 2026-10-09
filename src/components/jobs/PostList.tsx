@@ -8,7 +8,7 @@ import type { PostListItem } from "@/services/posts";
 
 export function CardGrid({ posts, loading, skeletons = 6, className }: { posts?: PostListItem[]; loading?: boolean; skeletons?: number; className?: string }) {
   return (
-    <div className={cn("grid gap-3 sm:grid-cols-2 lg:grid-cols-3", className)}>
+    <div className={cn("grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3", className)}>
       {loading && !posts?.length
         ? Array.from({ length: skeletons }, (_, i) => <JobCardSkeleton key={i} />)
         : posts?.map((p) => <JobCard key={p.id} post={p} />)}
