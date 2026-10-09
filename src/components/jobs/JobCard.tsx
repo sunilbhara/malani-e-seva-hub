@@ -16,6 +16,8 @@ export function JobCard({ post, className, compact = false }: { post: PostListIt
   const saved = isSaved(post.id);
   const closed = post.job_status === "closed";
   const quals = (post.qualifications ?? []).filter((q) => q !== "any").map(qualificationLabel);
+  const isJob = post.post_type === "job";
+  const hasFacts = Boolean(post.total_posts || quals.length || post.last_date);
 
   async function onSave() {
     try {
@@ -58,38 +60,39 @@ export function JobCard({ post, className, compact = false }: { post: PostListIt
         )}
       </div>
 
-      <h3 className="font-hindi text-[1.125rem] font-semibold leading-snug text-foreground">
+      {/* One anatomy for every card (title always 2 lines tall, one body slot), so grids line up. */}
+      <h3 className="min-h-[2.75em] font-hindi text-[1.125rem] font-semibold leading-snug text-foreground">
         <Link to={`/blog/${post.slug}`} className="line-clamp-2 after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none">
           {post.title}
         </Link>
       </h3>
 
-      {!compact && (post.total_posts || quals.length || post.last_date) ? (
-        <ul className="flex flex-wrap gap-x-4 gap-y-1 font-hindi text-small text-muted-foreground">
-          {post.total_posts ? (
-            <li className="inline-flex items-center gap-1.5">
-              <Users aria-hidden className="h-4 w-4" />
-              <span className="tabular">{formatNumber(post.total_posts)} पद</span>
-            </li>
+      {!compact && (
+        <div className="min-h-[2.75rem]">
+          {isJob || hasFacts ? (
+            <ul className="flex flex-wrap gap-x-4 gap-y-1 font-hindi text-small text-muted-foreground">
+              {post.total_posts ? (
+                <li className="inline-flex items-center gap-1.5">
+                  <Users aria-hidden className="h-4 w-4" />
+                  <span className="tabular">{formatNumber(post.total_posts)} पद</span>
+                </li>
+              ) : null}
+              {quals.length ? (
+                <li className="inline-flex items-center gap-1.5">
+                  <GraduationCap aria-hidden className="h-4 w-4" />
+                  {quals.slice(0, 2).join(", ")}
+                </li>
+              ) : null}
+              <li className="inline-flex items-center gap-1.5">
+                <CalendarDays aria-hidden className="h-4 w-4" />
+                {post.last_date ? <span className="tabular">{formatDate(post.last_date)}</span> : <span>अंतिम तिथि जल्द</span>}
+              </li>
+            </ul>
+          ) : post.excerpt ? (
+            <p className="line-clamp-2 font-hindi text-small text-muted-foreground">{post.excerpt}</p>
           ) : null}
-          {quals.length ? (
-            <li className="inline-flex items-center gap-1.5">
-              <GraduationCap aria-hidden className="h-4 w-4" />
-              {quals.slice(0, 2).join(", ")}
-            </li>
-          ) : null}
-          {post.last_date ? (
-            <li className="inline-flex items-center gap-1.5">
-              <CalendarDays aria-hidden className="h-4 w-4" />
-              <span className="tabular">{formatDate(post.last_date)}</span>
-            </li>
-          ) : null}
-        </ul>
-      ) : null}
-
-      {!compact && !post.job_status && post.excerpt ? (
-        <p className="line-clamp-2 font-hindi text-small text-muted-foreground">{post.excerpt}</p>
-      ) : null}
+        </div>
+      )}
 
       <div className="relative z-10 mt-auto flex items-center justify-between gap-2 border-t pt-3">
         <CountdownChip lastDate={post.last_date} status={post.job_status} />

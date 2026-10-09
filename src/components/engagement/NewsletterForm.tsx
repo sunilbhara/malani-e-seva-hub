@@ -12,7 +12,7 @@ import { config } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
 /** Weekly email digest signup with explicit consent and double opt-in (audit S7, DPDP). */
-export function NewsletterForm({ className }: { className?: string }) {
+export function NewsletterForm({ className, embedded = false }: { className?: string; embedded?: boolean }) {
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [token, setToken] = useState<string | null>(null);
@@ -46,16 +46,20 @@ export function NewsletterForm({ className }: { className?: string }) {
   if (unavailable || !config.newsletterEnabled) return null;
 
   return (
-    <section aria-labelledby="newsletter-heading" className={cn("rounded-2xl border bg-card p-5", className)}>
-      <h2 id="newsletter-heading" className="font-hindi text-lg font-bold">हर रविवार ईमेल पर हफ़्ते की नौकरियाँ</h2>
+    <section
+      aria-labelledby={embedded ? undefined : "newsletter-heading"}
+      aria-label={embedded ? "ईमेल सब्सक्रिप्शन" : undefined}
+      className={cn(embedded ? "rounded-xl border bg-background p-3.5" : "rounded-2xl border bg-card p-5", className)}
+    >
+      {!embedded && <h2 id="newsletter-heading" className="font-hindi text-lg font-bold">हर रविवार ईमेल पर हफ़्ते की नौकरियाँ</h2>}
       {done ? (
-        <p role="status" className="mt-3 font-hindi text-small text-body">
+        <p role="status" className={cn("font-hindi text-small text-body", !embedded && "mt-3")}>
           {done === "already_subscribed"
             ? "आप पहले से सब्सक्राइब हैं। धन्यवाद!"
             : "लगभग हो गया! अपने ईमेल में आया पुष्टि लिंक दबाएँ (स्पैम फ़ोल्डर भी देखें)।"}
         </p>
       ) : (
-        <form onSubmit={(e) => void onSubmit(e)} className="mt-3 space-y-3">
+        <form onSubmit={(e) => void onSubmit(e)} className={cn("space-y-3", !embedded && "mt-3")}>
           <div className="flex flex-col gap-2 sm:flex-row">
             <label htmlFor="newsletter-email" className="sr-only">ईमेल</label>
             <Input

@@ -239,7 +239,7 @@ export default function AdminCatalog() {
         <ul className="space-y-2">
           {list.map((item, i) => (
             <li key={item.id} className={cn("flex items-center gap-3 rounded-2xl border bg-card p-2.5", !item.is_active && "opacity-60")}>
-              <img src={item.image_url} alt="" className={cn("w-14 shrink-0 rounded-lg border bg-muted object-cover", kind === "product" ? "aspect-square" : "aspect-[3/4]")} />
+              <img src={item.image_url} alt="" className={cn("w-14 shrink-0 rounded-lg border bg-muted", kind === "product" ? "aspect-square object-cover" : "aspect-[3/4] object-contain")} />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{item.title}</p>
                 <p className="font-hindi text-caption text-muted-foreground">
@@ -281,14 +281,16 @@ export default function AdminCatalog() {
           <DialogHeader>
             <DialogTitle className="font-hindi">{editor?.item ? "आइटम बदलें" : kind === "product" ? "नया प्रोडक्ट" : "नई स्टूडियो फोटो"}</DialogTitle>
             <DialogDescription className="font-hindi">
-              फोटो अपने-आप {spec.label} में बदल दी जाएगी, ताकि पेज पर हर कार्ड एक जैसा दिखे।
+              {spec.keepAspect
+                ? `फोटो जैसी है वैसी रहेगी (खड़ी या आड़ी), बस ${spec.label} तक छोटी की जाएगी।`
+                : `फोटो अपने-आप ${spec.label} में बदल दी जाएगी, ताकि पेज पर हर कार्ड एक जैसा दिखे।`}
             </DialogDescription>
           </DialogHeader>
           {editor && (
             <div className="space-y-4">
               <div className="flex gap-4">
                 <div className={cn("w-28 shrink-0 overflow-hidden rounded-xl border bg-muted", kind === "product" ? "aspect-square" : "aspect-[3/4]")}>
-                  {editor.preview && <img src={editor.preview} alt="फोटो का प्रीव्यू" className="h-full w-full object-cover" />}
+                  {editor.preview && <img src={editor.preview} alt="फोटो का प्रीव्यू" className={cn("h-full w-full", spec.keepAspect ? "object-contain" : "object-cover")} />}
                 </div>
                 <div className="min-w-0 flex-1 space-y-2">
                   <label className={cn("inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border bg-card px-4 font-hindi text-small font-semibold hover:bg-muted", (preparing || busy) && "pointer-events-none opacity-60")}>
@@ -309,6 +311,7 @@ export default function AdminCatalog() {
                   <p className="font-hindi text-caption text-muted-foreground">
                     JPG, PNG या WebP, 15 MB तक। कम से कम {spec.minSide} px; सबसे अच्छा {spec.label}।
                   </p>
+                  {!spec.keepAspect && (
                   <fieldset className="flex flex-wrap gap-3 font-hindi text-small">
                     <legend className="sr-only">फोटो कैसे फिट हो</legend>
                     {(
@@ -330,6 +333,7 @@ export default function AdminCatalog() {
                       </label>
                     ))}
                   </fieldset>
+                  )}
                 </div>
               </div>
 

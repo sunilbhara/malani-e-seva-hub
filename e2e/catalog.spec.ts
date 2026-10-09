@@ -141,13 +141,13 @@ test.describe("Admin catalog", () => {
     expect(backend.writes("catalog_items")).toHaveLength(0);
   });
 
-  test("studio photo uses the 3:4 spec and has no price fields", async ({ page, backend }) => {
+  test("studio photo keeps its shape and has no price fields", async ({ page, backend }) => {
     await page.goto("/admin/catalog");
     await page.getByRole("tab", { name: "स्टूडियो फोटो" }).click();
     await expect(page.getByText("फैमिली पोर्ट्रेट")).toBeVisible();
     await page.getByRole("button", { name: "नई फोटो" }).click();
     const dialog = page.getByRole("dialog");
-    await expect(dialog).toContainText("900×1200 px");
+    await expect(dialog).toContainText("फोटो जैसी है वैसी रहेगी (खड़ी या आड़ी)");
     await expect(dialog.getByLabel(/दाम/)).toHaveCount(0);
     await expect(dialog.getByLabel(/MRP/)).toHaveCount(0);
     await dialog.getByLabel("फोटो चुनें").setInputFiles(await pngFile(page, 1200, 1600));

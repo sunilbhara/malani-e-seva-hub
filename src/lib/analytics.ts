@@ -46,6 +46,7 @@ export function trackPageView(path: string, title?: string): void {
 
 export type AnalyticsEvent =
   | "job_view"
+  | "shop_slider_pick"
   | "search"
   | "filter_apply"
   | "save_job"

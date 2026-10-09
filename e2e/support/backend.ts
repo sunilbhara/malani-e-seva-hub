@@ -325,8 +325,9 @@ export class MockBackend {
         return json(route, 200, {
           drafts: this.posts.filter((p) => p.status === "draft").map((p) => ({ id: p.id, title: p.title, updated_at: p.updated_at })),
           draft_count: this.posts.filter((p) => p.status === "draft").length,
-          short_posts: [],
-          short_count: 0,
+          // Long titles on purpose: the dashboard must wrap them on a 360px phone, not scroll sideways.
+          short_posts: this.posts.filter((p) => p.status === "published").slice(0, 2).map((p) => ({ id: p.id, title: `${p.title} — Recruitment Schedule II July 2026 Apply Online Form`, words: 125 })),
+          short_count: 2,
           closing_jobs: [],
           unanswered: [],
           quiz_today: this.quiz.some((q) => q.quiz_date === istToday()),

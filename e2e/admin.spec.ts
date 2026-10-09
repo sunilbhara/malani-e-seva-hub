@@ -1,4 +1,4 @@
-import { expect, test } from "./support/test";
+import { expect, noHorizontalScroll, test } from "./support/test";
 import { day, istToday } from "./support/data";
 
 test.beforeEach(async ({ signInAs, skipPreferenceSheet }) => {
@@ -12,6 +12,18 @@ test("dashboard shows analytics", async ({ page }) => {
   await expect(page.getByText("4,321")).toBeVisible();
   await expect(page.getByText("कुल व्यूज़")).toBeVisible();
   await expect(page.getByRole("link", { name: "नई पोस्ट लिखें" })).toBeVisible();
+});
+
+test.describe("on a 360px phone", () => {
+  test.use({ viewport: { width: 360, height: 740 } });
+
+  test("dashboard cards wrap long titles instead of scrolling sideways", async ({ page }) => {
+    await page.goto("/admin");
+    await expect(page.getByRole("heading", { name: "आज के काम" })).toBeVisible();
+    await expect(page.getByText("2 पोस्ट 600 शब्द से छोटी — AdSense के लिए बढ़ाएँ")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "सबसे लोकप्रिय" })).toBeVisible();
+    await noHorizontalScroll(page);
+  });
 });
 
 test("editor blocks invalid posts", async ({ page, backend }) => {

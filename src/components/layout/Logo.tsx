@@ -9,8 +9,10 @@ export function Logo({ className, compact = false, onDark = false }: { className
       {!compact && (
         <span className="min-w-0 leading-tight">
           <span className={cn("block truncate font-hindi text-[1.0625rem] font-bold", onDark ? "text-brand-foreground" : "text-foreground")}>मालाणी बाड़मेर</span>
+          {/* Full tagline only where it fits; phones get a short one instead of a cut-off line. */}
           <span className={cn("block truncate text-caption font-normal", onDark ? "text-brand-foreground/75" : "text-muted-foreground")}>
-            नौकरी अपडेट · ई-मित्र सेवाएँ
+            <span className="sm:hidden">नौकरी · ई-मित्र</span>
+            <span className="hidden sm:inline">नौकरी अपडेट · ई-मित्र सेवाएँ</span>
           </span>
         </span>
       )}

@@ -10,7 +10,10 @@ import { listCatalog } from "@/services/catalog";
 import { useI18n } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-/** Photo grid (2–4 columns) with a full-screen viewer that steps through the filtered photos. */
+/**
+ * Masonry photo wall (2–4 columns) where every photo keeps its own shape — portrait or landscape —
+ * and a full-screen viewer that steps through the filtered photos.
+ */
 function Gallery() {
   const { messages } = useI18n();
   const [filter, setFilter] = useState("all");
@@ -49,16 +52,16 @@ function Gallery() {
         ) : photos.length === 0 ? (
           <p className="font-hindi text-small text-muted-foreground">इस श्रेणी में अभी कोई फोटो नहीं है।</p>
         ) : (
-          <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4" aria-label="स्टूडियो फोटो">
+          <ul className="columns-2 gap-3 md:columns-3 lg:columns-4" aria-label="स्टूडियो फोटो">
             {photos.map((p, i) => (
-              <li key={p.id}>
+              <li key={p.id} className="mb-3 break-inside-avoid">
                 <button
                   type="button"
                   onClick={() => setIndex(i)}
                   aria-label={`${p.title} — बड़ी फोटो देखें`}
-                  className="group relative block aspect-[3/4] w-full overflow-hidden rounded-xl bg-muted shadow-1 focus-visible:ring-2 focus-visible:ring-ring"
+                  className="group relative block min-h-32 w-full overflow-hidden rounded-xl bg-muted shadow-1 focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  <img src={p.image_url} alt="" width={900} height={1200} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <img src={p.image_url} alt="" loading="lazy" decoding="async" className="block h-auto w-full transition-transform duration-500 group-hover:scale-105" />
                   <span aria-hidden className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/70 to-transparent" />
                   <span className="absolute left-2 top-2 rounded-full bg-black/45 px-2 py-0.5 font-hindi text-caption text-white backdrop-blur-sm">
                     {categoryName(p.category)}

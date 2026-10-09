@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowDownWideNarrow, MessageCircle, PackageSearch } from "lucide-react";
+import { ArrowDownWideNarrow, MessageCircle, PackageSearch, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { LoadingLabel, Skeleton } from "@/components/common/Skeleton";
 import { whatsappHref } from "@/lib/business";
-import { discountPercent, formatPrice } from "@/lib/catalogImage";
+import { discountPercent, emiFrom, EMI_MONTHS, formatPrice } from "@/lib/catalogImage";
 import { queryKeys } from "@/lib/queryClient";
 import { track } from "@/lib/analytics";
 import { getShopCatalog, type CatalogCollection, type CatalogItem } from "@/services/catalog";
@@ -56,6 +56,17 @@ function PriceBlock({ p, large = false }: { p: CatalogItem; large?: boolean }) {
   );
 }
 
+function EmiHint({ price, className }: { price: number | null; className?: string }) {
+  const monthly = emiFrom(price);
+  if (!monthly) return null;
+  return (
+    <p className={cn("font-hindi text-caption font-normal text-muted-foreground", className)}>
+      EMI <span className="whitespace-nowrap font-semibold text-foreground tabular">{formatPrice(monthly)}/माह</span> से
+      <span className="sr-only"> ({EMI_MONTHS} महीने, शर्तें दुकान पर पूछें)</span>
+    </p>
+  );
+}
+
 function ProductCard({ p, onOpen }: { p: CatalogItem; onOpen: (p: CatalogItem) => void }) {
   const off = discountPercent(p.price, p.mrp);
   return (
@@ -66,19 +77,28 @@ function ProductCard({ p, onOpen }: { p: CatalogItem; onOpen: (p: CatalogItem) =
           <span className="absolute left-2 top-2 rounded-md bg-status-urgent px-2 py-0.5 font-hindi text-caption text-white">{off}% छूट</span>
         )}
       </button>
-      <div className="flex flex-1 flex-col gap-1.5 border-t p-3 sm:p-4">
-        <h3 className="line-clamp-2 min-h-[2.75rem] font-semibold leading-snug">
-          <button type="button" onClick={() => onOpen(p)} className="text-left hover:underline">
+      <div className="flex flex-1 flex-col gap-1 border-t p-3 sm:p-4">
+        <p className="inline-flex items-center gap-1 font-hindi text-caption font-semibold text-status-open">
+          <Store aria-hidden className="h-3.5 w-3.5" /> दुकान पर उपलब्ध
+        </p>
+        {/* Block-level title button with a fixed two-line height keeps every price on the same line. */}
+        <h3 className="min-h-[2.75rem] font-semibold leading-snug">
+          <button type="button" onClick={() => onOpen(p)} className="line-clamp-2 block w-full text-left hover:underline">
             {p.title}
           </button>
         </h3>
-        <PriceBlock p={p} />
         {p.features.length > 0 && <p className="line-clamp-1 text-caption font-normal text-muted-foreground">{p.features.slice(0, 3).join(" · ")}</p>}
-        <Button asChild variant="whatsapp" size="sm" className="mt-auto font-hindi">
-          <a href={whatsappHref(askText(p))} target="_blank" rel="noopener noreferrer" onClick={() => track("product_enquiry", { product: p.title })}>
-            <MessageCircle /> WhatsApp पर पूछें
-          </a>
-        </Button>
+        <div className="mt-auto space-y-2 pt-1.5">
+          <div className="min-h-[4.25rem]">
+            <PriceBlock p={p} />
+            <EmiHint price={p.price} />
+          </div>
+          <Button asChild variant="whatsapp" size="sm" className="w-full font-hindi">
+            <a href={whatsappHref(askText(p))} target="_blank" rel="noopener noreferrer" onClick={() => track("product_enquiry", { product: p.title })}>
+              <MessageCircle /> WhatsApp पर पूछें
+            </a>
+          </Button>
+        </div>
       </div>
     </article>
   );
@@ -233,6 +253,7 @@ export function ProductCatalog() {
                 <DialogDescription asChild>
                   <div>
                     <PriceBlock p={open} large />
+                    <EmiHint price={open.price} className="mt-1 text-small" />
                   </div>
                 </DialogDescription>
                 {open.features.length > 0 && (

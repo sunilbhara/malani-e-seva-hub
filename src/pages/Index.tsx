@@ -7,8 +7,7 @@ import { SEO } from "@/components/seo/SEO";
 import { SectionHeading } from "@/components/common/EmptyState";
 import { CardGrid, CardRail, UpdateList } from "@/components/jobs/PostList";
 import { ShopStrip } from "@/components/home/ShopStrip";
-import { AlertsCard } from "@/components/engagement/AlertsCard";
-import { NewsletterForm } from "@/components/engagement/NewsletterForm";
+import { StayUpdatedCard } from "@/components/engagement/StayUpdatedCard";
 import { AdSlot } from "@/components/common/AdSlot";
 import { usePreferences } from "@/hooks/usePreferences";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -36,6 +35,14 @@ const QUICK_CHIPS = [
 ];
 
 
+const UPDATE_TABS = [
+  { value: "all", label: "सभी" },
+  { value: "jobs", label: "भर्ती / परीक्षा" },
+  { value: "articles", label: "लेख" },
+] as const;
+type UpdateTab = (typeof UPDATE_TABS)[number]["value"];
+const NOTICE_TYPES = new Set(["job", "admit_card", "result", "exam"]);
+
 const TRUST = [
   { icon: BadgeCheck, title: "अधिकृत ई-मित्र केंद्र", text: `${BUSINESS.address.cityHi} में अपनी दुकान — रेलवे स्टेशन के सामने`, status: false },
   { icon: ShieldCheck, title: "आधिकारिक स्रोत से", text: "हर भर्ती के साथ अधिसूचना और आधिकारिक लिंक", status: false },
@@ -48,6 +55,7 @@ export default function Index() {
   const desktop = useMediaQuery("(min-width: 1024px)");
   const [query, setQuery] = useState("");
   const [prefsOpen, setPrefsOpen] = useState(false);
+  const [updateTab, setUpdateTab] = useState<UpdateTab>("all");
   const personalised = hasPreferences(prefs);
   const today = istToday();
   const open = isOpenAt(new Date());
@@ -82,6 +90,12 @@ export default function Index() {
     queryFn: () => listPosts({ postTypes: ["job"], jobStatus: "active", limit: 6 }),
     enabled: !personalised,
   });
+
+  const updates = todays.data?.items;
+  const noticeUpdates = updates?.filter((p) => NOTICE_TYPES.has(p.post_type ?? "article")) ?? [];
+  const showUpdateTabs = Boolean(updates && noticeUpdates.length > 0 && noticeUpdates.length < updates.length);
+  const visibleUpdates =
+    !showUpdateTabs || updateTab === "all" ? updates : updateTab === "jobs" ? noticeUpdates : updates?.filter((p) => !NOTICE_TYPES.has(p.post_type ?? "article"));
 
   function onSearch(e: FormEvent) {
     e.preventDefault();
@@ -214,7 +228,40 @@ export default function Index() {
             title={`${todays.data?.title ?? "आज की अपडेट"} (${formatDate(today, { withYear: false })})`}
             action={<Link to="/today" className="inline-flex items-center gap-1 font-hindi text-small font-semibold text-primary">सभी <ChevronRight className="h-4 w-4" /></Link>}
           />
-          <UpdateList posts={todays.data?.items} loading={todays.isLoading} />
+          {showUpdateTabs && (
+            <div role="group" aria-label="अपडेट का प्रकार" className="mb-3 flex gap-2">
+              {UPDATE_TABS.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  aria-pressed={updateTab === t.value}
+                  onClick={() => setUpdateTab(t.value)}
+                  className={cn(
+                    "h-9 rounded-full border px-3.5 font-hindi text-small font-semibold transition-colors",
+                    updateTab === t.value ? "border-primary bg-primary text-primary-foreground" : "bg-card text-foreground hover:border-primary",
+                  )}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <UpdateList posts={visibleUpdates} loading={todays.isLoading} />
+          <Link
+            to="/quiz"
+            className="group mt-3 flex min-h-14 items-center gap-3 rounded-xl border bg-card px-4 py-2.5 shadow-1 transition-shadow hover:shadow-2"
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-soft text-foreground ring-1 ring-accent/40">
+              <Brain aria-hidden className="h-5 w-5" />
+            </span>
+            <span className="min-w-0 flex-1 font-hindi">
+              <strong className="font-semibold">आज का GK क्विज़</strong>
+              <span className="text-small text-muted-foreground"> — 2 मिनट की तैयारी</span>
+            </span>
+            <span className="inline-flex shrink-0 items-center gap-1 font-hindi text-small font-semibold text-link">
+              खेलें <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </Link>
         </section>
 
         {!personalised && (latestJobs.isLoading || (latestJobs.data?.items.length ?? 0) >= 3) && (
@@ -230,27 +277,7 @@ export default function Index() {
 
         <AdSlot />
 
-        <div className="flex flex-wrap gap-4">
-          <Link to="/quiz" className="group flex min-w-[17rem] flex-1 flex-col justify-between gap-4 rounded-xl border bg-card p-5 shadow-1 transition-shadow hover:shadow-2">
-            <span className="flex items-center gap-3">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent-soft text-foreground ring-1 ring-accent/40">
-                <Brain aria-hidden className="h-5 w-5" />
-              </span>
-              <span>
-                <span className="block font-hindi text-lg font-bold">आज का GK क्विज़</span>
-                <span className="block font-hindi text-small text-muted-foreground">रोज़ के सवाल — परीक्षा की तैयारी, 2 मिनट में</span>
-              </span>
-            </span>
-            <span className="inline-flex items-center gap-1 font-hindi text-small font-semibold text-link">
-              क्विज़ खेलें <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </span>
-          </Link>
-          {/* Collapses when no alert channel or newsletter is configured, so the quiz card fills the row. */}
-          <div className="grid min-w-[17rem] flex-[2] basis-[34rem] gap-4 empty:hidden md:grid-cols-2">
-            <AlertsCard compact />
-            <NewsletterForm />
-          </div>
-        </div>
+        <StayUpdatedCard />
 
         {/* Trust strip */}
         <section aria-label="भरोसा" className="grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-3">
