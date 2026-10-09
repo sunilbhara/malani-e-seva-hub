@@ -157,7 +157,7 @@ export function seedPosts(): Post[] {
       apply_link: "https://police.rajasthan.gov.in/apply",
       official_website: "https://police.rajasthan.gov.in",
     }),
-    post(2, { title: "SBI क्लर्क भर्ती 2026 — 5000 पद", slug: "sbi-clerk-2026" }, { organisation: "भारतीय स्टेट बैंक", total_posts: 5000, departments: ["bank"], state: "all_india", last_date: day(25) }),
+    post(2, { title: "SBI क्लर्क भर्ती 2026 — 5000 पद", slug: "sbi-clerk-2026" }, { organisation: "State Bank of India — Central Recruitment and Promotion Department", total_posts: 5000, departments: ["bank"], state: "all_india", last_date: day(25) }),
     post(3, { title: "पटवारी भर्ती 2025 — आवेदन बंद", slug: "patwari-2025-closed" }, { organisation: "राजस्व मंडल", departments: ["patwari"], last_date: day(-10) }),
     post(4, { title: "REET मुख्य भर्ती — जल्द शुरू", slug: "reet-upcoming" }, { organisation: "RSMSSB", departments: ["teacher"], apply_start: day(10), last_date: day(40) }),
     post(5, { title: "राजस्थान पुलिस कांस्टेबल एडमिट कार्ड जारी", slug: "police-admit-card", post_type: "admit_card", category: "Admit Card" }, {
