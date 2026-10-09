@@ -1,3 +1,4 @@
+import { ListSkeleton } from "@/components/common/PageSpinner";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -50,7 +51,7 @@ function Tracker({ userId }: { userId: string }) {
   const ids = (follows.data ?? []).map((f) => f.recruitment_id);
   const timeline = useQuery({ queryKey: ["timeline", ids], queryFn: () => recruitmentTimeline(ids), enabled: ids.length > 0 });
 
-  if (follows.isLoading) return <p className="font-hindi text-small text-muted-foreground">लोड हो रहा है…</p>;
+  if (follows.isLoading) return <ListSkeleton rows={3} />;
   if (!follows.data?.length) {
     return (
       <EmptyState

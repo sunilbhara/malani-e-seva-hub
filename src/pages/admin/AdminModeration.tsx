@@ -1,3 +1,4 @@
+import { ListSkeleton } from "@/components/common/PageSpinner";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, Flag, MessageSquareReply, Pin, Trash2 } from "lucide-react";
@@ -27,7 +28,7 @@ export default function AdminModeration() {
     <div className="space-y-4">
       <h1 className="font-hindi text-2xl font-bold">सवाल और मॉडरेशन</h1>
       <p className="font-hindi text-small text-muted-foreground">3 रिपोर्ट होते ही सवाल अपने आप छिप जाता है। जवाब देने के लिए पोस्ट खोलें — एडमिन के जवाब अपने आप पिन होते हैं।</p>
-      {queue.isLoading && <p className="font-hindi text-muted-foreground">लोड हो रहा है…</p>}
+      {queue.isLoading && <ListSkeleton rows={3} />}
       {queue.data?.length === 0 && <p className="rounded-2xl border bg-card p-6 text-center font-hindi text-muted-foreground">अभी कोई सवाल नहीं।</p>}
       <ul className="space-y-3">
         {queue.data?.map((c) => (

@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/lib/theme";
@@ -40,7 +39,6 @@ export default function App() {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider delayDuration={300}>
           <BrowserRouter>
             <AuthProvider>
               <Routes>
@@ -82,7 +80,6 @@ export default function App() {
               <Toaster />
             </AuthProvider>
           </BrowserRouter>
-        </TooltipProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

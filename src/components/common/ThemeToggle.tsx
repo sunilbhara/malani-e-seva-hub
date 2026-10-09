@@ -22,7 +22,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           title={label}
           onClick={() => setPreference(value)}
           className={cn(
-            "grid h-8 w-8 place-items-center rounded-full transition-colors",
+            "grid h-10 w-10 place-items-center rounded-full transition-colors",
             preference === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
           )}
         >

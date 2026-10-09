@@ -1,63 +1,58 @@
 /**
- * Blog image uploads to Cloudinary using short-lived server signatures (audit S5).
+ * Blog image uploads (cover photos and images inside posts) to the public `post-media`
+ * Supabase Storage bucket. Admin-only by storage RLS; no extra API keys needed.
  * - Validates type and size before upload
- * - Downscales large photos in the browser (keeps PNG transparency)
- * - Returns a delivery URL with automatic format and quality
+ * - Downscales in the browser (max 1400 px wide) and encodes WebP under 300 KB
+ *   (keeps PNG only when it is already small, e.g. screenshots with text)
  */
-import { invokeFunction } from "@/services/functions";
+import { supabase } from "@/lib/supabase";
 
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
-const MAX_DIMENSION = 1600;
+const MAX_INPUT_BYTES = 10 * 1024 * 1024;
+export const MAX_UPLOAD_BYTES = 300 * 1024;
+const MAX_DIMENSION = 1400;
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
-const DELIVERY_TRANSFORM = "f_auto,q_auto:good,w_1400,c_limit";
-
-interface Signature {
-  cloudName: string;
-  apiKey: string;
-  timestamp: number;
-  folder: string;
-  signature: string;
-}
+const BUCKET = "post-media";
 
 export function validateImage(file: File): string | null {
   if (!ALLOWED_MIME_TYPES.includes(file.type as (typeof ALLOWED_MIME_TYPES)[number])) {
     return "केवल JPG, PNG या WebP फोटो अपलोड करें।";
   }
-  if (file.size > MAX_FILE_SIZE_BYTES) return "फोटो 5 MB से छोटी होनी चाहिए।";
+  if (file.size > MAX_INPUT_BYTES) return "फोटो 10 MB से छोटी होनी चाहिए।";
   return null;
 }
 
-async function downscale(file: File): Promise<Blob> {
-  if (typeof createImageBitmap !== "function") return file;
+async function shrink(file: File): Promise<Blob> {
+  if (file.size <= MAX_UPLOAD_BYTES && file.type !== "image/png") return file;
+  if (typeof createImageBitmap !== "function") {
+    if (file.size <= MAX_UPLOAD_BYTES) return file;
+    throw new Error("फोटो 300 KB से बड़ी है। छोटी फोटो चुनें।");
+  }
   const bitmap = await createImageBitmap(file).catch(() => null);
-  if (!bitmap) return file;
-  const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
-  if (scale === 1 && file.size < 1.5 * 1024 * 1024) return file;
+  if (!bitmap) throw new Error("यह फोटो खुल नहीं सकी। कोई दूसरी फोटो चुनें।");
+  const scale = Math.min(1, MAX_DIMENSION / bitmap.width);
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);
   canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  const type = file.type === "image/png" ? "image/png" : "image/webp";
-  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, 0.85));
-  return blob && blob.size < file.size ? blob : file;
+  bitmap.close?.();
+  if (file.type === "image/png" && file.size <= MAX_UPLOAD_BYTES) return file;
+  for (const quality of [0.82, 0.72, 0.62, 0.52, 0.42]) {
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", quality));
+    const out = blob && blob.type === "image/webp" ? blob : await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+    if (out && out.size <= MAX_UPLOAD_BYTES) return out;
+  }
+  throw new Error("फोटो का साइज़ 300 KB से कम नहीं हो सका। कोई दूसरी फोटो चुनें।");
 }
 
-export function deliveryUrl(secureUrl: string): string {
-  return secureUrl.includes("/upload/") ? secureUrl.replace("/upload/", `/upload/${DELIVERY_TRANSFORM}/`) : secureUrl;
-}
-
+/** Uploads a blog image and returns its public URL. */
 export async function uploadBlogImage(file: File): Promise<string> {
   const problem = validateImage(file);
   if (problem) throw new Error(problem);
-  const sig = await invokeFunction<Signature>("cloudinary-sign", {});
-  const body = new FormData();
-  body.append("file", await downscale(file));
-  body.append("api_key", sig.apiKey);
-  body.append("timestamp", String(sig.timestamp));
-  body.append("folder", sig.folder);
-  body.append("signature", sig.signature);
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, { method: "POST", body });
-  const data = (await res.json().catch(() => null)) as { secure_url?: string; error?: { message?: string } } | null;
-  if (!res.ok || !data?.secure_url) throw new Error(data?.error?.message ?? "फोटो अपलोड नहीं हो सकी।");
-  return deliveryUrl(data.secure_url);
+  const blob = await shrink(file);
+  const ext = blob.type === "image/png" ? "png" : blob.type === "image/jpeg" ? "jpg" : "webp";
+  const month = new Date().toISOString().slice(0, 7);
+  const path = `${month}/${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage.from(BUCKET).upload(path, blob, { contentType: blob.type, cacheControl: "31536000", upsert: false });
+  if (error) throw new Error(error.message.includes("exceeded") ? "फोटो 300 KB से बड़ी है।" : "फोटो अपलोड नहीं हो सकी।");
+  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 }

@@ -142,7 +142,7 @@ export default function Listing({ kind }: { kind: ListingKind }) {
   ].filter(Boolean) as Array<{ key: keyof ListingFilters; label: string }>;
   const activeCount = activeChips.length + (filters.status ? 1 : 0) + (filters.sort !== "latest" ? 1 : 0);
 
-  const pairTabs = kind === "admit" || kind === "result";
+  const typeTabs = kind !== "all";
 
   return (
     <div className="container-page py-6">
@@ -155,23 +155,26 @@ export default function Listing({ kind }: { kind: ListingKind }) {
         jsonLd={buildBreadcrumbSchema([{ name: "होम", path: "/" }, { name: meta.heading, path: meta.path }])}
       />
 
-      {pairTabs && (
-        <div role="tablist" aria-label="रिजल्ट या एडमिट कार्ड" className="mb-4 inline-flex rounded-xl border bg-card p-1">
+      {typeTabs && (
+        <nav aria-label="अपडेट का प्रकार" className="mb-4 grid grid-cols-3 rounded-xl border bg-card p-1 sm:inline-grid">
           {[
-            { to: "/result", label: "रिजल्ट / परीक्षा", active: kind === "result" },
+            { to: "/jobs", label: "भर्ती", active: kind === "jobs" },
             { to: "/admit-card", label: "एडमिट कार्ड", active: kind === "admit" },
+            { to: "/result", label: "रिजल्ट", active: kind === "result" },
           ].map((t) => (
             <Link
               key={t.to}
               to={t.to}
-              role="tab"
-              aria-selected={t.active}
-              className={cn("rounded-lg px-4 py-2 font-hindi text-small font-semibold", t.active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
+              aria-current={t.active ? "page" : undefined}
+              className={cn(
+                "flex h-11 items-center justify-center rounded-lg px-4 font-hindi text-small font-semibold",
+                t.active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
             >
               {t.label}
             </Link>
           ))}
-        </div>
+        </nav>
       )}
 
       <h1 className="font-hindi text-2xl font-bold sm:text-3xl">{meta.heading}</h1>
@@ -202,7 +205,7 @@ export default function Listing({ kind }: { kind: ListingKind }) {
         </div>
 
         {meta.jobFilters && (
-          <div className="-mx-4 mt-3 overflow-x-auto px-4 scrollbar-none">
+          <div className="rail-fade -mx-4 mt-3 overflow-x-auto px-4 scrollbar-none sm:[mask-image:none]">
             <div className="flex gap-2">
               {QUICK.map((chip) => {
                 const active =
@@ -232,6 +235,7 @@ export default function Listing({ kind }: { kind: ListingKind }) {
         )}
       </div>
 
+      <h2 className="sr-only">{meta.heading} — सूची</h2>
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <p className="mr-auto font-hindi text-small text-muted-foreground tabular" aria-live="polite">
           {query.isLoading ? "खोज रहे हैं…" : `${total} ${kind === "jobs" ? "भर्तियाँ" : "अपडेट"}`}

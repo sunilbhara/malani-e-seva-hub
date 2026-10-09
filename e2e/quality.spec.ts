@@ -154,9 +154,9 @@ test.describe("Layout and theming", () => {
     await page.goto("/jobs");
     const nav = page.getByRole("navigation", { name: "नीचे का नेविगेशन" });
     await expect(nav.getByRole("link", { name: "नौकरियाँ" })).toHaveAttribute("aria-current", "page");
-    await nav.getByRole("link", { name: "सेव" }).click();
+    await nav.getByRole("link", { name: "सेव", exact: true }).click();
     await expect(page).toHaveURL(/\/my$/);
-    await expect(nav.getByRole("link", { name: "सेव" })).toHaveAttribute("aria-current", "page");
+    await expect(nav.getByRole("link", { name: "सेव", exact: true })).toHaveAttribute("aria-current", "page");
   });
 });
 

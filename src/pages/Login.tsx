@@ -135,7 +135,7 @@ export default function Login() {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password" className="font-hindi">पासवर्ड</Label>
                     {mode === "login" && (
-                      <button type="button" onClick={() => { setMode("forgot"); setError(null); }} className="font-hindi text-small font-semibold text-primary">
+                      <button type="button" onClick={() => { setMode("forgot"); setError(null); }} className="inline-flex min-h-11 items-center font-hindi text-small font-semibold text-link">
                         पासवर्ड भूल गए?
                       </button>
                     )}
@@ -173,11 +173,11 @@ export default function Login() {
 
             <div className="mt-6 flex flex-wrap justify-between gap-3 font-hindi text-small">
               {mode === "login" ? (
-                <button type="button" onClick={() => { setMode("signup"); setError(null); }} className="font-semibold text-primary">नया खाता बनाएँ</button>
+                <button type="button" onClick={() => { setMode("signup"); setError(null); }} className="inline-flex min-h-11 items-center font-semibold text-link">नया खाता बनाएँ</button>
               ) : (
-                <button type="button" onClick={() => { setMode("login"); setError(null); }} className="font-semibold text-primary">पहले से खाता है? साइन इन</button>
+                <button type="button" onClick={() => { setMode("login"); setError(null); }} className="inline-flex min-h-11 items-center font-semibold text-link">पहले से खाता है? साइन इन</button>
               )}
-              <Link to="/" className="text-muted-foreground hover:text-foreground">होम पर जाएँ</Link>
+              <Link to="/" className="inline-flex min-h-11 items-center text-muted-foreground hover:text-foreground">होम पर जाएँ</Link>
             </div>
             <p className="mt-6 font-hindi text-caption font-normal text-muted-foreground">
               साइन इन करके आप हमारी <Link to="/privacy-policy" className="underline">प्राइवेसी पॉलिसी</Link> और <Link to="/terms" className="underline">शर्तों</Link> से सहमत होते हैं।

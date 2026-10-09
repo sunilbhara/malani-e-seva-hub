@@ -162,12 +162,13 @@ export interface AdminPostRow {
   likes_count: number;
   comments_count: number;
   share_count: number;
+  read_time_min?: number | null;
 }
 
 export async function listAdminPosts(opts: { status?: PostStatus | "all"; search?: string; limit?: number; offset?: number } = {}) {
   let query = supabase
     .from("posts")
-    .select("id, title, slug, status, post_type, category, published_at, scheduled_at, updated_at, views_count, likes_count, comments_count, share_count", { count: "exact" })
+    .select("id, title, slug, status, post_type, category, published_at, scheduled_at, updated_at, views_count, likes_count, comments_count, share_count, read_time_min", { count: "exact" })
     .order("updated_at", { ascending: false })
     .range(opts.offset ?? 0, (opts.offset ?? 0) + (opts.limit ?? 25) - 1);
   if (opts.status && opts.status !== "all") query = query.eq("status", opts.status);
@@ -270,6 +271,17 @@ export async function savePost(opts: {
   return { id, slug };
 }
 
+/** Titles of other posts with the same title (case-insensitive), for the editor's duplicate warning. */
+export async function findSimilarTitles(title: string, excludeId?: string): Promise<string[]> {
+  const t = title.trim().replace(/[%_,()]/g, " ").replace(/\s+/g, " ");
+  if (t.length < 12) return [];
+  let q = supabase.from("posts").select("id, title").ilike("title", `%${t}%`).limit(3);
+  if (excludeId) q = q.neq("id", excludeId);
+  const { data, error } = await q;
+  if (error) return [];
+  return (data ?? []).map((p) => p.title);
+}
+
 export async function deletePost(id: string): Promise<void> {
   const { error } = await supabase.from("posts").delete().eq("id", id);
   if (error) throw error;
@@ -302,6 +314,24 @@ export async function getAdminAnalytics(): Promise<BlogAnalytics> {
   const { data, error } = await supabase.rpc("admin_blog_analytics");
   if (error) throw error;
   return data as unknown as BlogAnalytics;
+}
+
+export interface AdminTodo {
+  drafts: Array<{ id: string; title: string; updated_at: string }>;
+  draft_count: number;
+  short_posts: Array<{ id: string; title: string; words: number }>;
+  short_count: number;
+  closing_jobs: Array<{ id: string; title: string; slug: string; last_date: string; updated_at: string }>;
+  unanswered: Array<{ id: string; content: string; post_title: string; post_slug: string; created_at: string }>;
+  quiz_today: boolean;
+  products_without_price: number;
+}
+
+/** "आज के काम" for the admin dashboard, computed in the database (admin_todo RPC). */
+export async function getAdminTodo(): Promise<AdminTodo> {
+  const { data, error } = await supabase.rpc("admin_todo");
+  if (error) throw error;
+  return data as unknown as AdminTodo;
 }
 
 export function jobFieldsFromRow(job: JobRow | null): JobDetailsInput | null {

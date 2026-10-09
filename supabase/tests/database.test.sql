@@ -749,11 +749,83 @@ BEGIN
 EXCEPTION WHEN check_violation THEN
   PERFORM pg_temp.ok('catalog: studio photos cannot carry a price', true);
 END $$;
-SELECT pg_temp.ok('catalog: storage bucket is public, 512 KB, WebP/JPEG only',
-  (SELECT public AND file_size_limit = 524288 AND allowed_mime_types <@ ARRAY['image/webp', 'image/jpeg'] FROM storage.buckets WHERE id = 'catalog'));
+SELECT pg_temp.ok('catalog: storage bucket is public, 300 KB, WebP/JPEG only',
+  (SELECT public AND file_size_limit = 307200 AND allowed_mime_types <@ ARRAY['image/webp', 'image/jpeg'] FROM storage.buckets WHERE id = 'catalog'));
 SELECT pg_temp.ok('catalog: only admins may write to the bucket',
   (SELECT count(*) FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname LIKE 'Admins % catalog images'
      AND (coalesce(qual, '') || coalesce(with_check, '')) LIKE '%has_role%') = 4);
+
+-- Shop collections and admin to-do ---------------------------------------------------------------------
+DO $$
+BEGIN
+  PERFORM pg_temp.as_user('aaaaaaaa-0000-4000-8000-000000000001');
+  INSERT INTO public.catalog_collections (id, title, is_active) VALUES
+    ('eeeeeeee-0000-4000-8000-000000000001', 'Test offer', true),
+    ('eeeeeeee-0000-4000-8000-000000000002', 'Hidden offer', false);
+  INSERT INTO public.catalog_collection_items (collection_id, item_id) VALUES
+    ('eeeeeeee-0000-4000-8000-000000000001', 'cccccccc-0000-4000-8000-000000000001'),
+    ('eeeeeeee-0000-4000-8000-000000000002', 'cccccccc-0000-4000-8000-000000000001');
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('collections: admin can create collections and add products', true);
+EXCEPTION WHEN others THEN
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('collections: admin can create collections and add products', false, SQLERRM);
+END $$;
+DO $$
+DECLARE c INTEGER; l INTEGER;
+BEGIN
+  PERFORM pg_temp.as_anon();
+  SELECT count(*) INTO c FROM public.catalog_collections WHERE id::text LIKE 'eeeeeeee-%';
+  SELECT count(*) INTO l FROM public.catalog_collection_items WHERE collection_id::text LIKE 'eeeeeeee-%';
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('collections: visitors see only active collections and their links', c = 1 AND l = 1, c || '/' || l);
+END $$;
+DO $$
+BEGIN
+  PERFORM pg_temp.as_user('aaaaaaaa-0000-4000-8000-000000000002');
+  INSERT INTO public.catalog_collections (title) VALUES ('Spam');
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('collections: readers cannot create collections', false);
+EXCEPTION WHEN insufficient_privilege THEN
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('collections: readers cannot create collections', true);
+END $$;
+DO $$
+BEGIN
+  INSERT INTO public.catalog_items (id, kind, category, title, image_url) VALUES ('cccccccc-0000-4000-8000-0000000000f1', 'studio_photo', 'weddings', 'Photo', 'https://example.test/p.webp');
+  INSERT INTO public.catalog_collection_items (collection_id, item_id) VALUES ('eeeeeeee-0000-4000-8000-000000000001', 'cccccccc-0000-4000-8000-0000000000f1');
+  PERFORM pg_temp.ok('collections: only products can be added', false);
+EXCEPTION WHEN others THEN
+  PERFORM pg_temp.ok('collections: only products can be added', SQLERRM LIKE '%Only products%', SQLERRM);
+END $$;
+DO $$
+BEGIN
+  UPDATE public.catalog_items SET mrp = 100 WHERE id = 'cccccccc-0000-4000-8000-000000000001';
+  PERFORM pg_temp.ok('catalog: MRP below the price is rejected', false);
+EXCEPTION WHEN check_violation THEN
+  PERFORM pg_temp.ok('catalog: MRP below the price is rejected', true);
+END $$;
+DO $$
+DECLARE t JSONB;
+BEGIN
+  PERFORM pg_temp.as_user('aaaaaaaa-0000-4000-8000-000000000001');
+  t := public.admin_todo();
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('admin_todo: admins get the to-do summary', t ? 'drafts' AND t ? 'unanswered' AND t ? 'quiz_today', left(t::text, 80));
+END $$;
+DO $$
+BEGIN
+  PERFORM pg_temp.as_user('aaaaaaaa-0000-4000-8000-000000000002');
+  PERFORM public.admin_todo();
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('admin_todo: readers are refused', false);
+EXCEPTION WHEN others THEN
+  PERFORM pg_temp.as_system();
+  PERFORM pg_temp.ok('admin_todo: readers are refused', SQLERRM LIKE '%Admins only%', SQLERRM);
+END $$;
+SELECT pg_temp.ok('storage: post-media bucket is public, 300 KB, images only; catalog bucket 300 KB',
+  (SELECT public AND file_size_limit = 307200 FROM storage.buckets WHERE id = 'post-media')
+  AND (SELECT file_size_limit = 307200 FROM storage.buckets WHERE id = 'catalog'));
 
 SELECT n, CASE WHEN ok THEN 'PASS' ELSE 'FAIL' END AS result, name, detail FROM results ORDER BY n;
 -- No COMMIT: the transaction is discarded when the session ends.

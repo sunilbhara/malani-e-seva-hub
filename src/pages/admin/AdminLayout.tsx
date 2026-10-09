@@ -36,16 +36,17 @@ export default function AdminLayout() {
   return (
     <div className="container-page py-6">
       <SEO title="एडमिन डैशबोर्ड | मालाणी बाड़मेर" description="एडमिन" path={location.pathname} noindex />
-      <nav aria-label="एडमिन" className="-mx-4 mb-6 overflow-x-auto px-4 scrollbar-none">
-        <ul className="flex gap-1 rounded-xl border bg-card p-1">
+      <nav aria-label="एडमिन" className="mb-6">
+        {/* Phones: 3×2 grid so every section is visible; desktop: one row. */}
+        <ul className="grid grid-cols-3 gap-1 rounded-xl border bg-card p-1 lg:flex">
           {TABS.map(({ to, label, icon: Icon, end }) => (
-            <li key={to} className="shrink-0">
+            <li key={to} className="min-w-0">
               <NavLink
                 to={to}
                 end={end ?? to === "/admin/posts"}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-2 rounded-lg px-3.5 py-2 font-hindi text-small font-semibold",
+                    "flex min-h-11 flex-col items-center justify-center gap-1 rounded-lg px-2 py-2 text-center font-hindi text-small font-semibold lg:flex-row lg:gap-2 lg:px-3.5",
                     isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
                   )
                 }

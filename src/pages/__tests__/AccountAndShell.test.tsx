@@ -138,8 +138,13 @@ describe("Newsletter", () => {
     const second = renderRoute(<NewsletterPage />, { route: "/newsletter?status=unsubscribed" });
     expect(screen.getByRole("heading", { name: "अनसब्सक्राइब हो गया" })).toBeInTheDocument();
     second.unmount();
-    renderRoute(<NewsletterPage />, { route: "/newsletter?status=whatever" });
+    const third = renderRoute(<NewsletterPage />, { route: "/newsletter?status=whatever" });
     expect(screen.getByRole("heading", { name: "लिंक मान्य नहीं है" })).toBeInTheDocument();
+    third.unmount();
+    // Opened directly, without an email link: show the subscription form, not an error.
+    renderRoute(<NewsletterPage />, { route: "/newsletter" });
+    expect(screen.getByRole("heading", { name: "हर रविवार नौकरी अपडेट ईमेल पर" })).toBeInTheDocument();
+    expect(screen.queryByText("लिंक मान्य नहीं है")).not.toBeInTheDocument();
   });
 
   it("form is hidden until the newsletter is enabled", () => {
@@ -224,15 +229,57 @@ describe("App shell", () => {
     expect(screen.getByRole("navigation", { name: "नीचे का नेविगेशन" })).toBeInTheDocument();
   });
 
+  it("bottom nav has a सेवाएँ tab that is active on all three shop pages", () => {
+    for (const route of ["/services", "/mobile-electronics", "/mataji-studio"]) {
+      const { unmount } = renderRoute(
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route path="*" element={<h1>दुकान</h1>} />
+          </Route>
+        </Routes>,
+        { route },
+      );
+      const nav = screen.getByRole("navigation", { name: "नीचे का नेविगेशन" });
+      expect(within(nav).getByRole("link", { name: "सेवाएँ" })).toHaveAttribute("aria-current", "page");
+      expect(within(nav).getByRole("link", { name: "होम" })).not.toHaveAttribute("aria-current");
+      unmount();
+    }
+  });
+
+  it("admin pages hide the reader bottom nav and use the short footer", () => {
+    renderRoute(
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route path="/admin" element={<h1>एडमिन</h1>} />
+        </Route>
+      </Routes>,
+      { route: "/admin" },
+    );
+    expect(screen.queryByRole("navigation", { name: "नीचे का नेविगेशन" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("list", { name: "सोशल मीडिया" })).not.toBeInTheDocument();
+  });
+
+  it("footer: call/WhatsApp/directions actions, labelled social links, no language switch", () => {
+    Shell({ route: "/" });
+    const footer = screen.getByRole("contentinfo");
+    expect(within(footer).getByRole("link", { name: /कॉल करें/ })).toHaveAttribute("href", expect.stringMatching(/^tel:/));
+    expect(within(footer).getByRole("link", { name: /रास्ता/ })).toHaveAttribute("href", expect.stringContaining("google.com/maps"));
+    const social = within(footer).getByRole("list", { name: "सोशल मीडिया" });
+    expect(within(social).getByRole("link", { name: "Instagram" })).toHaveAttribute("target", "_blank");
+    expect(within(social).getByRole("link", { name: "YouTube" })).toHaveAttribute("rel", expect.stringContaining("noopener"));
+    expect(within(footer).queryByText("English")).not.toBeInTheDocument();
+  });
+
   it("post pages replace the bottom nav with their own action bar", () => {
     Shell({ route: "/blog/x" });
     expect(screen.queryByRole("navigation", { name: "नीचे का नेविगेशन" })).not.toBeInTheDocument();
   });
 
-  it("asks for preferences on the 2nd page view, not the 1st", async () => {
-    localStorage.setItem("malani-page-views", "1");
+  it("never interrupts with a preferences popup, even on later page views", async () => {
+    localStorage.setItem("malani-page-views", "5");
     Shell({ route: "/" });
-    expect(await screen.findByRole("dialog")).toHaveTextContent("3 सवाल");
+    await new Promise((r) => setTimeout(r, 50));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("does not ask on the first visit", async () => {

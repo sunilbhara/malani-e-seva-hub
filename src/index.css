@@ -8,101 +8,109 @@
  * Contrast is checked against WCAG 2.2 AA (see docs/Malani_New_UI_and_Engagement_Blueprint.docx §4).
  */
 @layer base {
+  /*
+   * Premium palette (docs/UX_AUDIT_AND_REDESIGN.md §4.2): ink navy, marigold, terracotta and leaf
+   * on warm ivory. Flat colours only — no gradients. Text on marigold is always ink.
+   */
   :root {
-    --background: 210 40% 98%;          /* #F8FAFC canvas */
-    --foreground: 222 47% 11%;          /* #0F172A ink */
-    --body: 215 25% 27%;                /* #334155 paragraph text */
+    --background: 36 45% 96%;           /* #FAF7F2 ivory */
+    --foreground: 225 15% 13%;          /* #1C1F26 */
+    --body: 222 13% 26%;                /* #3A404C paragraph text */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 225 15% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 225 15% 13%;
 
-    --primary: 224 76% 48%;             /* #1D4ED8 royal blue */
+    --primary: 222 51% 16%;             /* #14213D ink navy */
     --primary-foreground: 0 0% 100%;
-    --brand: 226 71% 33%;               /* #1E3A8A navy */
-    --brand-foreground: 0 0% 100%;
-    --secondary: 214 95% 93%;           /* #DBEAFE blue 100 */
-    --secondary-foreground: 224 76% 40%;
+    --brand: 222 51% 16%;
+    --brand-foreground: 36 45% 96%;
+    --secondary: 222 28% 93%;           /* #E9ECF3 ink tint */
+    --secondary-foreground: 222 51% 16%;
+    --link: 215 64% 34%;                /* #1F4E8C readable link blue */
 
-    --accent: 38 92% 50%;               /* #F59E0B saffron — always with dark text */
-    --accent-foreground: 222 47% 11%;
-    --accent-soft: 48 100% 96%;         /* #FFFBEB */
+    --accent: 36 72% 56%;               /* #E09F3E marigold — always with ink text */
+    --accent-foreground: 222 51% 16%;
+    --accent-soft: 37 76% 93%;          /* #FBF1E1 */
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 40%;    /* #556070 — 6:1 on white */
-    --border: 214 32% 91%;              /* #E2E8F0 */
-    --input: 214 32% 85%;
-    --ring: 224 76% 48%;
+    --muted: 36 30% 92%;                /* #F1ECE4 */
+    --muted-foreground: 221 11% 38%;    /* #565D6B — 5.6:1 on ivory */
+    --border: 38 22% 87%;               /* #E6DFD4 */
+    --input: 38 18% 78%;
+    --ring: 215 64% 34%;
 
-    --destructive: 0 74% 42%;           /* #B91C1C */
+    --destructive: 4 76% 40%;           /* #B42318 */
     --destructive-foreground: 0 0% 100%;
 
-    --status-open: 142 72% 29%;         /* #15803D */
-    --status-open-bg: 141 84% 93%;      /* #DCFCE7 */
-    --status-soon: 23 83% 31%;          /* #92400E */
-    --status-soon-bg: 48 96% 89%;       /* #FEF3C7 */
-    --status-urgent: 0 74% 42%;         /* #B91C1C */
-    --status-urgent-bg: 0 93% 94%;      /* #FEE2E2 */
-    --status-closed: 215 19% 35%;       /* #475569 */
-    --status-closed-bg: 210 40% 96%;    /* #F1F5F9 */
+    --status-open: 145 46% 30%;         /* #296F46 leaf */
+    --status-open-bg: 141 35% 91%;      /* #E1F0E6 */
+    --status-soon: 28 80% 30%;          /* #8A4510 */
+    --status-soon-bg: 37 85% 90%;       /* #FAEBD0 */
+    --status-urgent: 11 55% 42%;        /* #A84A33 terracotta */
+    --status-urgent-bg: 13 64% 92%;     /* #F8E3DC */
+    --status-closed: 221 11% 38%;
+    --status-closed-bg: 36 25% 91%;
 
-    --type-job: 224 76% 48%;
-    --type-admit: 262 83% 58%;          /* #7C3AED */
-    --type-result: 175 84% 26%;         /* #0F766E */
-    --type-exam: 21 90% 40%;            /* #C2410C */
-    --type-news: 215 19% 35%;
+    --type-job: 215 64% 34%;            /* #1F4E8C */
+    --type-admit: 270 45% 42%;          /* #6B3A9C */
+    --type-result: 175 70% 26%;         /* #146F66 */
+    --type-exam: 11 55% 42%;            /* terracotta */
+    --type-news: 221 11% 38%;
 
     --whatsapp: 142 70% 49%;            /* #25D366 */
     --whatsapp-foreground: 150 69% 14%; /* #0B3B24 */
 
-    --chart-1: 224 76% 48%;             /* #1D4ED8 — validated vs light surface */
+    --chart-1: 215 64% 34%;
     --radius: 0.75rem;
-    --shadow-1: 0 1px 3px rgb(15 23 42 / 0.08);
-    --shadow-2: 0 10px 30px rgb(15 23 42 / 0.12);
+    --shadow-1: 0 1px 2px rgb(28 31 38 / 0.06), 0 1px 1px rgb(28 31 38 / 0.04);
+    --shadow-2: 0 12px 28px rgb(28 31 38 / 0.10);
     --bottom-nav-height: 64px;
     --post-font-scale: 1;
   }
 
   :root[data-theme="dark"] {
-    --background: 224 49% 8%;           /* #0B1120 */
-    --foreground: 220 13% 91%;          /* #E5E7EB */
-    --body: 216 12% 84%;
-    --card: 221 39% 11%;                /* #111827 */
-    --card-foreground: 220 13% 91%;
-    --popover: 221 39% 11%;
-    --popover-foreground: 220 13% 91%;
-    --primary: 213 94% 68%;             /* #60A5FA */
-    --primary-foreground: 224 49% 8%;
-    --brand: 222 47% 14%;
-    --brand-foreground: 220 13% 91%;
-    --secondary: 217 33% 20%;
-    --secondary-foreground: 213 94% 78%;
-    --accent: 43 96% 56%;               /* #FBBF24 */
-    --accent-foreground: 224 49% 8%;
-    --accent-soft: 38 40% 14%;
-    --muted: 217 27% 16%;
-    --muted-foreground: 215 20% 65%;    /* #94A3B8 */
-    --border: 217 27% 21%;
-    --input: 217 27% 28%;
-    --ring: 213 94% 68%;
-    --destructive: 0 84% 65%;
-    --destructive-foreground: 224 49% 8%;
-    --status-open: 142 69% 58%;
-    --status-open-bg: 143 64% 14%;
-    --status-soon: 43 96% 56%;
-    --status-soon-bg: 32 70% 15%;
-    --status-urgent: 0 91% 71%;
-    --status-urgent-bg: 0 63% 18%;
-    --status-closed: 215 20% 65%;
-    --status-closed-bg: 217 27% 16%;
-    --type-job: 213 94% 68%;
-    --type-admit: 255 92% 76%;
-    --type-result: 172 66% 50%;
-    --type-exam: 27 96% 61%;
-    --type-news: 215 20% 65%;
-    --chart-1: 217 91% 60%;             /* #3B82F6 — validated vs dark surface */
+    --background: 222 43% 9%;           /* #0D1424 */
+    --foreground: 36 30% 93%;           /* #F2EEE7 */
+    --body: 36 12% 82%;
+    --card: 222 38% 13%;                /* #141D30 */
+    --card-foreground: 36 30% 93%;
+    --popover: 222 38% 13%;
+    --popover-foreground: 36 30% 93%;
+    --primary: 219 63% 78%;             /* #A9C1EC */
+    --primary-foreground: 222 51% 12%;
+    --brand: 222 47% 7%;
+    --brand-foreground: 36 30% 93%;
+    --secondary: 222 30% 20%;
+    --secondary-foreground: 219 63% 85%;
+    --link: 219 70% 76%;
+    --accent: 37 75% 62%;               /* #E8B062 */
+    --accent-foreground: 222 51% 10%;
+    --accent-soft: 34 35% 16%;
+    --muted: 222 28% 17%;
+    --muted-foreground: 36 10% 68%;
+    --border: 222 24% 23%;
+    --input: 222 22% 30%;
+    --ring: 219 70% 76%;
+    --destructive: 4 80% 66%;
+    --destructive-foreground: 222 51% 10%;
+    --status-open: 142 50% 62%;
+    --status-open-bg: 145 40% 15%;
+    --status-soon: 37 80% 64%;
+    --status-soon-bg: 32 55% 16%;
+    --status-urgent: 11 75% 70%;
+    --status-urgent-bg: 11 45% 18%;
+    --status-closed: 36 10% 68%;
+    --status-closed-bg: 222 28% 17%;
+    --type-job: 219 70% 76%;
+    --type-admit: 270 60% 78%;
+    --type-result: 172 55% 55%;
+    --type-exam: 11 75% 70%;
+    --type-news: 36 10% 68%;
+    --whatsapp: 142 70% 49%;
+    --whatsapp-foreground: 150 69% 14%;
+    --chart-1: 219 70% 70%;
     --shadow-1: 0 1px 3px rgb(0 0 0 / 0.4);
-    --shadow-2: 0 10px 30px rgb(0 0 0 / 0.5);
+    --shadow-2: 0 12px 28px rgb(0 0 0 / 0.5);
   }
 
   * {
@@ -111,14 +119,15 @@
 
   html {
     -webkit-text-size-adjust: 100%;
-    font-family: "Inter Variable", "Noto Sans Devanagari Variable", "Nirmala UI", system-ui, -apple-system, sans-serif;
-    font-feature-settings: "cv11", "ss01";
+    font-family: "Noto Sans Devanagari Variable", "Nirmala UI", system-ui, -apple-system, sans-serif;
     scroll-padding-top: 72px;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     min-height: 100dvh;
+    /* Chip rows bleed to the screen edge; never let them cause sideways page scroll. */
+    overflow-x: clip;
   }
 
   /* Hindi text needs extra line height for matras (Blueprint §5). */
@@ -174,6 +183,16 @@
     box-shadow: var(--shadow-1);
   }
 
+  /* Subtle Rajasthani jaali line motif for the header band and footer (very low contrast). */
+  .jaali {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M14 0 28 14 14 28 0 14Z' fill='none' stroke='%23ffffff' stroke-opacity='.06' stroke-width='1'/%3E%3Ccircle cx='14' cy='14' r='2' fill='%23ffffff' fill-opacity='.05'/%3E%3C/svg%3E");
+  }
+
+  /* Horizontal chip rail with a fade hinting there is more to scroll. */
+  .rail-fade {
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+
   .scrollbar-none {
     scrollbar-width: none;
   }
@@ -206,7 +225,7 @@
     list-style: decimal;
   }
   .post-body :where(a) {
-    @apply font-medium text-primary underline underline-offset-4 hover:no-underline;
+    @apply font-medium text-link underline underline-offset-4 hover:no-underline;
   }
   .post-body :where(strong) {
     @apply font-semibold text-foreground;
@@ -230,6 +249,11 @@
   .post-body :where(hr) {
     @apply my-8;
   }
+}
+
+/* AdSense marks slots it could not fill; never leave an empty box behind. */
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
 }
 
 /* TipTap editor placeholder (admin) */

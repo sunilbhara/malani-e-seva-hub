@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, Plus, Sparkles, Trash2 } from "lucide-react";
+import { CheckCircle2, CircleAlert, Copy, ExternalLink, ImagePlus, MessageCircle, Plus, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,10 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { PageSpinner } from "@/components/common/PageSpinner";
 import { useAuth } from "@/hooks/useAuth";
-import { getPost, savePost, type JobDetailsInput, type PostInput, type PostStatus } from "@/services/posts";
+import { findSimilarTitles, getPost, savePost, type JobDetailsInput, type PostInput, type PostStatus } from "@/services/posts";
 import { createRecruitment, listRecruitments } from "@/services/tracker";
 import { uploadBlogImage } from "@/services/media";
 import { generateDraft } from "@/services/ai";
@@ -20,9 +21,24 @@ import { DEPARTMENTS, parseExtraDates, parseFees, POST_TYPES, QUALIFICATIONS, ST
 import { safeHttpUrl } from "@/lib/url";
 import { stripHtml } from "@/lib/html";
 import { validatePostForm, type PostFormState as FormState } from "@/lib/postForm";
+import { qualityChecks } from "@/lib/contentQuality";
+import { shareText, whatsappShareUrl } from "@/lib/share";
+import { track } from "@/lib/analytics";
+import { BUSINESS } from "@/lib/business";
 import { cn } from "@/lib/utils";
 
 const CATEGORIES = ["Government Job", "Admit Card", "Result", "Exam Date", "Application Form", "Barmer News", "E-Mitra Guide", "Community"];
+/** Stored values stay English (existing posts use them); admins see Hindi labels. */
+const CATEGORY_LABEL: Record<string, string> = {
+  "Government Job": "सरकारी नौकरी",
+  "Admit Card": "एडमिट कार्ड",
+  Result: "रिजल्ट",
+  "Exam Date": "परीक्षा तिथि",
+  "Application Form": "आवेदन फॉर्म",
+  "Barmer News": "बाड़मेर समाचार",
+  "E-Mitra Guide": "ई-मित्र गाइड",
+  Community: "सामुदायिक",
+};
 
 const TEMPLATES: Record<string, string> = {
   job: "<h2>भर्ती का संक्षिप्त विवरण</h2><p></p><h2>पद विवरण</h2><p></p><h2>योग्यता</h2><ul><li></li></ul><h2>आयु सीमा</h2><p></p><h2>चयन प्रक्रिया</h2><ul><li></li></ul><h2>आवेदन कैसे करें</h2><ol><li>आधिकारिक वेबसाइट खोलें</li><li></li></ol><h2>ज़रूरी दस्तावेज़</h2><ul><li></li></ul>",
@@ -166,6 +182,19 @@ export default function PostEditor() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<FormState>(EMPTY);
+  const [justPublished, setJustPublished] = useState<{ id: string; slug: string; title: string; afterPath: string } | null>(null);
+  // Duplicate-title check, debounced so it runs after typing stops.
+  const [titleForCheck, setTitleForCheck] = useState("");
+  useEffect(() => {
+    const t = window.setTimeout(() => setTitleForCheck(form.title.trim()), 600);
+    return () => window.clearTimeout(t);
+  }, [form.title]);
+  const duplicates = useQuery({
+    queryKey: ["similar-titles", titleForCheck, id ?? "new"],
+    queryFn: () => findSimilarTitles(titleForCheck, isNew ? undefined : id),
+    enabled: titleForCheck.length >= 12,
+    staleTime: 60_000,
+  });
   const [loaded, setLoaded] = useState(isNew);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -324,13 +353,17 @@ export default function PostEditor() {
     try {
       const { post, job } = toPayload(form);
       const saved = await savePost({ id: isNew ? undefined : id, authorId: user.id, post, job });
-      await queryClient.invalidateQueries({ queryKey: ["admin"] });
-      await queryClient.invalidateQueries({ queryKey: ["post"] });
-      await queryClient.invalidateQueries({ queryKey: ["listing"] });
-      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      // Refresh lists in the background; no need to wait before moving on.
+      for (const key of [["admin"], ["post"], ["listing"], ["posts"]]) void queryClient.invalidateQueries({ queryKey: key });
       toast.success(form.status === "published" ? "पोस्ट प्रकाशित हो गई" : form.status === "scheduled" ? "पोस्ट शेड्यूल हो गई" : "ड्राफ़्ट सेव हो गया");
-      navigate(isNew ? `/admin/posts/${saved.id}` : "/admin/posts", { replace: isNew });
-      if (isNew) setLoaded(false);
+      const afterPath = isNew ? `/admin/posts/${saved.id}` : "/admin/posts";
+      if (form.status === "published") {
+        // Offer sharing first; leave the editor when the dialog closes.
+        setJustPublished({ id: saved.id, slug: saved.slug, title: form.title.trim(), afterPath });
+      } else {
+        navigate(afterPath, { replace: isNew });
+        if (isNew) setLoaded(false);
+      }
     } catch (error) {
       const message = (error as { message?: string })?.message ?? "";
       toast.error(message.includes("check constraint") ? "कोई फ़ील्ड सही फ़ॉर्मेट में नहीं है (लिंक/तारीख जाँचें)।" : "सेव नहीं हो सका। दोबारा कोशिश करें।");
@@ -387,7 +420,7 @@ export default function PostEditor() {
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="कैटेगरी" htmlFor="category">
             <select id="category" value={form.category} onChange={(e) => set("category", e.target.value)} className="h-11 w-full rounded-xl border bg-card px-3 font-hindi">
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              {CATEGORIES.map((c) => <option key={c} value={c}>{CATEGORY_LABEL[c] ?? c}</option>)}
             </select>
           </Field>
           <Field label="टैग (कॉमा से अलग)" htmlFor="tags">
@@ -492,7 +525,7 @@ export default function PostEditor() {
       </section>
 
       <section className="grid gap-4 rounded-2xl border bg-card p-5 md:grid-cols-2">
-        <Field label="कवर फोटो (1200×630 सबसे अच्छा)">
+        <Field label="कवर फोटो (1200×630 सबसे अच्छा, अपने-आप 300 KB से छोटी की जाती है)">
           <div className="flex items-center gap-3">
             {form.imageUrl && <img src={form.imageUrl} alt="" className="h-16 w-28 rounded-lg border object-cover" />}
             <label className={cn("inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border bg-card px-4 font-hindi text-small font-semibold hover:bg-muted", uploading && "opacity-60")}>
@@ -514,6 +547,40 @@ export default function PostEditor() {
         </label>
       </section>
 
+      {(() => {
+        const checks = qualityChecks({
+          title: form.title,
+          content: form.content,
+          isJob: form.hasJob,
+          applyLink: form.applyLink,
+          officialLink: form.officialLink,
+          officialWebsite: form.officialWebsite,
+          imageUrl: form.imageUrl,
+          seoDescription: form.seoDescription,
+          duplicateTitles: duplicates.data ?? [],
+        });
+        const done = checks.filter((c) => c.ok).length;
+        return (
+          <section aria-labelledby="quality-heading" className="rounded-2xl border bg-card p-5">
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="quality-heading" className="font-hindi text-lg font-bold">प्रकाशन से पहले जाँच</h2>
+              <span className={cn("rounded-full px-2.5 py-1 font-hindi text-caption tabular", done === checks.length ? "bg-status-open-bg text-status-open" : "bg-status-soon-bg text-status-soon")}>
+                {done}/{checks.length} पूरे
+              </span>
+            </div>
+            <p className="mt-1 font-hindi text-small text-muted-foreground">अच्छी, अपने शब्दों में लिखी पोस्ट Google और AdSense दोनों के लिए ज़रूरी है।</p>
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+              {checks.map((c) => (
+                <li key={c.id} className="flex items-start gap-2 font-hindi text-small">
+                  {c.ok ? <CheckCircle2 aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-status-open" /> : <CircleAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-status-soon" />}
+                  <span className={c.ok ? "text-muted-foreground" : "text-foreground"}>{c.text}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })()}
+
       <section className="sticky bottom-0 z-20 -mx-4 flex flex-col gap-3 border-t bg-card/95 px-4 py-3 backdrop-blur sm:flex-row sm:items-center lg:static lg:mx-0 lg:rounded-2xl lg:border">
         <div className="flex flex-wrap gap-1.5">
           {statusOptions.map((o) => (
@@ -530,6 +597,61 @@ export default function PostEditor() {
           {saving ? "सेव हो रहा है…" : form.status === "published" ? "प्रकाशित करें" : form.status === "scheduled" ? "शेड्यूल करें" : "सेव करें"}
         </Button>
       </section>
+
+      <Dialog
+        open={Boolean(justPublished)}
+        onOpenChange={(open) => {
+          if (open || !justPublished) return;
+          const { afterPath } = justPublished;
+          setJustPublished(null);
+          navigate(afterPath, { replace: isNew });
+          if (isNew) setLoaded(false);
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-hindi">पोस्ट प्रकाशित हो गई — अब शेयर करें</DialogTitle>
+            <DialogDescription className="font-hindi">
+              WhatsApp ग्रुप और स्टेटस पर शेयर करने से सबसे ज़्यादा पाठक आते हैं। Telegram और नोटिफ़िकेशन अपने-आप भेजे जाते हैं (अगर चालू हैं)।
+            </DialogDescription>
+          </DialogHeader>
+          {justPublished && (
+            <div className="grid gap-2">
+              <Button asChild variant="whatsapp" size="lg" className="font-hindi">
+                <a
+                  href={whatsappShareUrl(shareText({ title: justPublished.title, slug: justPublished.slug }))}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => track("post_shared_after_publish", { channel: "whatsapp" })}
+                >
+                  <MessageCircle /> WhatsApp पर शेयर करें
+                </a>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="font-hindi"
+                onClick={() => {
+                  const url = `${BUSINESS.siteUrl}/blog/${justPublished.slug}`;
+                  void navigator.clipboard?.writeText(url).then(
+                    () => toast.success("लिंक कॉपी हो गया"),
+                    () => toast.error(url),
+                  );
+                  track("post_shared_after_publish", { channel: "copy" });
+                }}
+              >
+                <Copy /> लिंक कॉपी करें
+              </Button>
+              <Button asChild variant="ghost" size="lg" className="font-hindi">
+                <Link to={`/blog/${justPublished.slug}`} target="_blank">
+                  <ExternalLink /> पोस्ट देखें
+                </Link>
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Sheet open={aiOpen} onOpenChange={setAiOpen}>
         <SheetContent side="bottom" className="mx-auto max-w-2xl">

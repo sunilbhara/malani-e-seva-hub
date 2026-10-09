@@ -20,7 +20,6 @@ import { SEO } from "@/components/seo/SEO";
 import { loginUrl } from "@/lib/url";
 import { PageSpinner } from "@/components/common/PageSpinner";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/hooks/useAuth";
 import { usePreferences } from "@/hooks/usePreferences";
 import { getProfile, updateDisplayName } from "@/services/profile";
@@ -164,10 +163,9 @@ export default function Profile() {
         )}
       </Card>
 
-      <Card title="दिखावट और भाषा">
+      <Card title="दिखावट">
         <div className="flex flex-wrap items-center gap-4">
           <ThemeToggle />
-          <LanguageSwitcher />
         </div>
       </Card>
 

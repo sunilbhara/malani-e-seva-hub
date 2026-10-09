@@ -59,3 +59,7 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Original photos with identifiable customers: keep local only until they agree to publication
+assets/originals/shop-photo-06.jpeg
+assets/originals/shop-photo-07.jpeg

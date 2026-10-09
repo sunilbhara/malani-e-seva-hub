@@ -6,16 +6,17 @@ test.describe("Home", () => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("सरकारी नौकरी");
     await expect(page.getByRole("link", { name: "राजस्थान पुलिस कांस्टेबल भर्ती 2026 — 9617 पद" }).first()).toBeVisible();
-    await expect(page.getByRole("main").getByRole("heading", { name: /आज की अपडेट/ })).toBeVisible();
+    // "आज की अपडेट" when something was published today (IST), otherwise "ताज़ा अपडेट".
+    await expect(page.getByRole("main").getByRole("heading", { name: /आज की अपडेट|ताज़ा अपडेट/ })).toBeVisible();
     await expect(page.getByRole("dialog")).toHaveCount(0);
     await expect(page.getByText("ड्राफ्ट — पाठकों को नहीं दिखना चाहिए")).toHaveCount(0);
     expect(backend.rpcCalls("list_posts").length).toBeGreaterThan(0);
     await noHorizontalScroll(page);
   });
 
-  test("second page view asks 3 questions and personalises the feed", async ({ page }) => {
+  test("the 3 questions open from the home card and personalise the feed", async ({ page }) => {
     await page.goto("/");
-    await page.goto("/jobs");
+    await page.getByRole("button", { name: "शुरू करें" }).click();
     const sheet = page.getByRole("dialog");
     await expect(sheet).toContainText("3 सवाल");
     await sheet.getByRole("button", { name: "12वीं पास" }).click();
@@ -27,12 +28,27 @@ test.describe("Home", () => {
     await expect(page.getByText("12वीं पास · पुलिस")).toBeVisible();
   });
 
-  test("preference sheet can be skipped and stays away", async ({ page }) => {
+  test("no preferences popup interrupts later page views", async ({ page }) => {
     await page.goto("/");
     await page.goto("/jobs");
-    await page.getByRole("dialog").getByRole("button", { name: "अभी नहीं" }).click();
     await page.goto("/result");
     await expect(page.getByRole("dialog")).toHaveCount(0);
+  });
+
+  test("shop strip shows the three businesses with real photos and links to them", async ({ page, skipPreferenceSheet }) => {
+    await skipPreferenceSheet();
+    await page.goto("/");
+    const strip = page.getByRole("region", { name: "हमारी दुकान — बाड़मेर" });
+    for (const [name, href] of [["ई-मित्र सेवाएँ", "/services"], ["मोबाइल और एक्सेसरीज़", "/mobile-electronics"], ["माताजी स्टूडियो", "/mataji-studio"]] as const) {
+      await expect(strip.getByRole("link", { name: new RegExp(name) })).toHaveAttribute("href", href);
+    }
+    await expect(strip.getByRole("img").first()).toHaveAttribute("src", /\/shop\/.+\.webp$/);
+    await strip.getByRole("link", { name: /माताजी स्टूडियो/ }).click();
+    await expect(page).toHaveURL(/\/mataji-studio$/);
+    // The bottom navigation exists on phones only.
+    if (await page.getByRole("navigation", { name: "नीचे का नेविगेशन" }).isVisible()) {
+      await expect(page.getByRole("navigation", { name: "नीचे का नेविगेशन" }).getByRole("link", { name: "सेवाएँ" })).toHaveAttribute("aria-current", "page");
+    }
   });
 
   test("home search goes to the jobs listing with the query", async ({ page, skipPreferenceSheet }) => {
@@ -119,7 +135,7 @@ test.describe("Jobs listing", () => {
     await page.goto("/result");
     await expect(page.getByRole("link", { name: "पटवारी परीक्षा रिजल्ट घोषित" })).toBeVisible();
     await expect(page.getByRole("link", { name: "RPSC परीक्षा कैलेंडर 2026" })).toBeVisible();
-    await page.getByRole("tab", { name: "एडमिट कार्ड" }).click();
+    await page.getByRole("navigation", { name: "अपडेट का प्रकार" }).getByRole("link", { name: "एडमिट कार्ड" }).click();
     await expect(page).toHaveURL(/\/admit-card$/);
     await expect(page.getByRole("link", { name: "राजस्थान पुलिस कांस्टेबल एडमिट कार्ड जारी" })).toBeVisible();
   });

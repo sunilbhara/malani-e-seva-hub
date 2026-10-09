@@ -73,10 +73,12 @@ export default function Quiz() {
           <h1 className="font-hindi text-2xl font-bold sm:text-3xl">डेली GK क्विज़</h1>
           <p className="mt-1 font-hindi text-small text-muted-foreground">{formatDate(date, { long: true })} · हर दिन नए सवाल</p>
         </div>
-        <div className="flex shrink-0 flex-col items-center rounded-2xl border bg-accent-soft px-4 py-2" aria-label={`${streak} दिन की स्ट्रीक`}>
-          <Flame aria-hidden className="h-6 w-6 text-accent" />
-          <span className="font-hindi text-caption tabular">{streak} दिन</span>
-        </div>
+        {streak > 0 && (
+          <div className="flex shrink-0 flex-col items-center rounded-xl border bg-accent-soft px-4 py-2" aria-label={`${streak} दिन की स्ट्रीक`}>
+            <Flame aria-hidden className="h-6 w-6 text-accent" />
+            <span className="font-hindi text-caption tabular">{streak} दिन</span>
+          </div>
+        )}
       </header>
 
       {(dates.data?.length ?? 0) > 1 && (

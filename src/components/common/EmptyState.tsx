@@ -48,7 +48,10 @@ export function SectionHeading({
   return (
     <div className={cn("mb-4 flex items-end justify-between gap-4", className)}>
       <div className="min-w-0">
-        <h2 id={id} className="font-hindi text-xl font-bold sm:text-2xl">{title}</h2>
+        <h2 id={id} className="flex items-center gap-2.5 font-hindi text-xl font-bold sm:text-2xl">
+          <span aria-hidden className="h-5 w-1.5 shrink-0 rounded-full bg-accent" />
+          {title}
+        </h2>
         {description && <p className="mt-1 font-hindi text-small text-muted-foreground">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}

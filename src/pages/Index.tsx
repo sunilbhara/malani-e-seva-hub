@@ -1,16 +1,17 @@
 import { lazy, Suspense, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, BadgeCheck, Camera, ChevronRight, FileText, MapPin, Search, ShieldCheck, Smartphone, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck, Brain, ChevronRight, Clock, Search, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/seo/SEO";
 import { SectionHeading } from "@/components/common/EmptyState";
 import { CardGrid, CardRail, UpdateList } from "@/components/jobs/PostList";
-import { FormHelpCard } from "@/components/engagement/FormHelpCard";
+import { ShopStrip } from "@/components/home/ShopStrip";
 import { AlertsCard } from "@/components/engagement/AlertsCard";
 import { NewsletterForm } from "@/components/engagement/NewsletterForm";
 import { AdSlot } from "@/components/common/AdSlot";
 import { usePreferences } from "@/hooks/usePreferences";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { listPosts } from "@/services/posts";
 import { queryKeys } from "@/lib/queryClient";
 import { departmentLabel, qualificationLabel } from "@/lib/jobs";
@@ -18,6 +19,7 @@ import { formatDate, istToday } from "@/lib/format";
 import { hasPreferences } from "@/lib/preferences";
 import { buildLocalBusinessSchema, buildWebsiteSchema } from "@/lib/seo";
 import { BUSINESS, isOpenAt } from "@/lib/business";
+import { cn } from "@/lib/utils";
 import { track } from "@/lib/analytics";
 
 const PreferenceSheet = lazy(() => import("@/components/engagement/PreferenceSheet"));
@@ -33,15 +35,17 @@ const QUICK_CHIPS = [
   { label: "पटवारी", to: "/jobs?department=patwari" },
 ];
 
-const SERVICES = [
-  { to: "/services", title: "ई-मित्र सेवाएँ", text: "ऑनलाइन फॉर्म, प्रमाण पत्र, बिल भुगतान, आधार-पैन सहायता", icon: FileText },
-  { to: "/mobile-electronics", title: "मोबाइल और इलेक्ट्रॉनिक्स", text: "नए मोबाइल, एक्सेसरीज़ और भरोसेमंद सलाह", icon: Smartphone },
-  { to: "/mataji-studio", title: "माताजी स्टूडियो", text: "पासपोर्ट फोटो, शादी, प्री-वेडिंग और इवेंट फोटोग्राफी", icon: Camera },
+
+const TRUST = [
+  { icon: BadgeCheck, title: "अधिकृत ई-मित्र केंद्र", text: `${BUSINESS.address.cityHi} में अपनी दुकान — रेलवे स्टेशन के सामने`, status: false },
+  { icon: ShieldCheck, title: "आधिकारिक स्रोत से", text: "हर भर्ती के साथ अधिसूचना और आधिकारिक लिंक", status: false },
+  { icon: Clock, title: "दुकान का समय", text: BUSINESS.hoursTextHi, status: true },
 ];
 
 export default function Index() {
   const navigate = useNavigate();
   const prefs = usePreferences();
+  const desktop = useMediaQuery("(min-width: 1024px)");
   const [query, setQuery] = useState("");
   const [prefsOpen, setPrefsOpen] = useState(false);
   const personalised = hasPreferences(prefs);
@@ -97,9 +101,10 @@ export default function Index() {
       />
 
       {/* Hero: search first (Blueprint §9.1) */}
-      <section className="border-b bg-gradient-to-b from-secondary/70 to-background">
-        <div className="container-page py-8 sm:py-12">
-          <h1 className="max-w-2xl font-hindi text-[1.875rem] font-bold leading-tight sm:text-[2.75rem]">
+      <section className="border-b bg-card">
+        <div className="container-page grid items-center gap-8 py-6 sm:py-10 lg:grid-cols-[1.35fr_1fr]">
+          <div className="min-w-0">
+          <h1 className="max-w-2xl font-hindi text-[1.75rem] font-bold leading-tight sm:text-[2.5rem]">
             आपकी अगली सरकारी नौकरी यहाँ है
           </h1>
           <p className="mt-2 max-w-xl font-hindi text-body text-muted-foreground">
@@ -116,26 +121,47 @@ export default function Index() {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="भर्ती, विभाग या पद खोजें…"
                 enterKeyHint="search"
-                className="h-12 w-full rounded-xl border bg-card pl-12 pr-4 font-hindi text-body shadow-1 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="h-12 w-full rounded-xl border border-input bg-background pl-12 pr-4 font-hindi text-body placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
             <Button type="submit" size="lg" className="font-hindi">खोजें</Button>
           </form>
-          <nav aria-label="जल्दी खोजें" className="-mx-4 mt-4 overflow-x-auto px-4 scrollbar-none">
+          <nav aria-label="जल्दी खोजें" className="rail-fade -mx-4 mt-4 overflow-x-auto px-4 scrollbar-none sm:[mask-image:none]">
             <ul className="flex gap-2">
               {QUICK_CHIPS.map((chip) => (
                 <li key={chip.to} className="shrink-0">
-                  <Link to={chip.to} className="inline-flex h-10 items-center rounded-full border bg-card px-4 font-hindi text-small font-semibold text-foreground transition-colors hover:border-primary hover:text-primary">
+                  <Link to={chip.to} className="inline-flex h-11 items-center rounded-full border bg-background px-4 font-hindi text-small font-semibold text-foreground transition-colors hover:border-primary">
                     {chip.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </nav>
+          </div>
+          {/* Desktop: the real shop front builds trust next to the search (not rendered on phones, so not downloaded). */}
+          {desktop && (
+          <figure>
+            <img
+              src="/shop/storefront-800.webp"
+              srcSet="/shop/storefront-480.webp 480w, /shop/storefront-800.webp 800w"
+              sizes="40vw"
+              alt="मालाणी मोबाइल, ई-मित्र सर्विस और माताजी स्टूडियो की दुकान, बाड़मेर"
+              width={800}
+              height={500}
+              {...{ fetchpriority: "high" }}
+              className="aspect-[16/10] w-full rounded-xl border object-cover shadow-2"
+            />
+            <figcaption className="mt-2 flex items-center gap-2 font-hindi text-small text-muted-foreground">
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" /> हमारी दुकान — रेलवे स्टेशन के सामने, बाड़मेर
+            </figcaption>
+          </figure>
+          )}
         </div>
       </section>
 
-      <div className="container-page space-y-12 py-8">
+      <div className="container-page space-y-10 py-6 sm:space-y-12 sm:py-8">
+        <ShopStrip />
+
         {/* For you */}
         {personalised ? (
           <section aria-labelledby="for-you">
@@ -157,15 +183,15 @@ export default function Index() {
             )}
           </section>
         ) : (
-          <section className="flex flex-col items-start gap-4 rounded-2xl border bg-card p-5 sm:flex-row sm:items-center">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-secondary text-secondary-foreground">
-              <Sparkles aria-hidden className="h-6 w-6" />
+          <section className="flex items-center gap-4 rounded-xl bg-primary p-4 text-primary-foreground sm:p-5">
+            <span className="hidden h-12 w-12 shrink-0 place-items-center rounded-full bg-white/10 sm:grid">
+              <Sparkles aria-hidden className="h-6 w-6 text-accent" />
             </span>
-            <div className="flex-1">
-              <h2 className="font-hindi text-lg font-bold">3 सवाल, फिर सिर्फ़ आपकी नौकरियाँ</h2>
-              <p className="font-hindi text-small text-muted-foreground">अपनी योग्यता और पसंद बताएँ — बिना लॉगिन।</p>
+            <div className="min-w-0 flex-1">
+              <h2 className="font-hindi text-lg font-bold text-primary-foreground">3 सवाल, फिर सिर्फ़ आपकी नौकरियाँ</h2>
+              <p className="font-hindi text-small text-primary-foreground/80">योग्यता और पसंद चुनें — बिना लॉगिन।</p>
             </div>
-            <Button type="button" onClick={() => setPrefsOpen(true)} className="font-hindi">शुरू करें</Button>
+            <Button type="button" variant="accent" onClick={() => setPrefsOpen(true)} className="shrink-0 font-hindi">शुरू करें</Button>
           </section>
         )}
 
@@ -174,7 +200,7 @@ export default function Index() {
           <section aria-labelledby="closing-soon">
             <SectionHeading
               id="closing-soon"
-              title="⏰ अंतिम तिथि नज़दीक"
+              title="अंतिम तिथि नज़दीक"
               action={<Link to="/jobs?status=closing" className="inline-flex items-center gap-1 font-hindi text-small font-semibold text-primary">सभी <ChevronRight className="h-4 w-4" /></Link>}
             />
             <CardRail posts={closing.data?.items} loading={closing.isLoading} />
@@ -191,7 +217,7 @@ export default function Index() {
           <UpdateList posts={todays.data?.items} loading={todays.isLoading} />
         </section>
 
-        {!personalised && (
+        {!personalised && (latestJobs.isLoading || (latestJobs.data?.items.length ?? 0) >= 3) && (
           <section aria-labelledby="latest-jobs">
             <SectionHeading
               id="latest-jobs"
@@ -202,49 +228,49 @@ export default function Index() {
           </section>
         )}
 
-        <FormHelpCard />
+        <AdSlot />
 
-        <div className="grid gap-4 lg:grid-cols-2">
-          <AlertsCard />
-          <NewsletterForm />
+        <div className="flex flex-wrap gap-4">
+          <Link to="/quiz" className="group flex min-w-[17rem] flex-1 flex-col justify-between gap-4 rounded-xl border bg-card p-5 shadow-1 transition-shadow hover:shadow-2">
+            <span className="flex items-center gap-3">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent-soft text-foreground ring-1 ring-accent/40">
+                <Brain aria-hidden className="h-5 w-5" />
+              </span>
+              <span>
+                <span className="block font-hindi text-lg font-bold">आज का GK क्विज़</span>
+                <span className="block font-hindi text-small text-muted-foreground">रोज़ के सवाल — परीक्षा की तैयारी, 2 मिनट में</span>
+              </span>
+            </span>
+            <span className="inline-flex items-center gap-1 font-hindi text-small font-semibold text-link">
+              क्विज़ खेलें <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </Link>
+          {/* Collapses when no alert channel or newsletter is configured, so the quiz card fills the row. */}
+          <div className="grid min-w-[17rem] flex-[2] basis-[34rem] gap-4 empty:hidden md:grid-cols-2">
+            <AlertsCard compact />
+            <NewsletterForm />
+          </div>
         </div>
 
         {/* Trust strip */}
-        <section aria-label="भरोसा" className="grid gap-3 sm:grid-cols-3">
-          {[
-            { icon: BadgeCheck, title: "अधिकृत ई-मित्र केंद्र", text: `${BUSINESS.address.cityHi} में स्थानीय दुकान` },
-            { icon: ShieldCheck, title: "आधिकारिक स्रोत से", text: "हर भर्ती के साथ अधिसूचना और आधिकारिक लिंक" },
-            { icon: MapPin, title: open ? "दुकान अभी खुली है" : "दुकान अभी बंद है", text: BUSINESS.hoursTextHi },
-          ].map(({ icon: Icon, title, text }) => (
-            <div key={title} className="flex items-start gap-3 rounded-2xl border bg-card p-4">
-              <Icon aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+        <section aria-label="भरोसा" className="grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-3">
+          {TRUST.map(({ icon: Icon, title, text, status }) => (
+            <div key={title} className="flex items-start gap-3 bg-card p-4">
+              <Icon aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-link" />
               <div>
-                <p className="font-hindi font-semibold">{title}</p>
+                <p className="flex flex-wrap items-center gap-2 font-hindi font-semibold">
+                  {title}
+                  {status && (
+                    <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-caption", open ? "bg-status-open-bg text-status-open" : "bg-status-closed-bg text-status-closed")}>
+                      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-current" />
+                      {open ? "अभी खुली है" : "अभी बंद है"}
+                    </span>
+                  )}
+                </p>
                 <p className="font-hindi text-small text-muted-foreground">{text}</p>
               </div>
             </div>
           ))}
-        </section>
-
-        <AdSlot />
-
-        {/* Services */}
-        <section aria-labelledby="our-services">
-          <SectionHeading id="our-services" title="हमारी सेवाएँ" />
-          <div className="grid gap-3 sm:grid-cols-3">
-            {SERVICES.map(({ to, title, text, icon: Icon }) => (
-              <Link key={to} to={to} className="group flex flex-col gap-3 rounded-2xl border bg-card p-5 transition-shadow hover:shadow-1">
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-secondary text-secondary-foreground">
-                  <Icon aria-hidden className="h-5 w-5" />
-                </span>
-                <span className="font-hindi text-lg font-bold">{title}</span>
-                <span className="font-hindi text-small text-muted-foreground">{text}</span>
-                <span className="mt-auto inline-flex items-center gap-1 font-hindi text-small font-semibold text-primary">
-                  देखें <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </Link>
-            ))}
-          </div>
         </section>
       </div>
 

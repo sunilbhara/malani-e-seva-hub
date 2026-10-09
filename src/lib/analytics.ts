@@ -13,15 +13,30 @@ function withGa(fn: (ga: GA) => void): void {
   else queue.push(fn);
 }
 
+/** Runs `fn` after the load event, when the main thread is idle (or after `timeout` ms at the latest). */
+export function whenIdle(fn: () => void, timeout = 4000): void {
+  if (typeof window === "undefined") return;
+  const schedule = () => {
+    const ric = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+    if (ric) ric(fn, { timeout });
+    else window.setTimeout(fn, 1500);
+  };
+  if (document.readyState === "complete") schedule();
+  else window.addEventListener("load", schedule, { once: true });
+}
+
 export function initAnalytics(): boolean {
   if (initialised) return true;
   if (!MEASUREMENT_ID || import.meta.env.MODE === "test") return false;
   initialised = true;
-  void import("react-ga4").then(({ default: ReactGA }) => {
-    ReactGA.initialize(MEASUREMENT_ID, { gtagOptions: { send_page_view: false } });
-    ga = ReactGA;
-    queue.splice(0).forEach((fn) => fn(ReactGA));
-  });
+  // gtag.js is ~180 KB: fetch it only once the page is loaded and the browser is idle (Phase 5).
+  whenIdle(() =>
+    void import("react-ga4").then(({ default: ReactGA }) => {
+      ReactGA.initialize(MEASUREMENT_ID, { gtagOptions: { send_page_view: false } });
+      ga = ReactGA;
+      queue.splice(0).forEach((fn) => fn(ReactGA));
+    }),
+  );
   return true;
 }
 
@@ -42,6 +57,8 @@ export type AnalyticsEvent =
   | "share_copy"
   | "share_status_card"
   | "form_help_click"
+  | "product_enquiry"
+  | "post_shared_after_publish"
   | "push_subscribe"
   | "channel_click"
   | "quiz_complete"

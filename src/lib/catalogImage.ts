@@ -3,7 +3,7 @@
  * carousels has the same shape and a small file:
  *  - products: 800×800 (1:1), studio photos: 900×1200 (3:4), WebP
  *  - "crop" fills the frame (centre crop); "fit" shows the whole photo on a white background
- * The `catalog` storage bucket accepts only WebP/JPEG up to 512 KB (see the migration).
+ * The `catalog` storage bucket accepts only WebP/JPEG up to 300 KB (free-tier storage; see the migrations).
  */
 export type CatalogKind = "product" | "studio_photo";
 export type FitMode = "crop" | "fit";
@@ -14,7 +14,7 @@ export const IMAGE_SPECS: Record<CatalogKind, { width: number; height: number; m
 };
 
 export const MAX_INPUT_BYTES = 15 * 1024 * 1024;
-export const MAX_OUTPUT_BYTES = 512 * 1024;
+export const MAX_OUTPUT_BYTES = 300 * 1024;
 const INPUT_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export function validateCatalogFile(file: File): string | null {
@@ -84,7 +84,7 @@ export async function prepareCatalogImage(file: File, kind: CatalogKind, mode: F
   ctx.drawImage(bitmap, p.sx, p.sy, p.sw, p.sh, p.dx, p.dy, p.dw, p.dh);
   bitmap.close?.();
 
-  for (const quality of [0.85, 0.75, 0.65, 0.55]) {
+  for (const quality of [0.82, 0.74, 0.66, 0.58, 0.5, 0.42]) {
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", quality));
     // Browsers without WebP encoding fall back to PNG; use JPEG then.
     const out = blob && blob.type === "image/webp" ? blob : await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
@@ -95,4 +95,11 @@ export async function prepareCatalogImage(file: File, kind: CatalogKind, mode: F
 
 export function formatPrice(price: number | null): string | null {
   return price === null ? null : `₹${price.toLocaleString("en-IN")}`;
+}
+
+/** Whole-number discount when an MRP above the selling price is set, else null. */
+export function discountPercent(price: number | null, mrp: number | null): number | null {
+  if (price === null || mrp === null || mrp <= price || mrp === 0) return null;
+  const pct = Math.round(((mrp - price) / mrp) * 100);
+  return pct >= 1 ? pct : null;
 }

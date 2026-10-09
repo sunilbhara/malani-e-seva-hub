@@ -190,12 +190,27 @@ export function seedQuiz() {
 
 export function seedCatalog() {
   const img = (id: string) => `https://images.unsplash.com/photo-${id}?w=800&h=800&fit=crop`;
-  const base = { image_path: null, is_active: true, created_at: "2026-10-01T00:00:00Z" };
+  const base = { image_path: null, is_active: true, created_at: "2026-10-01T00:00:00Z", mrp: null as number | null };
   return [
-    { ...base, id: "e2e40000-0000-4000-8000-000000000001", kind: "product", category: "mobiles", title: "Redmi Note 14", price: 17999, features: ["5110mAh बैटरी", "50MP कैमरा"], image_url: img("p1"), sort_order: 10 },
+    { ...base, id: "e2e40000-0000-4000-8000-000000000001", kind: "product", category: "mobiles", title: "Redmi Note 14", price: 17999, mrp: 21999, features: ["5110mAh बैटरी", "50MP कैमरा"], image_url: img("p1"), sort_order: 10 },
     { ...base, id: "e2e40000-0000-4000-8000-000000000002", kind: "product", category: "accessories", title: "boAt Airdopes 141", price: null, features: [], image_url: img("p2"), sort_order: 20 },
     { ...base, id: "e2e40000-0000-4000-8000-000000000003", kind: "product", category: "mobiles", title: "पुराना मॉडल (छुपा)", price: 9999, features: [], image_url: img("p3"), sort_order: 30, is_active: false },
     { ...base, id: "e2e40000-0000-4000-8000-000000000004", kind: "studio_photo", category: "weddings", title: "शादी के पल", price: null, features: [], image_url: img("s1"), sort_order: 10 },
     { ...base, id: "e2e40000-0000-4000-8000-000000000005", kind: "studio_photo", category: "portraits", title: "फैमिली पोर्ट्रेट", price: null, features: [], image_url: img("s2"), sort_order: 20 },
+  ];
+}
+
+export function seedCollections() {
+  return [
+    { id: "e2e48000-0000-4000-8000-000000000001", title: "त्योहार ऑफ़र", description: "दिवाली पर खास दाम", sort_order: 10, is_active: true, created_at: "2026-10-01T00:00:00Z" },
+    { id: "e2e48000-0000-4000-8000-000000000002", title: "छुपा कलेक्शन", description: null, sort_order: 20, is_active: false, created_at: "2026-10-01T00:00:00Z" },
+  ];
+}
+
+export function seedCollectionItems() {
+  return [
+    { collection_id: "e2e48000-0000-4000-8000-000000000001", item_id: "e2e40000-0000-4000-8000-000000000001", sort_order: 10 },
+    { collection_id: "e2e48000-0000-4000-8000-000000000001", item_id: "e2e40000-0000-4000-8000-000000000003", sort_order: 20 },
+    { collection_id: "e2e48000-0000-4000-8000-000000000002", item_id: "e2e40000-0000-4000-8000-000000000002", sort_order: 10 },
   ];
 }
