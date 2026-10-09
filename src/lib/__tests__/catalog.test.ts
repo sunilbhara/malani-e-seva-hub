@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { IMAGE_SPECS, drawPlan, formatPrice, validateCatalogFile, validateDimensions } from "@/lib/catalogImage";
+import { IMAGE_SPECS, drawPlan, fitWithin, formatPrice, validateCatalogFile, validateDimensions } from "@/lib/catalogImage";
 import { catalogFormProblems, parseFeatures, parsePrice, type CatalogForm } from "@/lib/catalogForm";
 
 const file = (type: string, size: number) => {
@@ -25,7 +25,7 @@ describe("catalog image rules", () => {
 
   it("output sizes are fixed per kind", () => {
     expect(IMAGE_SPECS.product).toMatchObject({ width: 800, height: 800 });
-    expect(IMAGE_SPECS.studio_photo).toMatchObject({ width: 900, height: 1200 });
+    expect(IMAGE_SPECS.studio_photo).toMatchObject({ width: 1200, height: 1200, keepAspect: true });
   });
 
   it("crop takes the centred part that matches the output shape", () => {
@@ -79,5 +79,15 @@ describe("catalog form", () => {
 
   it("studio photos ignore price and features", () => {
     expect(catalogFormProblems({ ...base, kind: "studio_photo", category: "weddings", priceText: "abc", title: "" })).toEqual(["फोटो का शीर्षक लिखें।"]);
+  });
+});
+
+describe("fitWithin (studio photos keep their shape)", () => {
+  it("scales landscape and portrait photos so the long side is 1200 px", () => {
+    expect(fitWithin(4000, 3000, 1200, 1200)).toEqual({ width: 1200, height: 900 });
+    expect(fitWithin(3000, 4000, 1200, 1200)).toEqual({ width: 900, height: 1200 });
+  });
+  it("never upscales small photos", () => {
+    expect(fitWithin(800, 600, 1200, 1200)).toEqual({ width: 800, height: 600 });
   });
 });

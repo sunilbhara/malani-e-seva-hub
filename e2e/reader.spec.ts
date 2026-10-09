@@ -43,6 +43,12 @@ test.describe("Home", () => {
       await expect(strip.getByRole("link", { name: new RegExp(name) })).toHaveAttribute("href", href);
     }
     await expect(strip.getByRole("img").first()).toHaveAttribute("src", /\/shop\/.+\.webp$/);
+    // Phones get an auto slider: pick the studio tab, then open its slide.
+    const studioTab = strip.getByRole("tab", { name: "स्टूडियो" });
+    if (await studioTab.isVisible()) {
+      await studioTab.click();
+      await expect(studioTab).toHaveAttribute("aria-selected", "true");
+    }
     await strip.getByRole("link", { name: /माताजी स्टूडियो/ }).click();
     await expect(page).toHaveURL(/\/mataji-studio$/);
     // The bottom navigation exists on phones only.

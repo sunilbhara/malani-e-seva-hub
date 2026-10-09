@@ -177,7 +177,9 @@ test("contact form sends an enquiry through EmailJS", async ({ page, backend }) 
 
 test("newsletter signup requires consent and shows the confirmation step", async ({ page, backend }) => {
   await page.goto("/");
-  const section = page.getByRole("region", { name: /ईमेल पर हफ़्ते की नौकरियाँ/ });
+  // Email is one of the choices in the home alerts card; it opens inline.
+  await page.getByRole("button", { name: /हर रविवार ईमेल/ }).click();
+  const section = page.getByRole("region", { name: "ईमेल सब्सक्रिप्शन" });
   await section.getByRole("textbox", { name: "ईमेल" }).fill("reader@example.test");
   await section.getByRole("button", { name: /सब्सक्राइब/ }).click();
   await expect(page.getByText("कृपया सहमति वाले बॉक्स पर टिक करें।")).toBeVisible();

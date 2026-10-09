@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { JobCard, JobCardSkeleton } from "@/components/jobs/JobCard";
-import { postTypeShort, TYPE_TEXT } from "@/lib/jobs";
-import { timeAgo } from "@/lib/format";
+import { countdownLabel, postTypeShort, statusClasses, TYPE_TEXT } from "@/lib/jobs";
+import { formatDate, timeAgo } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { PostListItem } from "@/services/posts";
 
@@ -29,7 +29,22 @@ export function CardRail({ posts, loading }: { posts?: PostListItem[]; loading?:
   );
 }
 
-/** Compact "today's updates" list: type, title, time. */
+/** Right-hand deadline chip: "3 दिन बचे" when close, "6 नवं तक" otherwise, "बंद" once the date has passed. */
+export function DeadlineChip({ post, className }: { post: Pick<PostListItem, "last_date" | "job_status" | "days_left">; className?: string }) {
+  if (!post.last_date || !post.job_status) return null;
+  const label =
+    post.job_status === "closed" ? "बंद" : post.job_status === "closing" ? countdownLabel(post.last_date) : `${formatDate(post.last_date, { withYear: false })} तक`;
+  return (
+    <span
+      className={cn("shrink-0 whitespace-nowrap rounded-lg px-2 py-1 font-hindi text-caption tabular", statusClasses(post.job_status, post.days_left), className)}
+      aria-label={post.job_status === "closed" ? "आवेदन बंद" : `अंतिम तिथि ${formatDate(post.last_date)}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+/** Compact "today's updates" list: type, time, title and a deadline chip for jobs. */
 export function UpdateList({ posts, loading }: { posts?: PostListItem[]; loading?: boolean }) {
   if (loading && !posts?.length) {
     return (
@@ -56,6 +71,7 @@ export function UpdateList({ posts, loading }: { posts?: PostListItem[]; loading
               </span>
               <span className="mt-0.5 line-clamp-2 block font-hindi text-body font-semibold leading-snug text-foreground">{p.title}</span>
             </span>
+            <DeadlineChip post={p} />
             <ChevronRight aria-hidden className="h-5 w-5 shrink-0 text-muted-foreground" />
           </Link>
         </li>

@@ -87,6 +87,21 @@ These users trust three things: the right last date, a real shop and a real pers
 16. **Dark mode:** do a visual pass of the shop photos and the amber CTA on the dark surface. This audit did not check them.
 17. **Empty and expired states:** when a filter returns nothing, offer "WhatsApp पर पूछें — हम बताएँगे" instead of a dead end.
 
+## Status
+
+- Items 5–10 shipped on 2026-10-09:
+  - one alerts card, with WhatsApp first;
+  - a slim quiz banner;
+  - deadline chips and type tabs on the home update list;
+  - one job card layout;
+  - product prices aligned, with an EMI hint and an "दुकान पर उपलब्ध" badge;
+  - a short tagline on phones;
+  - 13 px labels.
+- Also shipped:
+  - an auto slider for the shop strip on phones;
+  - studio photos keep their portrait/landscape shape;
+  - admin dashboard cards wrap long titles on phones.
+
 ## Suggested order
 
 1. Content backfill: items 1–4 (admin, about 1–2 hours).

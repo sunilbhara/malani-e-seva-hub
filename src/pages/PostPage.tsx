@@ -537,14 +537,14 @@ function PostView(props: PostViewProps) {
             type="button"
             onClick={() => void props.onToggleSave()}
             aria-pressed={props.saved}
-            className={cn("flex h-12 w-14 flex-col items-center justify-center rounded-xl font-hindi text-[0.6875rem] font-semibold", props.saved ? "text-primary" : "text-muted-foreground")}
+            className={cn("flex h-12 w-14 flex-col items-center justify-center rounded-xl font-hindi text-[0.8125rem] font-semibold", props.saved ? "text-primary" : "text-muted-foreground")}
           >
             <Bookmark className={cn("h-5 w-5", props.saved && "fill-current")} /> सेव
           </button>
           <button
             type="button"
             onClick={() => props.setShareOpen(true)}
-            className="flex h-12 w-14 flex-col items-center justify-center rounded-xl font-hindi text-[0.6875rem] font-semibold text-muted-foreground"
+            className="flex h-12 w-14 flex-col items-center justify-center rounded-xl font-hindi text-[0.8125rem] font-semibold text-muted-foreground"
           >
             <Share2 className="h-5 w-5" /> शेयर
           </button>

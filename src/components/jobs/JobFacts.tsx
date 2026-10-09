@@ -75,7 +75,7 @@ export function DatesTable({ job, className }: { job: JobRow; className?: string
                 <tr key={`${row.label}-${row.date}`} className={cn("border-b last:border-0", i === nextIndex ? "bg-secondary/60" : i % 2 ? "bg-muted/40" : "bg-card")}>
                   <th scope="row" className={cn("px-3 py-2.5 text-left font-medium", past ? "text-muted-foreground line-through" : "text-foreground")}>
                     {row.label}
-                    {i === nextIndex ? <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-[0.6875rem] font-semibold text-primary-foreground no-underline">अगली</span> : null}
+                    {i === nextIndex ? <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-caption font-semibold text-primary-foreground no-underline">अगली</span> : null}
                   </th>
                   <td className={cn("px-3 py-2.5 text-right font-semibold tabular", past ? "text-muted-foreground line-through" : "text-foreground")}>
                     {formatDate(row.date)}

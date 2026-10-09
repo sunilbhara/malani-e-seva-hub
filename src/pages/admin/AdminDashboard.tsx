@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 function Task({ icon: Icon, tone, title, children }: { icon: typeof AlarmClock; tone: "urgent" | "soon" | "info"; title: string; children?: ReactNode }) {
   return (
-    <li className="flex gap-3 rounded-xl border bg-card p-3.5">
+    <li className="flex min-w-0 gap-3 rounded-xl border bg-card p-3.5">
       <span
         className={cn(
           "grid h-9 w-9 shrink-0 place-items-center rounded-full",
@@ -24,7 +24,7 @@ function Task({ icon: Icon, tone, title, children }: { icon: typeof AlarmClock; 
         <Icon aria-hidden className="h-4 w-4" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="font-hindi font-semibold">{title}</p>
+        <p className="break-words font-hindi font-semibold leading-snug">{title}</p>
         {children}
       </div>
     </li>
@@ -39,7 +39,7 @@ function TodoCard({ todo }: { todo: AdminTodo }) {
       <Task key="q" icon={MessageSquareWarning} tone="urgent" title={`${todo.unanswered.length} पाठकों के सवाल का जवाब बाकी`}>
         <ul className="mt-1 space-y-0.5">
           {todo.unanswered.slice(0, 3).map((q) => (
-            <li key={q.id} className="truncate font-hindi text-small text-muted-foreground">
+            <li key={q.id} className="line-clamp-2 break-words font-hindi text-small text-muted-foreground">
               <Link to={`/blog/${q.post_slug}#qa`} className="hover:text-foreground hover:underline">“{q.content}” — {q.post_title}</Link>
             </li>
           ))}
@@ -51,7 +51,7 @@ function TodoCard({ todo }: { todo: AdminTodo }) {
       <Task key="c" icon={AlarmClock} tone="soon" title={`${todo.closing_jobs.length} भर्तियों की अंतिम तिथि 3 दिन में — तारीख बढ़ी हो तो अपडेट करें`}>
         <ul className="mt-1 space-y-0.5">
           {todo.closing_jobs.slice(0, 4).map((j) => (
-            <li key={j.id} className="truncate font-hindi text-small text-muted-foreground">
+            <li key={j.id} className="line-clamp-2 break-words font-hindi text-small text-muted-foreground">
               <Link to={`/admin/posts/${j.id}`} className="hover:text-foreground hover:underline">{j.title}</Link> · <span className="tabular">{formatDate(j.last_date)}</span>
             </li>
           ))}
@@ -69,7 +69,7 @@ function TodoCard({ todo }: { todo: AdminTodo }) {
       <Task key="s" icon={TextQuote} tone="info" title={`${todo.short_count} पोस्ट 600 शब्द से छोटी — AdSense के लिए बढ़ाएँ`}>
         <ul className="mt-1 space-y-0.5">
           {todo.short_posts.slice(0, 3).map((p) => (
-            <li key={p.id} className="truncate font-hindi text-small text-muted-foreground">
+            <li key={p.id} className="line-clamp-2 break-words font-hindi text-small text-muted-foreground">
               <Link to={`/admin/posts/${p.id}`} className="hover:text-foreground hover:underline">{p.title}</Link> · <span className="tabular">{p.words}</span> शब्द
             </li>
           ))}
@@ -81,7 +81,7 @@ function TodoCard({ todo }: { todo: AdminTodo }) {
       <Task key="d" icon={FilePenLine} tone="info" title={`${todo.draft_count} ड्राफ़्ट अधूरे हैं`}>
         <ul className="mt-1 space-y-0.5">
           {todo.drafts.slice(0, 3).map((p) => (
-            <li key={p.id} className="truncate font-hindi text-small text-muted-foreground">
+            <li key={p.id} className="line-clamp-2 break-words font-hindi text-small text-muted-foreground">
               <Link to={`/admin/posts/${p.id}`} className="hover:text-foreground hover:underline">{p.title || "बिना शीर्षक"}</Link>
             </li>
           ))}
@@ -101,8 +101,9 @@ function TodoCard({ todo }: { todo: AdminTodo }) {
         <span aria-hidden className="h-5 w-1.5 shrink-0 rounded-full bg-accent" />
         आज के काम
       </h2>
+      {/* grid-cols-1 (minmax(0,1fr)): long titles wrap inside the card instead of widening the page. */}
       {tasks.length ? (
-        <ul className="grid gap-2 lg:grid-cols-2">{tasks}</ul>
+        <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">{tasks}</ul>
       ) : (
         <p className="flex items-center gap-2 rounded-xl border bg-card p-4 font-hindi text-small text-status-open">
           <CheckCircle2 aria-hidden className="h-5 w-5" /> सब काम पूरे हैं — बढ़िया!
@@ -158,27 +159,27 @@ export default function AdminDashboard() {
         <Stat label="रिपोर्ट किए सवाल" value={a.reported_comments} />
       </div>
 
-      <section className="rounded-2xl border bg-card p-5">
+      <section className="min-w-0 rounded-2xl border bg-card p-4 sm:p-5">
         <h2 className="font-hindi text-lg font-bold">रोज़ाना व्यूज़ — पिछले 14 दिन</h2>
         <p className="mb-3 font-hindi text-caption font-normal text-muted-foreground">हर पाठक की एक पोस्ट पर दिन में एक व्यू गिना जाता है।</p>
         <ViewsChart data={a.views_last_14_days} />
       </section>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-2xl border bg-card p-5">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section className="min-w-0 rounded-2xl border bg-card p-4 sm:p-5">
           <h2 className="mb-3 font-hindi text-lg font-bold">सबसे लोकप्रिय</h2>
           <ol className="space-y-2">
             {a.trending.map((p, i) => (
-              <li key={p.id} className="flex gap-3">
-                <span className="w-5 shrink-0 text-muted-foreground tabular">{i + 1}.</span>
-                <Link to={`/blog/${p.slug}`} className="min-w-0 flex-1 truncate font-hindi text-small font-medium hover:text-primary">{p.title}</Link>
-                <span className="shrink-0 text-caption font-normal text-muted-foreground tabular">{formatNumber(p.views_count)} व्यू</span>
+              <li key={p.id} className="flex items-start gap-3">
+                <span className="w-5 shrink-0 text-small text-muted-foreground tabular">{i + 1}.</span>
+                <Link to={`/blog/${p.slug}`} className="line-clamp-2 min-w-0 flex-1 break-words font-hindi text-small font-medium leading-snug hover:text-primary">{p.title}</Link>
+                <span className="shrink-0 whitespace-nowrap text-caption font-normal text-muted-foreground tabular">{formatNumber(p.views_count)} व्यू</span>
               </li>
             ))}
             {a.trending.length === 0 && <li className="font-hindi text-small text-muted-foreground">अभी कोई डेटा नहीं।</li>}
           </ol>
         </section>
-        <section className="rounded-2xl border bg-card p-5">
+        <section className="min-w-0 rounded-2xl border bg-card p-4 sm:p-5">
           <h2 className="mb-3 font-hindi text-lg font-bold">कैटेगरी</h2>
           <table className="w-full text-small">
             <thead>
@@ -191,7 +192,7 @@ export default function AdminDashboard() {
             <tbody>
               {a.categories.map((c) => (
                 <tr key={c.category} className="border-t">
-                  <td className="py-2 font-hindi">{c.category}</td>
+                  <td className="break-words py-2 font-hindi">{c.category}</td>
                   <td className="py-2 text-right tabular">{formatNumber(c.count)}</td>
                   <td className="py-2 text-right tabular">{formatNumber(c.views)}</td>
                 </tr>
