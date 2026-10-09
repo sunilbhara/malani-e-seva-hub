@@ -27,7 +27,9 @@ describe("analytics", () => {
     expect(initAnalytics()).toBe(true);
     trackPageView("/jobs", "Jobs");
     track("share_whatsapp", { from: "card", missing: undefined });
-    await vi.waitFor(() => expect(ga.initialize).toHaveBeenCalledWith("G-TEST", { gtagOptions: { send_page_view: false } }));
+    // gtag loads only when the browser is idle after load (Phase 5), so nothing is sent yet.
+    expect(ga.initialize).not.toHaveBeenCalled();
+    await vi.waitFor(() => expect(ga.initialize).toHaveBeenCalledWith("G-TEST", { gtagOptions: { send_page_view: false } }), { timeout: 4000 });
     expect(ga.send).toHaveBeenCalledWith({ hitType: "pageview", page: "/jobs", title: "Jobs" });
     expect(ga.event).toHaveBeenCalledWith("share_whatsapp", { from: "card" });
     track("save_job");

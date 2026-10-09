@@ -23,6 +23,8 @@ vi.mock("@/services/posts", async (orig) => ({
   listAdminPosts: vi.fn(async () => ({ items: [], total: 0 })),
   deletePost: vi.fn(async () => undefined),
   getAdminAnalytics: vi.fn(),
+  getAdminTodo: vi.fn(async () => ({ drafts: [], draft_count: 0, short_posts: [], short_count: 0, closing_jobs: [], unanswered: [], quiz_today: true, products_without_price: 0 })),
+  findSimilarTitles: vi.fn(async () => []),
 }));
 vi.mock("@/services/tracker", () => ({ listRecruitments: vi.fn(async () => [{ id: "rec-1", name: "पुलिस 2026", organisation: "पुलिस" }]), createRecruitment: vi.fn() }));
 vi.mock("@/services/media", () => ({ uploadBlogImage: vi.fn() }));
@@ -141,7 +143,11 @@ describe("Post editor", () => {
       apply_link: "https://rsmssb.rajasthan.gov.in/",
       fees: [{ category: "सामान्य", amount: 600 }],
     });
-    expect(toast.success).toHaveBeenCalledWith("पोस्ट प्रकाशित हो गई");
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith("पोस्ट प्रकाशित हो गई"));
+    // Publishing offers sharing first; closing that dialog continues to the editor.
+    const share = await screen.findByRole("dialog", { name: "पोस्ट प्रकाशित हो गई — अब शेयर करें" });
+    expect(within(share).getByRole("link", { name: /WhatsApp पर शेयर करें/ })).toHaveAttribute("href", expect.stringContaining("wa.me"));
+    await userEvent.keyboard("{Escape}");
     await waitFor(() => expect(location()).toBe("/admin/posts/new-post-id"));
   }, 30_000);
 
@@ -247,13 +253,13 @@ describe("Admin posts list", () => {
     });
     renderRoute(<AdminPosts />);
     expect(await screen.findByText("पुरानी पोस्ट")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "देखें" })).toHaveAttribute("href", "/blog/old");
+    expect(screen.getAllByRole("link", { name: "देखें" })[0]).toHaveAttribute("href", "/blog/old");
     await userEvent.click(screen.getByRole("button", { name: "ड्राफ़्ट" }));
     await waitFor(() => expect(posts.listAdminPosts).toHaveBeenLastCalledWith(expect.objectContaining({ status: "draft", offset: 0 })));
     await userEvent.type(screen.getByPlaceholderText("शीर्षक से खोजें…"), "RAS");
     await waitFor(() => expect(posts.listAdminPosts).toHaveBeenLastCalledWith(expect.objectContaining({ search: "RAS" })));
 
-    await userEvent.click(screen.getByRole("button", { name: "हटाएँ" }));
+    await userEvent.click(screen.getAllByRole("button", { name: "हटाएँ" })[0]);
     const dialog = await screen.findByRole("alertdialog");
     expect(dialog).toHaveTextContent("यह पोस्ट हटाएँ?");
     await userEvent.click(within(dialog).getByRole("button", { name: "हटाएँ" }));
@@ -267,10 +273,10 @@ describe("Admin posts list", () => {
       total: 1,
     });
     renderRoute(<AdminPosts />);
-    await userEvent.click(await screen.findByRole("button", { name: "हटाएँ" }));
+    await userEvent.click((await screen.findAllByRole("button", { name: "हटाएँ" }))[0]);
     await userEvent.click(within(await screen.findByRole("alertdialog")).getByRole("button", { name: "रद्द करें" }));
     expect(posts.deletePost).not.toHaveBeenCalled();
-    expect(screen.getByRole("link", { name: "देखें" })).toHaveAttribute("href", "/blog/p1");
+    expect(screen.getAllByRole("link", { name: "देखें" })[0]).toHaveAttribute("href", "/blog/p1");
   });
 });
 
@@ -327,5 +333,40 @@ describe("Admin dashboard", () => {
     vi.mocked(posts.getAdminAnalytics).mockRejectedValue(new Error("Admins only"));
     renderRoute(<AdminDashboard />);
     expect(await screen.findByText("आँकड़े लोड नहीं हो सके।")).toBeInTheDocument();
+  });
+
+  it("आज के काम lists what needs attention, with links to fix it", async () => {
+    vi.mocked(posts.getAdminAnalytics).mockResolvedValue({
+      totals: { posts: 1, published: 1, drafts: 0, scheduled: 0, views: 0, likes: 0, comments: 0, shares: 0, bookmarks: 0 },
+      subscribers: 0, pending_subscribers: 0, users: 0, push_subscribers: 0, reported_comments: 0, categories: [], trending: [], views_last_14_days: [],
+    });
+    vi.mocked(posts.getAdminTodo).mockResolvedValue({
+      drafts: [{ id: "d1", title: "अधूरी पोस्ट", updated_at: "2026-10-01T00:00:00Z" }],
+      draft_count: 1,
+      short_posts: [{ id: "s1", title: "छोटी पोस्ट", words: 125 }],
+      short_count: 1,
+      closing_jobs: [{ id: "j1", title: "पटवारी भर्ती", slug: "patwari", last_date: "2026-10-10", updated_at: "2026-10-01T00:00:00Z" }],
+      unanswered: [{ id: "q1", content: "फीस कितनी है?", post_title: "पटवारी भर्ती", post_slug: "patwari", created_at: "2026-10-01T00:00:00Z" }],
+      quiz_today: false,
+      products_without_price: 2,
+    });
+    renderRoute(<AdminDashboard />);
+    const todo = await screen.findByRole("region", { name: "आज के काम" });
+    expect(within(todo).getByText("1 पाठकों के सवाल का जवाब बाकी")).toBeInTheDocument();
+    expect(within(todo).getByRole("link", { name: /फीस कितनी है/ })).toHaveAttribute("href", "/blog/patwari#qa");
+    expect(within(todo).getByRole("link", { name: "पटवारी भर्ती" })).toHaveAttribute("href", "/admin/posts/j1");
+    expect(within(todo).getByText("आज की GK क्विज़ नहीं जोड़ी गई")).toBeInTheDocument();
+    expect(within(todo).getByText(/600 शब्द से छोटी/)).toBeInTheDocument();
+    expect(within(todo).getByText("2 प्रोडक्ट पर दाम नहीं लिखा")).toBeInTheDocument();
+  });
+
+  it("says so when everything is done", async () => {
+    vi.mocked(posts.getAdminAnalytics).mockResolvedValue({
+      totals: { posts: 1, published: 1, drafts: 0, scheduled: 0, views: 0, likes: 0, comments: 0, shares: 0, bookmarks: 0 },
+      subscribers: 0, pending_subscribers: 0, users: 0, push_subscribers: 0, reported_comments: 0, categories: [], trending: [], views_last_14_days: [],
+    });
+    vi.mocked(posts.getAdminTodo).mockResolvedValue({ drafts: [], draft_count: 0, short_posts: [], short_count: 0, closing_jobs: [], unanswered: [], quiz_today: true, products_without_price: 0 });
+    renderRoute(<AdminDashboard />);
+    expect(await screen.findByText(/सब काम पूरे हैं/)).toBeInTheDocument();
   });
 });

@@ -5,6 +5,8 @@ export interface CatalogForm {
   category: string;
   title: string;
   priceText: string;
+  /** Original price (MRP) for the price-cut display; optional. */
+  mrpText?: string;
   featuresText: string;
   isActive: boolean;
   hasImage: boolean;
@@ -35,7 +37,12 @@ export function catalogFormProblems(form: CatalogForm): string[] {
   if (form.title.trim().length > 120) problems.push("नाम 120 अक्षरों से छोटा रखें।");
   if (!form.category) problems.push("श्रेणी चुनें।");
   if (form.kind === "product") {
-    if (parsePrice(form.priceText) === undefined) problems.push("दाम सिर्फ़ रुपये में अंकों में लिखें, जैसे 79999।");
+    const price = parsePrice(form.priceText);
+    const mrp = parsePrice(form.mrpText ?? "");
+    if (price === undefined) problems.push("दाम सिर्फ़ रुपये में अंकों में लिखें, जैसे 79999।");
+    if (mrp === undefined) problems.push("MRP सिर्फ़ रुपये में अंकों में लिखें, जैसे 89999।");
+    if (typeof price === "number" && typeof mrp === "number" && mrp < price) problems.push("MRP बिक्री के दाम से कम नहीं हो सकती।");
+    if (mrp !== null && mrp !== undefined && price === null) problems.push("MRP के साथ बिक्री का दाम भी लिखें।");
     if (parseFeatures(form.featuresText).some((f) => f.length > 40)) problems.push("हर खूबी 40 अक्षरों से छोटी रखें।");
   }
   return problems;

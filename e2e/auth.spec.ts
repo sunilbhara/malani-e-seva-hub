@@ -45,7 +45,7 @@ test("guest saves move into the account after sign in", async ({ page, backend }
   await expect.poll(() => backend.writes("post_bookmarks", "POST").length).toBeGreaterThan(0);
   const upload = backend.writes("post_bookmarks", "POST")[0];
   expect(upload.body).toEqual([{ post_id: "e2e10000-0000-4000-8000-000000000002", user_id: reader.id }]);
-  expect(await page.evaluate(() => localStorage.getItem("malani-saved-posts"))).toBe("[]");
+  await expect.poll(() => page.evaluate(() => localStorage.getItem("malani-saved-posts"))).toBe("[]");
 });
 
 test("sign up checks password strength, then asks to confirm the email", async ({ page, backend }) => {
@@ -79,6 +79,7 @@ test("forgot password sends a reset link to /auth/reset", async ({ page, backend
   await page.getByLabel("ईमेल").fill(reader.email);
   await page.getByRole("button", { name: "लिंक भेजें" }).click();
   await expect(page.getByText(/नया पासवर्ड बनाने का लिंक/)).toBeVisible();
+  await expect.poll(() => backend.find((c) => c.path === "/auth/v1/recover").length).toBeGreaterThan(0);
   const recover = backend.find((c) => c.path === "/auth/v1/recover")[0];
   expect(recover.query.get("redirect_to")).toMatch(/\/auth\/reset$/);
 });

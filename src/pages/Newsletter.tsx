@@ -2,6 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { CircleAlert, MailCheck, MailX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/seo/SEO";
+import { NewsletterForm } from "@/components/engagement/NewsletterForm";
 
 const STATES = {
   confirmed: { icon: MailCheck, title: "ईमेल की पुष्टि हो गई!", text: "हर रविवार आपको हफ़्ते की नई नौकरियाँ और अंतिम तिथि वाली भर्तियाँ ईमेल पर मिलेंगी।" },
@@ -12,7 +13,18 @@ const STATES = {
 /** Landing page for newsletter confirm/unsubscribe links (audit S7). */
 export default function Newsletter() {
   const [params] = useSearchParams();
-  const key = (params.get("status") ?? "invalid") as keyof typeof STATES;
+  const status = params.get("status");
+  // Opened directly (no link from an email): offer the subscription instead of an error.
+  if (!status) {
+    return (
+      <div className="container-page flex min-h-[60vh] max-w-xl flex-col justify-center py-10">
+        <SEO title="हर रविवार नौकरी अपडेट ईमेल पर | मालाणी बाड़मेर" description="हफ़्ते की नई नौकरियाँ और अंतिम तिथि वाली भर्तियाँ हर रविवार ईमेल पर पाएँ।" path="/newsletter" />
+        <h1 className="mb-4 font-hindi text-2xl font-bold">हर रविवार नौकरी अपडेट ईमेल पर</h1>
+        <NewsletterForm />
+      </div>
+    );
+  }
+  const key = status as keyof typeof STATES;
   const state = STATES[key] ?? STATES.invalid;
   const Icon = state.icon;
   return (

@@ -6,23 +6,16 @@ import { VitePWA } from "vite-plugin-pwa";
 import { componentTagger } from "lovable-tagger";
 
 /**
- * AdSense site verification: Google's reviewers look for the account meta tag and the official
- * loader in every page's <head>. Injected only when VITE_ADSENSE_CLIENT is a real publisher id,
- * so dev and E2E builds never contact Google.
+ * AdSense site verification: the account meta tag in every page's <head> (Google accepts it as the
+ * verification method). The ~270 KB ad script itself is loaded after first paint by src/lib/adsense.ts.
+ * Injected only when VITE_ADSENSE_CLIENT is a real publisher id, so dev and E2E builds never contact Google.
  */
 function adsenseHead(client: string | undefined): PluginOption {
   return {
     name: "adsense-head",
     transformIndexHtml() {
       if (!client || !/^ca-pub-\d{16}$/.test(client)) return [];
-      return [
-        { tag: "meta", attrs: { name: "google-adsense-account", content: client }, injectTo: "head" },
-        {
-          tag: "script",
-          attrs: { async: true, src: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`, crossorigin: "anonymous" },
-          injectTo: "head",
-        },
-      ];
+      return [{ tag: "meta", attrs: { name: "google-adsense-account", content: client }, injectTo: "head" }];
     },
   };
 }

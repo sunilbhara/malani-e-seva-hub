@@ -99,40 +99,36 @@ describe("invokeFunction", () => {
   });
 });
 
-describe("media uploads", () => {
+describe("media uploads (Supabase Storage, post-media bucket)", () => {
   afterEach(() => vi.unstubAllGlobals());
   const file = (type: string, size: number) => new File([new Uint8Array(size)], "x", { type });
 
   it("validates type and size", () => {
     expect(media.validateImage(file("image/gif", 10))).toContain("JPG");
-    expect(media.validateImage(file("image/png", 6 * 1024 * 1024))).toContain("5 MB");
+    expect(media.validateImage(file("image/png", 11 * 1024 * 1024))).toContain("10 MB");
     expect(media.validateImage(file("image/webp", 1000))).toBeNull();
   });
 
-  it("adds the delivery transform once", () => {
-    expect(media.deliveryUrl("https://res.cloudinary.com/c/image/upload/v1/a.jpg")).toBe("https://res.cloudinary.com/c/image/upload/f_auto,q_auto:good,w_1400,c_limit/v1/a.jpg");
-    expect(media.deliveryUrl("https://other/x.jpg")).toBe("https://other/x.jpg");
-  });
-
-  it("uploads with a server signature (no unsigned preset)", async () => {
-    sb.supabase.functions.invoke.mockResolvedValueOnce({ data: { cloudName: "demo", apiKey: "k", timestamp: 1, folder: "malani-blog", signature: "sig" }, error: null });
-    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ secure_url: "https://res.cloudinary.com/demo/image/upload/v1/x.webp" }), { status: 200 }));
-    vi.stubGlobal("fetch", fetchMock);
+  it("uploads a small image as-is under a dated path and returns its public URL", async () => {
+    sb.storage.upload.mockClear();
     const url = await media.uploadBlogImage(file("image/jpeg", 2000));
-    expect(url).toContain("/upload/f_auto,q_auto:good,w_1400,c_limit/");
-    const [endpoint, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
-    expect(endpoint).toBe("https://api.cloudinary.com/v1_1/demo/image/upload");
-    const body = init.body as FormData;
-    expect(body.get("signature")).toBe("sig");
-    expect(body.get("upload_preset")).toBeNull();
+    const [path, , opts] = sb.storage.upload.mock.calls[0];
+    expect(path).toMatch(/^\d{4}-\d{2}\/[0-9a-f-]{36}\.jpg$/);
+    expect(opts).toMatchObject({ contentType: "image/jpeg", upsert: false });
+    expect(url).toBe(`https://mock.supabase.co/storage/v1/object/public/post-media/${path}`);
   });
 
-  it("reports Cloudinary errors and rejects invalid files before signing", async () => {
+  it("rejects invalid files before uploading and explains storage errors", async () => {
+    sb.storage.upload.mockClear();
     await expect(media.uploadBlogImage(file("text/plain", 5))).rejects.toThrow("JPG");
-    expect(sb.supabase.functions.invoke).not.toHaveBeenCalled();
-    sb.supabase.functions.invoke.mockResolvedValueOnce({ data: { cloudName: "d", apiKey: "k", timestamp: 1, folder: "f", signature: "s" }, error: null });
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ error: { message: "Invalid signature" } }), { status: 401 })));
-    await expect(media.uploadBlogImage(file("image/png", 10))).rejects.toThrow("Invalid signature");
+    expect(sb.storage.upload).not.toHaveBeenCalled();
+    sb.storage.upload.mockResolvedValueOnce({ data: null, error: { message: "The object exceeded the maximum allowed size" } });
+    await expect(media.uploadBlogImage(file("image/webp", 1000))).rejects.toThrow("300 KB");
+  });
+
+  it("refuses large images when the browser cannot resize them", async () => {
+    vi.stubGlobal("createImageBitmap", undefined);
+    await expect(media.uploadBlogImage(file("image/jpeg", 400 * 1024))).rejects.toThrow("300 KB");
   });
 });
 

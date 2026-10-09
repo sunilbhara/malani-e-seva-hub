@@ -21,15 +21,19 @@ export default function Contact() {
           <li><strong>समय:</strong> {BUSINESS.hoursTextHi}</li>
         </ul>
         <div className="not-prose flex flex-wrap gap-2">
-          <Button asChild variant="whatsapp" className="font-hindi">
+          <Button asChild variant="whatsapp" className="font-hindi no-underline">
             <a href={whatsappHref("नमस्ते, मुझे malanibarmer.com के बारे में बात करनी है।")} target="_blank" rel="noopener noreferrer"><MessageCircle /> WhatsApp करें</a>
           </Button>
-          <Button asChild variant="outline" className="font-hindi">
+          <Button asChild variant="outline" className="font-hindi no-underline">
             <a href={telHref}><Phone /> कॉल करें</a>
           </Button>
         </div>
       </LegalPage>
       <div className="container-page max-w-3xl space-y-6 pb-8">
+        <figure>
+          <img src="/shop/storefront-night-800.webp" srcSet="/shop/storefront-night-480.webp 480w, /shop/storefront-night-800.webp 800w, /shop/storefront-night-1200.webp 1200w" sizes="(min-width: 768px) 720px, 100vw" alt="रात में रोशन मालाणी मोबाइल की दुकान, बाड़मेर" width={800} height={450} loading="lazy" decoding="async" className="aspect-video w-full rounded-xl border object-cover" />
+          <figcaption className="mt-1.5 font-hindi text-small text-muted-foreground">रात 8 बजे तक खुली — रेलवे स्टेशन के सामने, हाई स्कूल रोड</figcaption>
+        </figure>
         <section aria-labelledby="contact-form-heading" className="rounded-2xl border bg-card p-5">
           <h2 id="contact-form-heading" className="mb-3 font-hindi text-xl font-bold">संदेश भेजें</h2>
           <ContactForm />

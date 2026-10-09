@@ -44,7 +44,10 @@ test("create and publish a job post with the real rich-text editor", async ({ pa
   await page.keyboard.type("आवेदन से पहले अधिसूचना ज़रूर पढ़ें।");
 
   await page.getByRole("button", { name: "प्रकाशित करें", exact: true }).click();
-  await expect(page.getByText("पोस्ट प्रकाशित हो गई")).toBeVisible();
+  await expect(page.getByText("पोस्ट प्रकाशित हो गई").first()).toBeVisible();
+  const share = page.getByRole("dialog", { name: "पोस्ट प्रकाशित हो गई — अब शेयर करें" });
+  await expect(share.getByRole("link", { name: /WhatsApp पर शेयर करें/ })).toHaveAttribute("href", /wa\.me/);
+  await page.keyboard.press("Escape");
   await expect(page).toHaveURL(/\/admin\/posts\/e2e19999-/);
 
   const insert = backend.writes("posts", "POST")[0];

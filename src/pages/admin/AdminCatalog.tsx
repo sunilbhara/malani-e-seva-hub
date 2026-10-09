@@ -18,11 +18,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { IMAGE_SPECS, formatPrice, prepareCatalogImage, type CatalogKind, type FitMode } from "@/lib/catalogImage";
+import { IMAGE_SPECS, discountPercent, formatPrice, prepareCatalogImage, type CatalogKind, type FitMode } from "@/lib/catalogImage";
 import { catalogFormProblems, parseFeatures, parsePrice } from "@/lib/catalogForm";
 import { queryKeys } from "@/lib/queryClient";
+import { AdminCollections } from "@/pages/admin/AdminCollections";
+import { ListSkeleton } from "@/components/common/PageSpinner";
 import {
   adminListCatalog,
+  adminListCollections,
+  setItemCollections,
   deleteCatalogItem,
   removeCatalogImage,
   saveCatalogItem,
@@ -34,8 +38,10 @@ import {
 import { useI18n } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-const KINDS: Array<{ kind: CatalogKind; label: string }> = [
-  { kind: "product", label: "मोबाइल-इलेक्ट्रॉनिक्स" },
+type View = CatalogKind | "collections";
+const VIEWS: Array<{ kind: View; label: string }> = [
+  { kind: "product", label: "प्रोडक्ट" },
+  { kind: "collections", label: "कलेक्शन" },
   { kind: "studio_photo", label: "स्टूडियो फोटो" },
 ];
 
@@ -44,7 +50,9 @@ interface EditorState {
   title: string;
   category: string;
   priceText: string;
+  mrpText: string;
   featuresText: string;
+  collectionIds: string[];
   isActive: boolean;
   file: File | null;
   blob: Blob | null;
@@ -52,13 +60,15 @@ interface EditorState {
   fit: FitMode;
 }
 
-function editorFor(item: CatalogItem | null, defaultCategory: string): EditorState {
+function editorFor(item: CatalogItem | null, defaultCategory: string, collectionIds: string[] = []): EditorState {
   return {
     item,
     title: item?.title ?? "",
     category: item?.category ?? defaultCategory,
     priceText: item?.price != null ? String(item.price) : "",
+    mrpText: item?.mrp != null ? String(item.mrp) : "",
     featuresText: item?.features.join("\n") ?? "",
+    collectionIds,
     isActive: item?.is_active ?? true,
     file: null,
     blob: null,
@@ -71,7 +81,8 @@ function editorFor(item: CatalogItem | null, defaultCategory: string): EditorSta
 export default function AdminCatalog() {
   const { messages } = useI18n();
   const queryClient = useQueryClient();
-  const [kind, setKind] = useState<CatalogKind>("product");
+  const [view, setView] = useState<View>("product");
+  const kind: CatalogKind = view === "collections" ? "product" : view;
   const [editor, setEditor] = useState<EditorState | null>(null);
   const [toDelete, setToDelete] = useState<CatalogItem | null>(null);
   const [busy, setBusy] = useState(false);
@@ -85,10 +96,14 @@ export default function AdminCatalog() {
 
   const items = useQuery({ queryKey: queryKeys.adminCatalog(kind), queryFn: () => adminListCatalog(kind) });
   const list = items.data ?? [];
+  const collections = useQuery({ queryKey: queryKeys.adminCatalog("collections"), queryFn: adminListCollections, enabled: kind === "product" });
+  const collectionsOf = (id: string) => (collections.data ?? []).filter((c) => c.item_ids.includes(id)).map((c) => c.id);
 
   const refresh = () => {
     void queryClient.invalidateQueries({ queryKey: queryKeys.adminCatalog(kind) });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.adminCatalog("collections") });
     void queryClient.invalidateQueries({ queryKey: queryKeys.catalog(kind) });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.catalog("shop") });
   };
 
   // Free object URLs created for previews.
@@ -118,6 +133,7 @@ export default function AdminCatalog() {
       category: editor.category,
       title: editor.title,
       priceText: editor.priceText,
+      mrpText: editor.mrpText,
       featuresText: editor.featuresText,
       isActive: editor.isActive,
       hasImage: Boolean(editor.blob || editor.item?.image_url),
@@ -131,12 +147,14 @@ export default function AdminCatalog() {
     try {
       if (editor.blob) uploaded = await uploadCatalogImage(kind, editor.blob);
       const maxOrder = list.reduce((m, i) => Math.max(m, i.sort_order), 0);
-      await saveCatalogItem({
+      const price = kind === "product" ? (parsePrice(editor.priceText) ?? null) : null;
+      const savedId = await saveCatalogItem({
         id: editor.item?.id,
         kind,
         category: editor.category,
         title: editor.title,
-        price: kind === "product" ? (parsePrice(editor.priceText) ?? null) : null,
+        price,
+        mrp: kind === "product" ? (parsePrice(editor.mrpText) ?? null) : null,
         features: kind === "product" ? parseFeatures(editor.featuresText) : [],
         image_url: uploaded?.url ?? editor.item!.image_url,
         image_path: uploaded?.path ?? editor.item?.image_path ?? null,
@@ -144,6 +162,11 @@ export default function AdminCatalog() {
         sort_order: editor.item ? undefined : maxOrder + 10,
       });
       if (uploaded && editor.item?.image_path) await removeCatalogImage(editor.item.image_path).catch(() => undefined);
+      if (kind === "product") {
+        const before = editor.item ? collectionsOf(editor.item.id) : [];
+        const changed = before.length !== editor.collectionIds.length || before.some((id) => !editor.collectionIds.includes(id));
+        if (changed) await setItemCollections(savedId, editor.collectionIds);
+      }
       toast.success(editor.item ? "बदलाव सेव हो गए" : "नया आइटम जुड़ गया");
       setEditor(null);
       refresh();
@@ -177,31 +200,37 @@ export default function AdminCatalog() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="mr-auto font-hindi text-2xl font-bold">दुकान के आइटम</h1>
-        <Button type="button" onClick={() => setEditor(editorFor(null, categories[0]?.id ?? ""))} className="font-hindi">
-          <Plus /> नया आइटम
-        </Button>
+        {view !== "collections" && (
+          <Button type="button" onClick={() => setEditor(editorFor(null, categories[0]?.id ?? ""))} className="font-hindi">
+            <Plus /> {view === "product" ? "नया प्रोडक्ट" : "नई फोटो"}
+          </Button>
+        )}
       </div>
 
       <div role="tablist" aria-label="आइटम का प्रकार" className="inline-flex rounded-xl border bg-card p-1">
-        {KINDS.map((k) => (
+        {VIEWS.map((k) => (
           <button
             key={k.kind}
             type="button"
             role="tab"
-            aria-selected={kind === k.kind}
-            onClick={() => setKind(k.kind)}
-            className={cn("rounded-lg px-3.5 py-2 font-hindi text-small font-semibold", kind === k.kind ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
+            aria-selected={view === k.kind}
+            onClick={() => setView(k.kind)}
+            className={cn("min-h-11 rounded-lg px-3.5 py-2 font-hindi text-small font-semibold", view === k.kind ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
           >
             {k.label}
           </button>
         ))}
       </div>
+      {view === "collections" ? (
+        <AdminCollections products={list} />
+      ) : (
+      <>
       <p className="font-hindi text-small text-muted-foreground">
-        ये आइटम {kind === "product" ? "“मोबाइल और इलेक्ट्रॉनिक्स”" : "“माताजी स्टूडियो”"} पेज के कैरोसेल में इसी क्रम में दिखते हैं। छुपाए गए आइटम पाठकों को नहीं दिखते।
+        ये आइटम {kind === "product" ? "“मोबाइल और इलेक्ट्रॉनिक्स”" : "“माताजी स्टूडियो”"} पेज पर इसी क्रम में दिखते हैं। छुपाए गए आइटम पाठकों को नहीं दिखते।
       </p>
 
       {items.isLoading ? (
-        <p className="font-hindi text-muted-foreground">लोड हो रहा है…</p>
+        <ListSkeleton rows={4} />
       ) : items.isError ? (
         <p className="font-hindi text-destructive">आइटम लोड नहीं हो सके।</p>
       ) : list.length === 0 ? (
@@ -216,6 +245,7 @@ export default function AdminCatalog() {
                 <p className="font-hindi text-caption text-muted-foreground">
                   {categoryName(item.category)}
                   {kind === "product" && ` · ${formatPrice(item.price) ?? "दाम पूछें"}`}
+                  {kind === "product" && discountPercent(item.price, item.mrp) && ` (${discountPercent(item.price, item.mrp)}% छूट)`}
                   {!item.is_active && " · छुपा हुआ"}
                 </p>
               </div>
@@ -232,7 +262,7 @@ export default function AdminCatalog() {
                 <Button type="button" variant="ghost" size="icon-sm" disabled={i === list.length - 1} aria-label="नीचे करें" onClick={() => void run(() => swapCatalogOrder(item, list[i + 1]), "क्रम नहीं बदला")}>
                   <ArrowDown />
                 </Button>
-                <Button type="button" variant="ghost" size="icon-sm" aria-label={`${item.title} बदलें`} onClick={() => setEditor(editorFor(item, categories[0]?.id ?? ""))}>
+                <Button type="button" variant="ghost" size="icon-sm" aria-label={`${item.title} बदलें`} onClick={() => setEditor(editorFor(item, categories[0]?.id ?? "", collectionsOf(item.id)))}>
                   <Pencil />
                 </Button>
                 <Button type="button" variant="ghost" size="icon-sm" aria-label={`${item.title} हटाएँ`} onClick={() => setToDelete(item)}>
@@ -242,6 +272,8 @@ export default function AdminCatalog() {
             </li>
           ))}
         </ul>
+      )}
+      </>
       )}
 
       <Dialog open={Boolean(editor)} onOpenChange={(open) => !open && !busy && setEditor(null)}>
@@ -313,10 +345,45 @@ export default function AdminCatalog() {
               </div>
               {kind === "product" && (
                 <>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="catalog-price" className="font-hindi">दाम (₹) — खाली छोड़ें तो “दाम के लिए पूछें” दिखेगा</Label>
-                    <Input id="catalog-price" inputMode="numeric" value={editor.priceText} onChange={(e) => setEditor({ ...editor, priceText: e.target.value })} placeholder="79999" className="h-11 tabular" />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="catalog-price" className="font-hindi">बिक्री का दाम (₹)</Label>
+                      <Input id="catalog-price" inputMode="numeric" value={editor.priceText} onChange={(e) => setEditor({ ...editor, priceText: e.target.value })} placeholder="79999" className="h-11 tabular" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="catalog-mrp" className="font-hindi">MRP (₹) — वैकल्पिक</Label>
+                      <Input id="catalog-mrp" inputMode="numeric" value={editor.mrpText} onChange={(e) => setEditor({ ...editor, mrpText: e.target.value })} placeholder="89999" className="h-11 tabular" />
+                    </div>
                   </div>
+                  <p className="-mt-2 font-hindi text-caption font-normal text-muted-foreground">
+                    {(() => {
+                      const off = discountPercent(parsePrice(editor.priceText) ?? null, parsePrice(editor.mrpText) ?? null);
+                      return off ? `पेज पर दिखेगा: MRP कटी हुई और “${off}% छूट”।` : "दाम खाली छोड़ें तो “दाम के लिए पूछें” दिखेगा। MRP ज़्यादा हो तो छूट दिखेगी।";
+                    })()}
+                  </p>
+                  {(collections.data?.length ?? 0) > 0 && (
+                    <fieldset className="space-y-2">
+                      <legend className="font-hindi text-small font-medium">कलेक्शन में जोड़ें</legend>
+                      <div className="flex flex-wrap gap-2">
+                        {collections.data!.map((c) => {
+                          const checked = editor.collectionIds.includes(c.id);
+                          return (
+                            <label key={c.id} className={cn("flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-3 font-hindi text-small", checked ? "border-primary bg-secondary" : "bg-card")}>
+                              <input
+                                type="checkbox"
+                                className="h-4 w-4"
+                                checked={checked}
+                                onChange={() =>
+                                  setEditor({ ...editor, collectionIds: checked ? editor.collectionIds.filter((id) => id !== c.id) : [...editor.collectionIds, c.id] })
+                                }
+                              />
+                              {c.title}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </fieldset>
+                  )}
                   <div className="space-y-1.5">
                     <Label htmlFor="catalog-features" className="font-hindi">खूबियाँ — हर लाइन में एक (ज़्यादा से ज़्यादा 6)</Label>
                     <Textarea id="catalog-features" rows={3} value={editor.featuresText} onChange={(e) => setEditor({ ...editor, featuresText: e.target.value })} placeholder={"5000mAh Battery\n120Hz Display"} />

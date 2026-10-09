@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { config } from "@/lib/config";
+import { loadAdsense } from "@/lib/adsense";
 import { cn } from "@/lib/utils";
 
 declare global {
@@ -8,45 +9,49 @@ declare global {
   }
 }
 
-let scriptRequested = false;
-
-function loadAdsense(client: string) {
-  if (scriptRequested || document.querySelector('script[src*="adsbygoogle.js"]')) return;
-  scriptRequested = true;
-  const s = document.createElement("script");
-  s.async = true;
-  s.crossOrigin = "anonymous";
-  s.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(client)}`;
-  document.head.appendChild(s);
-}
-
-/** One responsive AdSense unit with reserved height (no layout shift). Hidden when not configured. */
+/**
+ * One responsive AdSense unit. It takes no space until Google actually fills it
+ * (data-ad-status="filled"), so unapproved or unfilled slots never leave an empty box.
+ * Hidden when not configured, and in development.
+ */
 export function AdSlot({ className }: { className?: string }) {
   const ref = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
+  const [filled, setFilled] = useState(false);
   const { adsenseClient, adsenseSlot } = config;
+  const enabled = Boolean(adsenseClient && adsenseSlot) && !import.meta.env.DEV;
 
   useEffect(() => {
-    if (!adsenseClient || !adsenseSlot || pushed.current || import.meta.env.DEV) return;
-    loadAdsense(adsenseClient);
+    if (!enabled || pushed.current) return;
+    loadAdsense();
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
       pushed.current = true;
     } catch {
-      // Ad blockers: leave the reserved space empty.
+      // Ad blockers: the slot simply stays collapsed.
     }
-  }, [adsenseClient, adsenseSlot]);
+  }, [enabled]);
 
-  if (!adsenseClient || !adsenseSlot) return null;
+  useEffect(() => {
+    const el = ref.current;
+    if (!enabled || !el || typeof MutationObserver === "undefined") return;
+    const check = () => setFilled(el.getAttribute("data-ad-status") === "filled");
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(el, { attributes: true, attributeFilter: ["data-ad-status"] });
+    return () => observer.disconnect();
+  }, [enabled]);
+
+  if (!enabled) return null;
   return (
-    <div className={cn("min-h-[280px] overflow-hidden rounded-2xl", className)} aria-label="विज्ञापन">
-      <p className="mb-1 text-center text-[0.6875rem] font-normal uppercase tracking-wider text-muted-foreground">विज्ञापन</p>
+    <div className={cn("overflow-hidden", filled ? "rounded-xl" : "!m-0", className)} aria-label="विज्ञापन" aria-hidden={!filled}>
+      {filled && <p className="mb-1 text-center text-caption font-normal uppercase tracking-wider text-muted-foreground">विज्ञापन</p>}
       <ins
         ref={ref}
         className="adsbygoogle block"
-        style={{ display: "block", minHeight: 250 }}
-        data-ad-client={adsenseClient}
-        data-ad-slot={adsenseSlot}
+        style={{ display: "block" }}
+        data-ad-client={adsenseClient!}
+        data-ad-slot={adsenseSlot!}
         data-ad-format="auto"
         data-full-width-responsive="true"
       />

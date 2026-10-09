@@ -4,7 +4,7 @@
 // important database rules (drafts hidden from readers, admin-only writes, one view per
 // visitor), and records every call so tests can assert what the app sent.
 import type { BrowserContext, Request, Route } from "@playwright/test";
-import { RECRUITMENTS, TEST_USERS, day, istToday, seedCatalog, seedPosts, seedQuiz, type Post } from "./data";
+import { RECRUITMENTS, TEST_USERS, day, istToday, seedCatalog, seedCollectionItems, seedCollections, seedPosts, seedQuiz, type Post } from "./data";
 
 export const MOCK_HOST = "e2e-mock.supabase.co";
 export const STORAGE_KEY = "sb-e2e-mock-auth-token";
@@ -120,6 +120,8 @@ export class MockBackend {
   posts: Post[] = seedPosts();
   quiz = seedQuiz();
   catalog: Row[] = seedCatalog();
+  collections: Row[] = seedCollections();
+  collectionItems: Row[] = seedCollectionItems();
   /** Paths uploaded to / removed from storage buckets. */
   storage = { uploaded: [] as string[], removed: [] as string[] };
   recruitments = [...RECRUITMENTS];
@@ -318,6 +320,18 @@ export class MockBackend {
           trending: this.posts.slice(0, 3).map((p) => ({ id: p.id, title: p.title, slug: p.slug, views_count: p.views_count, likes_count: 0, comments_count: 0, share_count: 0 })),
           views_last_14_days: Array.from({ length: 14 }, (_, i) => ({ date: day(i - 13), views: 100 + i * 10 })),
         });
+      case "admin_todo":
+        if (user?.role !== "admin") return json(route, 400, { message: "Admins only" });
+        return json(route, 200, {
+          drafts: this.posts.filter((p) => p.status === "draft").map((p) => ({ id: p.id, title: p.title, updated_at: p.updated_at })),
+          draft_count: this.posts.filter((p) => p.status === "draft").length,
+          short_posts: [],
+          short_count: 0,
+          closing_jobs: [],
+          unanswered: [],
+          quiz_today: this.quiz.some((q) => q.quiz_date === istToday()),
+          products_without_price: this.catalog.filter((i) => i.kind === "product" && i.is_active && i.price === null).length,
+        });
       case "admin_quiz_questions":
         if (user?.role !== "admin") return json(route, 400, { message: "Admins only" });
         return json(route, 200, this.quiz.filter((q) => q.quiz_date === body.p_quiz_date));
@@ -426,8 +440,9 @@ export class MockBackend {
       if (!isAdmin) return json(route, 403, { code: "42501", message: "new row violates row-level security policy" });
       if (method === "POST") {
         const row = Array.isArray(body) ? body[0] : body;
-        this.catalog.push({ id: `e2e49999-0000-4000-8000-${String(this.catalog.length + 1).padStart(12, "0")}`, created_at: new Date().toISOString(), ...row });
-        return route.fulfill({ status: 201, headers: cors() });
+        const created = { id: `e2e49999-0000-4000-8000-${String(this.catalog.length + 1).padStart(12, "0")}`, created_at: new Date().toISOString(), mrp: null, ...row };
+        this.catalog.push(created);
+        return respond([created], 201);
       }
       if (method === "PATCH") {
         applyFilters(this.catalog, query).forEach((r) => Object.assign(r, body));
@@ -436,6 +451,43 @@ export class MockBackend {
       if (method === "DELETE") {
         const doomed = new Set(applyFilters(this.catalog, query));
         this.catalog = this.catalog.filter((r) => !doomed.has(r));
+        return route.fulfill({ status: 204, headers: cors() });
+      }
+    }
+    if (table === "catalog_collections") {
+      if (method === "GET") return respond(applyFilters(this.collections.filter((c) => isAdmin || c.is_active), query));
+      if (!isAdmin) return json(route, 403, { code: "42501", message: "rls" });
+      if (method === "POST") {
+        const created = { id: `e2e48000-0000-4000-8000-${String(this.collections.length + 1).padStart(12, "0")}`, created_at: new Date().toISOString(), description: null, sort_order: 0, is_active: true, ...(Array.isArray(body) ? body[0] : body) };
+        this.collections.push(created);
+        return respond([created], 201);
+      }
+      if (method === "PATCH") {
+        applyFilters(this.collections, query).forEach((r) => Object.assign(r, body));
+        return route.fulfill({ status: 204, headers: cors() });
+      }
+      if (method === "DELETE") {
+        const doomed = new Set(applyFilters(this.collections, query).map((c) => c.id));
+        this.collections = this.collections.filter((c) => !doomed.has(c.id));
+        this.collectionItems = this.collectionItems.filter((l) => !doomed.has(l.collection_id));
+        return route.fulfill({ status: 204, headers: cors() });
+      }
+    }
+    if (table === "catalog_collection_items") {
+      if (method === "GET") {
+        const visible = this.collectionItems.filter(
+          (l) => isAdmin || (this.collections.some((c) => c.id === l.collection_id && c.is_active) && this.catalog.some((i) => i.id === l.item_id && i.is_active)),
+        );
+        return respond(applyFilters(visible, query));
+      }
+      if (!isAdmin) return json(route, 403, { code: "42501", message: "rls" });
+      if (method === "POST") {
+        (Array.isArray(body) ? body : [body]).forEach((r: Row) => this.collectionItems.push({ sort_order: 0, ...r }));
+        return route.fulfill({ status: 201, headers: cors() });
+      }
+      if (method === "DELETE") {
+        const doomed = new Set(applyFilters(this.collectionItems, query));
+        this.collectionItems = this.collectionItems.filter((l) => !doomed.has(l));
         return route.fulfill({ status: 204, headers: cors() });
       }
     }

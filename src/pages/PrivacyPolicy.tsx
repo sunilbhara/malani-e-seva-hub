@@ -36,11 +36,11 @@ export default function PrivacyPolicy() {
         <li>Google की विज्ञापन कुकीज़ (जैसे DoubleClick कुकी) Google और उसके भागीदारों को इस साइट और इंटरनेट की दूसरी साइटों पर आपकी विज़िट के आधार पर विज्ञापन दिखाने देती हैं।</li>
         <li>
           आप <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google विज्ञापन सेटिंग</a> में जाकर व्यक्तिगत विज्ञापन बंद कर सकते हैं, या{" "}
-          <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">www.aboutads.info</a> पर तीसरे पक्ष के विक्रेताओं की कुकीज़ बंद कर सकते हैं।
+          <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" className="break-all">www.aboutads.info</a> पर तीसरे पक्ष के विक्रेताओं की कुकीज़ बंद कर सकते हैं।
         </li>
         <li>
-          Google आपकी जानकारी कैसे इस्तेमाल करता है:{" "}
-          <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">policies.google.com/technologies/partner-sites</a>
+          Google आपकी जानकारी कैसे इस्तेमाल करता है, यह{" "}
+          <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">Google की पार्टनर साइट नीति</a> में पढ़ें।
         </li>
         <li>हम ख़ुद आपकी विज़िट के आधार पर विज्ञापन नहीं चुनते और विज्ञापनदाताओं को आपका नाम, ईमेल या फ़ोन नहीं देते।</li>
       </ul>

@@ -15,6 +15,7 @@ const item = (patch: Partial<CatalogItem> = {}): CatalogItem => ({
   features: [],
   image_url: "https://x/a.webp",
   image_path: "product/a.webp",
+  mrp: null,
   sort_order: 10,
   is_active: true,
   ...patch,
@@ -54,10 +55,11 @@ describe("catalog service", () => {
     const res = await catalog.uploadCatalogImage("studio_photo", new Blob(["x"], { type: "image/jpeg" }));
     expect(res.path).toMatch(/^studio_photo\/.+\.jpg$/);
     sb.storage.upload.mockResolvedValueOnce({ data: null, error: { message: "The object exceeded the maximum allowed size" } });
-    await expect(catalog.uploadCatalogImage("product", new Blob(["x"], { type: "image/webp" }))).rejects.toThrow("512 KB");
+    await expect(catalog.uploadCatalogImage("product", new Blob(["x"], { type: "image/webp" }))).rejects.toThrow("300 KB");
   });
 
   it("insert cleans fields; studio photos never carry price or features", async () => {
+    sb.on({ name: "catalog_items", method: "insert" }, { data: { id: "new-id" } });
     await catalog.saveCatalogItem({ ...item({ title: "  Phone  ", features: [" A ", "", "B"] }), id: undefined, sort_order: 40 });
     expect(opArgs(sb.find("catalog_items", "insert")[0], "insert")?.[0]).toMatchObject({ title: "Phone", features: ["A", "B"], price: 1000, sort_order: 40 });
     await catalog.saveCatalogItem({ ...item({ kind: "studio_photo", category: "weddings", price: 5, features: ["x"] }), id: undefined });
@@ -94,5 +96,44 @@ describe("catalog service", () => {
     sb.on({ name: "catalog_items", method: "delete" }, { error: { message: "rls" } });
     await expect(catalog.deleteCatalogItem(item())).rejects.toBeTruthy();
     expect(sb.storage.remove).not.toHaveBeenCalled();
+  });
+
+  it("insert returns the new id; MRP is kept only when above the price", async () => {
+    sb.on({ name: "catalog_items", method: "insert" }, { data: { id: "new-id" } });
+    expect(await catalog.saveCatalogItem({ ...item({ mrp: 1500 }), id: undefined })).toBe("new-id");
+    expect(opArgs(sb.find("catalog_items", "insert")[0], "insert")?.[0]).toMatchObject({ price: 1000, mrp: 1500 });
+    await catalog.saveCatalogItem({ ...item({ mrp: 800 }), id: undefined });
+    expect(opArgs(sb.find("catalog_items", "insert")[1], "insert")?.[0]).toMatchObject({ mrp: null });
+  });
+
+  it("shop catalog: active products plus collections, hiding links to products that are not visible", async () => {
+    sb.on({ name: "catalog_items" }, { data: [item({ id: "a" }), item({ id: "b" })] });
+    sb.on({ name: "catalog_collections" }, { data: [{ id: "c1", title: "नए", description: null, sort_order: 10, is_active: true }] });
+    sb.on({ name: "catalog_collection_items" }, { data: [{ collection_id: "c1", item_id: "b", sort_order: 10 }, { collection_id: "c1", item_id: "hidden", sort_order: 20 }, { collection_id: "c1", item_id: "a", sort_order: 30 }] });
+    const shop = await catalog.getShopCatalog();
+    expect(shop.products.map((p) => p.id)).toEqual(["a", "b"]);
+    expect(shop.collections[0].item_ids).toEqual(["b", "a"]);
+    expect(sb.find("catalog_collections")[0].ops.filter((o) => o.method === "eq").map((o) => o.args)).toEqual([["is_active", true]]);
+  });
+
+  it("collections: create returns the id; members are replaced in order", async () => {
+    sb.on({ name: "catalog_collections", method: "insert" }, { data: { id: "c9" } });
+    expect(await catalog.saveCollection({ title: "  दिवाली ऑफ़र ", description: "", is_active: true, sort_order: 20 })).toBe("c9");
+    expect(opArgs(sb.find("catalog_collections", "insert")[0], "insert")?.[0]).toEqual({ title: "दिवाली ऑफ़र", description: null, is_active: true, sort_order: 20 });
+    await catalog.setCollectionItems("c9", ["x", "y"]);
+    expect(opArgs(sb.find("catalog_collection_items", "delete")[0], "eq")).toEqual(["collection_id", "c9"]);
+    expect(opArgs(sb.find("catalog_collection_items", "insert")[0], "insert")?.[0]).toEqual([
+      { collection_id: "c9", item_id: "x", sort_order: 10 },
+      { collection_id: "c9", item_id: "y", sort_order: 20 },
+    ]);
+    sb.reset();
+    await catalog.setCollectionItems("c9", []);
+    expect(sb.find("catalog_collection_items", "insert")).toHaveLength(0);
+  });
+
+  it("a product's collections can be replaced from the product form", async () => {
+    await catalog.setItemCollections("p1", ["c1", "c2"]);
+    expect(opArgs(sb.find("catalog_collection_items", "delete")[0], "eq")).toEqual(["item_id", "p1"]);
+    expect(opArgs(sb.find("catalog_collection_items", "insert")[0], "insert")?.[0]).toHaveLength(2);
   });
 });

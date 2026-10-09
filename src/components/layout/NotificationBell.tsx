@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/common/Skeleton";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bell, CheckCheck } from "lucide-react";
@@ -41,7 +42,7 @@ export function NotificationBell() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="relative grid h-11 w-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+          className="relative grid h-11 w-11 place-items-center rounded-full text-current transition-colors hover:bg-white/10"
           aria-label={count ? `सूचनाएँ, ${count} नई` : "सूचनाएँ"}
         >
           <Bell className="h-5 w-5" />
@@ -62,7 +63,12 @@ export function NotificationBell() {
           )}
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
-          {list.isLoading && <p className="px-4 py-6 text-center font-hindi text-small text-muted-foreground">लोड हो रहा है…</p>}
+          {list.isLoading && (
+            <div className="space-y-3 px-4 py-4" role="status">
+              <span className="sr-only">लोड हो रहा है…</span>
+              {Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-10 w-full" />)}
+            </div>
+          )}
           {list.data && list.data.length === 0 && (
             <p className="px-4 py-8 text-center font-hindi text-small text-muted-foreground">अभी कोई सूचना नहीं है।</p>
           )}

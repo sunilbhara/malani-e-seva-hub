@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { SEO } from "@/components/seo/SEO";
 import { EmptyState, SectionHeading } from "@/components/common/EmptyState";
-import { PageSpinner } from "@/components/common/PageSpinner";
+import { PostSkeleton } from "@/components/common/PageSpinner";
 import { DatesTable, FeeTable, QuickFacts } from "@/components/jobs/JobFacts";
 import { CountdownChip, StatusBadge } from "@/components/jobs/StatusBadge";
 import { CardGrid } from "@/components/jobs/PostList";
@@ -121,7 +121,7 @@ export default function PostPage() {
     return () => document.documentElement.style.setProperty("--post-font-scale", "1");
   }, [scaleIndex]);
 
-  if (postQuery.isLoading) return <PageSpinner />;
+  if (postQuery.isLoading) return <PostSkeleton />;
   if (postQuery.isError || !post) {
     return (
       <div className="container-page py-10">
@@ -361,14 +361,15 @@ function PostView(props: PostViewProps) {
           )}
 
           {/* Primary actions */}
-          <div className="mt-5 grid gap-2 sm:grid-cols-3">
+          <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {applyLink && status !== "closed" && (
               <Button asChild size="lg" className="font-hindi">
                 <a href={applyLink} target="_blank" rel="noopener noreferrer nofollow">आवेदन करें <ExternalLink /></a>
               </Button>
             )}
             {post.post_type === "job" || job ? (
-              <Button asChild size="lg" variant="accent" className="font-hindi">
+              // Phones already have "फॉर्म भरवाएँ" in the sticky bottom bar.
+              <Button asChild size="lg" variant="accent" className="hidden font-hindi lg:inline-flex">
                 <a href={whatsappHref(formHelpMessage(post.title))} target="_blank" rel="noopener noreferrer" onClick={() => track("form_help_click", { from: "post_actions" })}>
                   फॉर्म हमसे भरवाएँ
                 </a>
@@ -388,7 +389,7 @@ function PostView(props: PostViewProps) {
               width={1200}
               height={630}
               loading="eager"
-              fetchPriority="high"
+              {...{ fetchpriority: "high" }}
               className="mt-6 aspect-[1200/630] w-full rounded-2xl border object-cover"
             />
           )}
@@ -429,12 +430,12 @@ function PostView(props: PostViewProps) {
 
           {/* Desktop inline TOC */}
           {headings.length > 2 && (
-            <nav aria-label="विषय-सूची" className="mt-6 hidden rounded-2xl border bg-card p-4 md:block">
+            <nav aria-label="विषय-सूची" className="mt-6 hidden rounded-xl border bg-card p-4 md:block lg:hidden">
               <p className="mb-2 font-hindi font-semibold">विषय-सूची</p>
               <ol className="grid gap-1.5 sm:grid-cols-2">
                 {headings.filter((h) => h.level === 2).map((h) => (
                   <li key={h.id}>
-                    <a href={`#${h.id}`} className="font-hindi text-small text-primary hover:underline">{h.text}</a>
+                    <a href={`#${h.id}`} className="font-hindi text-small text-link hover:underline">{h.text}</a>
                   </li>
                 ))}
               </ol>
@@ -503,9 +504,9 @@ function PostView(props: PostViewProps) {
               <nav aria-label="विषय-सूची (साइड)" className="rounded-2xl border bg-card p-4">
                 <p className="mb-2 font-hindi font-semibold">विषय-सूची</p>
                 <ol className="space-y-1.5">
-                  {headings.map((h) => (
-                    <li key={h.id} className={h.level === 3 ? "pl-3" : ""}>
-                      <a href={`#${h.id}`} className="font-hindi text-small text-muted-foreground hover:text-primary">{h.text}</a>
+                  {headings.filter((h) => h.level === 2).map((h) => (
+                    <li key={h.id}>
+                      <a href={`#${h.id}`} className="block py-1 font-hindi text-small text-muted-foreground hover:text-foreground">{h.text}</a>
                     </li>
                   ))}
                 </ol>
@@ -562,8 +563,8 @@ function PostView(props: PostViewProps) {
             <SheetTitle className="font-hindi">विषय-सूची</SheetTitle>
           </SheetHeader>
           <ol className="mt-4 space-y-1">
-            {headings.map((h) => (
-              <li key={h.id} className={h.level === 3 ? "pl-4" : ""}>
+            {headings.filter((h) => h.level === 2).map((h) => (
+              <li key={h.id}>
                 <a href={`#${h.id}`} onClick={() => props.setTocOpen(false)} className="block rounded-lg px-3 py-2.5 font-hindi text-body hover:bg-muted">
                   {h.text}
                 </a>

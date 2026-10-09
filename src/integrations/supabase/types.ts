@@ -50,6 +50,72 @@ export type Database = {
         }
         Relationships: []
       }
+      catalog_collection_items: {
+        Row: {
+          collection_id: string
+          created_at: string
+          item_id: string
+          sort_order: number
+        }
+        Insert: {
+          collection_id: string
+          created_at?: string
+          item_id: string
+          sort_order?: number
+        }
+        Update: {
+          collection_id?: string
+          created_at?: string
+          item_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_collection_items_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_collection_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalog_collections: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       catalog_items: {
         Row: {
           category: string
@@ -60,6 +126,7 @@ export type Database = {
           image_url: string
           is_active: boolean
           kind: string
+          mrp: number | null
           price: number | null
           sort_order: number
           title: string
@@ -74,6 +141,7 @@ export type Database = {
           image_url: string
           is_active?: boolean
           kind: string
+          mrp?: number | null
           price?: number | null
           sort_order?: number
           title: string
@@ -88,6 +156,7 @@ export type Database = {
           image_url?: string
           is_active?: boolean
           kind?: string
+          mrp?: number | null
           price?: number | null
           sort_order?: number
           title?: string
@@ -894,6 +963,7 @@ export type Database = {
     }
     Functions: {
       admin_blog_analytics: { Args: never; Returns: Json }
+      admin_todo: { Args: never; Returns: Json }
       admin_quiz_questions: {
         Args: { p_quiz_date: string }
         Returns: {

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/seo/SEO";
 import { VisitUs } from "@/components/services/VisitUs";
 import { ContactForm } from "@/components/services/EnquiryForms";
+import { ShopStrip } from "@/components/home/ShopStrip";
 import { buildBreadcrumbSchema, buildFaqSchema, buildLocalBusinessSchema } from "@/lib/seo";
 import { telHref, whatsappHref } from "@/lib/business";
 import { useI18n } from "@/i18n";
@@ -34,6 +35,9 @@ export interface ServicePageTemplateProps {
   /** Page-specific sections (price list, product grid, gallery…) shown after the hero. */
   children?: ReactNode;
   showContactForm?: boolean;
+  /** Real shop photo from public/shop/ shown in the header. */
+  photo?: "emitra" | "mobile" | "studio" | "owner" | "interior";
+  photoAlt?: string;
 }
 
 export function ServicePageTemplate(props: ServicePageTemplateProps) {
@@ -51,24 +55,37 @@ export function ServicePageTemplate(props: ServicePageTemplateProps) {
         ]}
       />
 
-      <section className="border-b bg-gradient-to-b from-secondary/70 to-background">
-        <div className="container-page py-8 sm:py-12">
-          <p className="font-hindi text-small font-semibold text-primary">{props.eyebrow}</p>
-          <h1 className="mt-2 max-w-3xl font-hindi text-[1.75rem] font-bold leading-tight sm:text-[2.5rem]">{props.title}</h1>
-          <p className="mt-3 max-w-2xl font-hindi text-body text-muted-foreground">{props.description}</p>
-          <ul className="mt-5 grid gap-2 sm:grid-cols-3">
-            {props.bullets.map((b) => (
-              <li key={b} className="flex items-start gap-2 rounded-xl border bg-card p-3 font-hindi text-small">
-                <CheckCircle2 aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-status-open" /> {b}
-              </li>
-            ))}
-          </ul>
-          <div className="mt-5 flex flex-wrap gap-2">
-            <Button asChild variant="whatsapp" size="lg" className="font-hindi">
-              <a href={whatsappHref(props.whatsappText)} target="_blank" rel="noopener noreferrer"><MessageCircle /> WhatsApp करें</a>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="font-hindi"><a href={telHref}><Phone /> कॉल करें</a></Button>
+      <section className="border-b bg-card">
+        <div className="container-page grid gap-6 py-6 sm:py-10 md:grid-cols-[1.25fr_1fr] md:items-center">
+          <div>
+            <p className="font-hindi text-small font-semibold text-link">{props.eyebrow}</p>
+            <h1 className="mt-2 max-w-3xl font-hindi text-[1.75rem] font-bold leading-tight sm:text-[2.5rem]">{props.title}</h1>
+            <p className="mt-3 max-w-2xl font-hindi text-body text-muted-foreground">{props.description}</p>
+            <ul className="mt-4 space-y-2">
+              {props.bullets.map((b) => (
+                <li key={b} className="flex items-start gap-2 font-hindi text-body">
+                  <CheckCircle2 aria-hidden className="mt-1 h-4 w-4 shrink-0 text-status-open" /> {b}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Button asChild variant="whatsapp" size="lg" className="font-hindi">
+                <a href={whatsappHref(props.whatsappText)} target="_blank" rel="noopener noreferrer"><MessageCircle /> WhatsApp करें</a>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="font-hindi"><a href={telHref}><Phone /> कॉल करें</a></Button>
+            </div>
           </div>
+          {props.photo && (
+            <img
+              src={`/shop/${props.photo}-800.webp`}
+              srcSet={`/shop/${props.photo}-480.webp 480w, /shop/${props.photo}-800.webp 800w`}
+              sizes="(min-width: 768px) 40vw, 100vw"
+              alt={props.photoAlt ?? ""}
+              width={800}
+              height={600}
+              className="order-first aspect-[16/9] w-full rounded-xl border object-cover md:order-none md:aspect-[4/3]"
+            />
+          )}
         </div>
       </section>
 
@@ -96,6 +113,8 @@ export function ServicePageTemplate(props: ServicePageTemplateProps) {
             ))}
           </div>
         </section>
+
+        <ShopStrip current={props.path} showHelp={false} />
 
         <VisitUs />
 
@@ -128,7 +147,7 @@ export function ServicePageTemplate(props: ServicePageTemplateProps) {
                     <span className="block font-hindi font-semibold">{link.title}</span>
                     <span className="block font-hindi text-small text-muted-foreground">{link.description}</span>
                   </span>
-                  <ArrowRight aria-hidden className="mt-1 h-4 w-4 shrink-0 text-primary" />
+                  <ArrowRight aria-hidden className="mt-1 h-4 w-4 shrink-0 text-link" />
                 </Link>
               ))}
             </nav>

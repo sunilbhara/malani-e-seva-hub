@@ -1,3 +1,4 @@
+import { ListSkeleton } from "@/components/common/PageSpinner";
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -172,7 +173,7 @@ export function QaSection({ postId, returnPath }: { postId: string; returnPath: 
       )}
 
       <div className="mt-6 space-y-5">
-        {threads.isLoading && <p className="font-hindi text-small text-muted-foreground">लोड हो रहा है…</p>}
+        {threads.isLoading && <ListSkeleton rows={2} />}
         {threads.data?.length === 0 && (
           <p className="rounded-2xl bg-muted/60 px-4 py-6 text-center font-hindi text-small text-muted-foreground">अभी कोई सवाल नहीं। पहला सवाल आप पूछें!</p>
         )}

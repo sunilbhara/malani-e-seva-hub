@@ -15,12 +15,12 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter Variable", "Noto Sans Devanagari Variable", "Nirmala UI", "system-ui", "sans-serif"],
+        sans: ["Noto Sans Devanagari Variable", "Nirmala UI", "system-ui", "sans-serif"],
         hindi: ["Noto Sans Devanagari Variable", "Nirmala UI", "Mangal", "sans-serif"],
       },
       fontSize: {
         // Mobile-first scale, ratio ≈1.2 (Blueprint §5.1)
-        caption: ["0.75rem", { lineHeight: "1.4", fontWeight: "600" }],
+        caption: ["0.8125rem", { lineHeight: "1.45", fontWeight: "600" }],
         small: ["0.875rem", { lineHeight: "1.5" }],
         body: ["1rem", { lineHeight: "1.6" }],
         "body-lg": ["1.0625rem", { lineHeight: "1.75" }],
@@ -32,6 +32,7 @@ export default {
         background: token("background"),
         foreground: token("foreground"),
         body: token("body"),
+        link: token("link"),
         brand: { DEFAULT: token("brand"), foreground: token("brand-foreground") },
         primary: { DEFAULT: token("primary"), foreground: token("primary-foreground") },
         secondary: { DEFAULT: token("secondary"), foreground: token("secondary-foreground") },

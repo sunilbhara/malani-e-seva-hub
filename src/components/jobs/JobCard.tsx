@@ -3,7 +3,7 @@ import { Bookmark, CalendarDays, GraduationCap, Share2, Users } from "lucide-rea
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatDate, formatNumber, timeAgo } from "@/lib/format";
-import { postTypeShort, qualificationLabel, TYPE_BORDER, TYPE_TEXT } from "@/lib/jobs";
+import { postTypeShort, qualificationLabel, TYPE_TEXT } from "@/lib/jobs";
 import { shareText, whatsappShareUrl } from "@/lib/share";
 import { track } from "@/lib/analytics";
 import { recordShare, type PostListItem } from "@/services/posts";
@@ -34,25 +34,30 @@ export function JobCard({ post, className, compact = false }: { post: PostListIt
   return (
     <article
       className={cn(
-        "group relative flex flex-col gap-3 rounded-2xl border border-l-4 bg-card p-4 transition-shadow hover:shadow-1",
-        TYPE_BORDER[post.post_type ?? "article"] ?? TYPE_BORDER.article,
+        "group relative flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-1 transition-[box-shadow,border-color] hover:border-input hover:shadow-2",
         // Closed jobs are muted with a tinted background, not opacity, so text keeps WCAG AA contrast.
         closed && "bg-muted/60",
         className,
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <p className={cn("min-w-0 truncate text-small font-semibold", TYPE_TEXT[post.post_type ?? "article"])}>
-          {post.organisation || postTypeShort(post.post_type)}
+        <p className="flex min-w-0 items-center gap-2 text-small">
+          <span className={cn("shrink-0 font-hindi font-bold", TYPE_TEXT[post.post_type ?? "article"])}>{postTypeShort(post.post_type)}</span>
+          {post.organisation && (
+            <>
+              <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-border" />
+              <span className="truncate font-semibold text-muted-foreground">{post.organisation}</span>
+            </>
+          )}
         </p>
         {post.job_status ? (
           <StatusBadge status={post.job_status} daysLeft={post.days_left} className="shrink-0" />
         ) : (
-          <span className="shrink-0 text-caption font-normal text-muted-foreground">{timeAgo(post.published_at)}</span>
+          <span className="shrink-0 text-caption font-normal text-muted-foreground tabular">{timeAgo(post.published_at)}</span>
         )}
       </div>
 
-      <h3 className="font-hindi text-[1.0625rem] font-semibold leading-snug text-foreground">
+      <h3 className="font-hindi text-[1.125rem] font-semibold leading-snug text-foreground">
         <Link to={`/blog/${post.slug}`} className="line-clamp-2 after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none">
           {post.title}
         </Link>
@@ -85,7 +90,7 @@ export function JobCard({ post, className, compact = false }: { post: PostListIt
         <p className="line-clamp-2 font-hindi text-small text-muted-foreground">{post.excerpt}</p>
       ) : null}
 
-      <div className="relative z-10 mt-auto flex items-center justify-between gap-2">
+      <div className="relative z-10 mt-auto flex items-center justify-between gap-2 border-t pt-3">
         <CountdownChip lastDate={post.last_date} status={post.job_status} />
         <div className="ml-auto flex items-center gap-1">
           <button
@@ -118,7 +123,7 @@ export function JobCard({ post, className, compact = false }: { post: PostListIt
 
 export function JobCardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("flex flex-col gap-3 rounded-2xl border border-l-4 bg-card p-4", className)} aria-hidden>
+    <div className={cn("flex flex-col gap-3 rounded-xl border bg-card p-4", className)} aria-hidden>
       <div className="flex justify-between">
         <div className="h-4 w-28 animate-pulse rounded bg-muted" />
         <div className="h-6 w-24 animate-pulse rounded-full bg-muted" />

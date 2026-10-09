@@ -1,7 +1,8 @@
+import { Skeleton } from "@/components/common/Skeleton";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Share2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ import { deletePost, listAdminPosts, type AdminPostRow, type PostStatus } from "
 import { queryKeys } from "@/lib/queryClient";
 import { formatDateTime, formatNumber } from "@/lib/format";
 import { postTypeShort } from "@/lib/jobs";
+import { shareText, whatsappShareUrl } from "@/lib/share";
 import { cn } from "@/lib/utils";
 
 const STATUS: Record<PostStatus, { label: string; className: string }> = {
@@ -28,6 +30,21 @@ const STATUS: Record<PostStatus, { label: string; className: string }> = {
   archived: { label: "आर्काइव", className: "bg-status-closed-bg text-status-closed" },
 };
 const PAGE = 25;
+
+function PostActions({ p, onDelete }: { p: AdminPostRow; onDelete: () => void }) {
+  return (
+    <>
+      <Button asChild size="icon-sm" variant="ghost" aria-label="देखें"><Link to={`/blog/${p.status === "published" ? p.slug : p.id}`}><Eye /></Link></Button>
+      <Button asChild size="icon-sm" variant="ghost" aria-label="संपादित करें"><Link to={`/admin/posts/${p.id}`}><Pencil /></Link></Button>
+      {p.status === "published" && (
+        <Button asChild size="icon-sm" variant="ghost" aria-label="WhatsApp पर शेयर करें">
+          <a href={whatsappShareUrl(shareText({ title: p.title, slug: p.slug }))} target="_blank" rel="noopener noreferrer"><Share2 /></a>
+        </Button>
+      )}
+      <Button size="icon-sm" variant="ghost" aria-label="हटाएँ" onClick={onDelete} className="text-destructive"><Trash2 /></Button>
+    </>
+  );
+}
 
 export default function AdminPosts() {
   const queryClient = useQueryClient();
@@ -76,38 +93,50 @@ export default function AdminPosts() {
       </div>
 
       <div className="overflow-x-auto rounded-2xl border bg-card">
-        <table className="w-full min-w-[720px] text-small">
+        <table className="w-full text-small md:min-w-[720px]">
           <thead>
             <tr className="border-b text-left font-hindi text-muted-foreground">
               <th className="px-4 py-3 font-medium">शीर्षक</th>
               <th className="px-3 py-3 font-medium">स्थिति</th>
-              <th className="px-3 py-3 font-medium">अपडेट</th>
-              <th className="px-3 py-3 text-right font-medium">व्यू</th>
-              <th className="px-3 py-3 text-right font-medium">सवाल</th>
-              <th className="px-3 py-3"><span className="sr-only">कार्य</span></th>
+              <th className="hidden px-3 py-3 font-medium md:table-cell">अपडेट</th>
+              <th className="hidden px-3 py-3 text-right font-medium md:table-cell">व्यू</th>
+              <th className="hidden px-3 py-3 text-right font-medium md:table-cell">सवाल</th>
+              <th className="hidden px-3 py-3 md:table-cell"><span className="sr-only">कार्य</span></th>
             </tr>
           </thead>
           <tbody>
             {posts.isLoading && (
-              <tr><td colSpan={6} className="px-4 py-8 text-center font-hindi text-muted-foreground">लोड हो रहा है…</td></tr>
+              Array.from({ length: 5 }, (_, i) => (
+                <tr key={i} aria-hidden>
+                  <td colSpan={6} className="px-4 py-3"><Skeleton className="h-5 w-full" /></td>
+                </tr>
+              ))
             )}
             {posts.data?.items.map((p) => (
               <tr key={p.id} className="border-b last:border-0">
                 <td className="max-w-[22rem] px-4 py-3">
                   <p className="truncate font-hindi font-medium">{p.title}</p>
-                  <p className="font-hindi text-caption font-normal text-muted-foreground">{postTypeShort(p.post_type)} · {p.category}</p>
+                  <p className="font-hindi text-caption font-normal text-muted-foreground">
+                    {postTypeShort(p.post_type)}
+                    {p.read_time_min ? ` · ${p.read_time_min} मिनट पढ़ाई` : ""}
+                  </p>
+                  {/* Phones: the facts and actions that the hidden columns show on desktop. */}
+                  <p className="mt-1 font-hindi text-caption font-normal text-muted-foreground md:hidden">
+                    <span className="tabular">{formatDateTime(p.updated_at)}</span> · <span className="tabular">{formatNumber(p.views_count)}</span> व्यू · <span className="tabular">{formatNumber(p.comments_count)}</span> सवाल
+                  </p>
+                  <div className="mt-1.5 flex gap-1 md:hidden">
+                    <PostActions p={p} onDelete={() => setToDelete(p)} />
+                  </div>
                 </td>
                 <td className="px-3 py-3"><span className={cn("rounded-full px-2.5 py-1 font-hindi text-caption", STATUS[p.status]?.className)}>{STATUS[p.status]?.label ?? p.status}</span>
                   {p.status === "scheduled" && p.scheduled_at && <p className="mt-1 text-caption font-normal text-muted-foreground">{formatDateTime(p.scheduled_at)}</p>}
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 text-caption font-normal text-muted-foreground">{formatDateTime(p.updated_at)}</td>
-                <td className="px-3 py-3 text-right tabular">{formatNumber(p.views_count)}</td>
-                <td className="px-3 py-3 text-right tabular">{formatNumber(p.comments_count)}</td>
-                <td className="px-3 py-3">
+                <td className="hidden whitespace-nowrap px-3 py-3 text-caption font-normal text-muted-foreground md:table-cell">{formatDateTime(p.updated_at)}</td>
+                <td className="hidden px-3 py-3 text-right tabular md:table-cell">{formatNumber(p.views_count)}</td>
+                <td className="hidden px-3 py-3 text-right tabular md:table-cell">{formatNumber(p.comments_count)}</td>
+                <td className="hidden px-3 py-3 md:table-cell">
                   <div className="flex justify-end gap-1">
-                    <Button asChild size="icon-sm" variant="ghost" aria-label="देखें"><Link to={`/blog/${p.status === "published" ? p.slug : p.id}`}><Eye /></Link></Button>
-                    <Button asChild size="icon-sm" variant="ghost" aria-label="संपादित करें"><Link to={`/admin/posts/${p.id}`}><Pencil /></Link></Button>
-                    <Button size="icon-sm" variant="ghost" aria-label="हटाएँ" onClick={() => setToDelete(p)} className="text-destructive"><Trash2 /></Button>
+                    <PostActions p={p} onDelete={() => setToDelete(p)} />
                   </div>
                 </td>
               </tr>

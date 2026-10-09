@@ -33,7 +33,7 @@ export function CardRail({ posts, loading }: { posts?: PostListItem[]; loading?:
 export function UpdateList({ posts, loading }: { posts?: PostListItem[]; loading?: boolean }) {
   if (loading && !posts?.length) {
     return (
-      <ul className="divide-y rounded-2xl border bg-card" aria-hidden>
+      <ul className="divide-y rounded-xl border bg-card" aria-hidden>
         {Array.from({ length: 5 }, (_, i) => (
           <li key={i} className="flex items-center gap-3 px-4 py-3.5">
             <div className="h-5 w-16 animate-pulse rounded bg-muted" />
@@ -44,14 +44,19 @@ export function UpdateList({ posts, loading }: { posts?: PostListItem[]; loading
     );
   }
   return (
-    <ul className="divide-y rounded-2xl border bg-card">
+    <ul className="divide-y rounded-xl border bg-card shadow-1">
       {posts?.map((p) => (
         <li key={p.id}>
-          <Link to={`/blog/${p.slug}`} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted">
-            <span className={cn("w-20 shrink-0 font-hindi text-caption", TYPE_TEXT[p.post_type ?? "article"])}>{postTypeShort(p.post_type)}</span>
-            <span className="line-clamp-2 min-w-0 flex-1 font-hindi text-small font-medium text-foreground">{p.title}</span>
-            <span className="hidden shrink-0 text-caption font-normal text-muted-foreground sm:inline">{timeAgo(p.published_at)}</span>
-            <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <Link to={`/blog/${p.slug}`} className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/60">
+            <span className="min-w-0 flex-1">
+              <span className="flex items-center gap-2 text-caption">
+                <span className={cn("font-hindi font-bold", TYPE_TEXT[p.post_type ?? "article"])}>{postTypeShort(p.post_type)}</span>
+                <span aria-hidden className="h-1 w-1 rounded-full bg-border" />
+                <span className="font-normal text-muted-foreground tabular">{timeAgo(p.published_at)}</span>
+              </span>
+              <span className="mt-0.5 line-clamp-2 block font-hindi text-body font-semibold leading-snug text-foreground">{p.title}</span>
+            </span>
+            <ChevronRight aria-hidden className="h-5 w-5 shrink-0 text-muted-foreground" />
           </Link>
         </li>
       ))}

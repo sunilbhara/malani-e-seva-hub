@@ -123,11 +123,13 @@ describe("Listing (/jobs)", () => {
 });
 
 describe("Listing variants", () => {
-  it("/admit-card requests admit cards and shows the pair tabs", async () => {
+  it("/admit-card requests admit cards and marks its type tab as current", async () => {
     vi.mocked(listPosts).mockResolvedValue({ items: [], total: 0 });
     renderRoute(<Listing kind="admit" />, { route: "/admit-card" });
     await waitFor(() => expect(lastParams()?.postTypes).toEqual(["admit_card"]));
-    expect(screen.getByRole("tab", { name: "एडमिट कार्ड" })).toHaveAttribute("aria-selected", "true");
+    const tabs = screen.getByRole("navigation", { name: "अपडेट का प्रकार" });
+    expect(within(tabs).getByRole("link", { name: "एडमिट कार्ड" })).toHaveAttribute("aria-current", "page");
+    expect(within(tabs).getByRole("link", { name: "भर्ती" })).toHaveAttribute("href", "/jobs");
     expect(screen.queryByRole("button", { name: "अंतिम तिथि नज़दीक" })).not.toBeInTheDocument();
   });
 
